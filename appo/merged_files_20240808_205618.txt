@@ -1,0 +1,208 @@
+// File creato il: 2024-08-08 20:56:27
+
+// Contenuto di santibailor/MainActivity.java
+
+package it.faustobe.santibailor;
+
+import android.os.Bundle;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import it.faustobe.santibailor.databinding.ActivityMainBinding;
+import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
+
+public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding binding;
+    private RicorrenzaViewModel ricorrenzaViewModel;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Inizializza il ViewModel
+        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    // Metodo per ottenere il ViewModel dai fragment
+    public RicorrenzaViewModel getRicorrenzaViewModel() {
+        return ricorrenzaViewModel;
+    }
+}
+
+// Contenuto di viewmodel/RicorrenzaViewModel.java
+
+package it.faustobe.santibailor.viewmodel;
+
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+
+import java.util.List;
+
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.dao.RicorrenzaDao;
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.data.entities.TipoRicorrenza;
+import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+
+public class RicorrenzaViewModel extends AndroidViewModel {
+    private RicorrenzaRepository repository;
+
+    public RicorrenzaViewModel(Application application) {
+        super(application);
+        repository = new RicorrenzaRepository(application);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese) {
+        return repository.getRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose(int giorno, int mese) {
+        return repository.getRicorrenzeReligiose(giorno, mese);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche(int giorno, int mese) {
+        return repository.getRicorrenzeLaiche(giorno, mese);
+    }
+}
+
+// Contenuto di layout/activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="?attr/actionBarSize">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        android:background="?android:attr/windowBackground"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <fragment
+        android:id="@+id/nav_host_fragment_activity_main"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/nav_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navGraph="@navigation/mobile_navigation" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+// Struttura dell'app Saintbailor
+
+main/
+    AndroidManifest.xml
+    java/
+        it/
+            faustobe/
+                santibailor/
+                    MainActivity.java
+                    ui/
+                        notifications/
+                            NotificationsViewModel.java
+                            NotificationsFragment.java
+                        dashboard/
+                            DashboardFragment.java
+                            DashboardViewModel.java
+                        home/
+                            HomeViewModel.java
+                            HomeFragment.java
+                    data/
+                        AppDatabase.java
+                        dao/
+                            RicorrenzaDao.java
+                            TipoRicorrenzaDao.java
+                        repository/
+                            RicorrenzaRepository.java
+                        entities/
+                            Ricorrenza.java
+                            TipoRicorrenza.java
+                            RicorrenzaConTipo.java
+                    viewmodel/
+                        RicorrenzaViewModel.java
+    assets/
+        santocal.db
+    res/
+        values-night/
+            themes.xml
+        mipmap-mdpi/
+            ic_launcher_round.webp
+            ic_launcher.webp
+        mipmap-anydpi-v26/
+            ic_launcher_round.xml
+            ic_launcher.xml
+        menu/
+            bottom_nav_menu.xml
+        navigation/
+            mobile_navigation.xml
+        values/
+            colors.xml
+            themes.xml
+            strings.xml
+            dimens.xml
+        drawable/
+            ic_home_black_24dp.xml
+            ic_launcher_foreground.xml
+            ic_notifications_black_24dp.xml
+            ic_dashboard_black_24dp.xml
+            ic_launcher_background.xml
+        layout/
+            activity_main.xml
+            item_ricorrenza.xml
+            fragment_dashboard.xml
+            fragment_notifications.xml
+            fragment_home.xml
+        mipmap-hdpi/
+            ic_launcher_round.webp
+            ic_launcher.webp
+        xml/
+            backup_rules.xml
+            data_extraction_rules.xml
+        mipmap-xxhdpi/
+            ic_launcher_round.webp
+            ic_launcher.webp
+        mipmap-xxxhdpi/
+            ic_launcher_round.webp
+            ic_launcher.webp
+        mipmap-xhdpi/
+            ic_launcher_round.webp
+            ic_launcher.webp
+
+

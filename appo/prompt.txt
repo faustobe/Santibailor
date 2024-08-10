@@ -1,0 +1,146 @@
+Continuazione del progetto Android SantiBailor: implementazione delle prossime funzionalità
+
+
+L'app SantiBailor mostra le ricorrenze giornaliere, sia religiose che laiche.
+L'app utilizza:
+Java come linguaggio di programmazione
+Android Jetpack (inclusi ViewModel e LiveData) per l'architettura
+Room per la persistenza dei dati
+RecyclerView per la visualizzazione della lista di ricorrenze
+
+Contesto attuale:
+Il layout principale (fragment_home.xml) è stato aggiornato per mostrare un'immagine di sfondo a schermo intero con un overlay semitrasparente.
+È stato implementato un RicorrenzaAdapter per visualizzare le ricorrenze in un RecyclerView.
+Glide è stato integrato per il caricamento efficiente delle immagini.
+La classe Ricorrenza è stata aggiornata per includere un campo 'img' per le immagini delle ricorrenze.
+È stata creata un'immagine predefinita (default_ricorrenza_image) per le ricorrenze senza immagine specifica.
+
+Prossimi passi da implementare (in ordine di priorità):
+
+1.Implementare la funzionalità di inserimento nuove ricorrenze e modifica di quelle esistenti:
+
+Creare un nuovo layout per l'inserimento/modifica delle ricorrenze.
+Implementare la logica per salvare nuove ricorrenze nel database locale.
+Aggiungere la funzionalità di modifica per le ricorrenze esistenti.
+Integrare la gestione delle immagini per le nuove ricorrenze (upload o selezione dalla galleria).
+
+2.Migliorare il layout della lista delle ricorrenze:
+
+Aggiungere dettagli come descrizioni brevi o icone per il tipo di ricorrenza.
+Ottimizzare la visualizzazione per diversi tipi di dispositivi.
+
+
+3.Implementare la funzionalità di cambio data:
+
+Aggiungere controlli per navigare tra i giorni.
+Aggiornare il ViewModel per gestire il cambio di data.
+
+
+4.Creare una schermata di dettaglio per ogni ricorrenza:
+
+Implementare un nuovo layout per la visualizzazione dettagliata.
+Aggiungere la navigazione dal HomeFragment alla schermata di dettaglio.
+
+
+5.Implementare la funzionalità di ricerca:
+
+Aggiungere una barra di ricerca nel HomeFragment.
+Creare query di ricerca nel RicorrenzaRepository.
+
+
+6.Ottimizzare le prestazioni:
+
+Implementare DiffUtil con ListAdapter per aggiornamenti più efficienti della RecyclerView.
+Considerare l'uso di Paging Library per gestire grandi set di dati.
+
+
+7.Implementare le altre schede dell'app (Dashboard e Lista spesa) come previsto dal design iniziale.
+
+Per iniziare, si prega di fornire indicazioni su quale di questi punti si desidera affrontare per primo, se diverso da quello proposto o se ci sono modifiche o priorità diverse da considerare. 
+Per allineare le implementazioni al codice esistente fornisco l'alberatura dell'app e posso fornire in un unico file di testo il codice delle classi e dei files che potresti voler vedere prima di iniziare. Inoltre, si prega di specificare se sono necessarie ulteriori informazioni sul codice esistente o sulla struttura del progetto per procedere efficacemente. Prima di iniziare lo sviluppo e la modifica di classi esistenti ritengo opportuno da parte tua visionare il codice attuale per evitare inutili sessioni di debug, dimmi se sei d'accordo.
+
+Ecco la struttura attuale del progetto relativamente ai package e alle res:
+
+
+                    it/
+                        faustobe/
+                            santibailor/
+                                MainActivity.java
+                                ui/
+                                    notifications/
+                                        NotificationsViewModel.java
+                                        NotificationsFragment.java
+                                    dashboard/
+                                        DashboardFragment.java
+                                        DashboardViewModel.java
+                                    home/
+                                        HomeViewModel.java
+                                        HomeFragment.java
+                                        RicorrenzaAdapter.java
+                                data/
+                                    AppDatabase.java
+                                    dao/
+                                        RicorrenzaDao.java
+                                        TipoRicorrenzaDao.java
+                                    repository/
+                                        RicorrenzaRepository.java
+                                    entities/
+                                        Ricorrenza.java
+                                        TipoRicorrenza.java
+                                        RicorrenzaConTipo.java
+                                viewmodel/
+                                    RicorrenzaViewModel.java
+                                util/
+                                    MyAppGlideModule.java
+                                    ImageLoadingUtil.java
+                res/
+                    values-night/
+                        themes.xml
+                    mipmap-mdpi/
+                        ic_launcher_round.webp
+                        ic_launcher.webp
+                    mipmap-anydpi-v26/
+                        ic_launcher_round.xml
+                        ic_launcher.xml
+                    menu/
+                        bottom_nav_menu.xml
+                    navigation/
+                        mobile_navigation.xml
+                    values/
+                        colors.xml
+                        themes.xml
+                        strings.xml
+                        dimens.xml
+                    drawable/
+                        ic_notes_vector.xml
+                        default_ricorrenza_image.xml
+                        ic_home_black_24dp.xml
+                        background_saint.jpg
+                        ic_launcher_foreground.xml
+                        ic_notifications_black_24dp.xml
+                        ic_home_vector.xml
+                        ic_dashboard_black_24dp.xml
+                        ic_launcher_background.xml
+                        ic_dashboard_vector.xml
+                    layout/
+                        activity_main.xml
+                        item_ricorrenza.xml
+                        fragment_home_bk.xml
+                        fragment_dashboard.xml
+                        fragment_notifications.xml
+                        fragment_home.xml
+                    mipmap-hdpi/
+                        ic_launcher_round.webp
+                        ic_launcher.webp
+                    xml/
+                        backup_rules.xml
+                        data_extraction_rules.xml
+                    mipmap-xxhdpi/
+                        ic_launcher_round.webp
+                        ic_launcher.webp
+                    mipmap-xxxhdpi/
+                        ic_launcher_round.webp
+                        ic_launcher.webp
+                    mipmap-xhdpi/
+                        ic_launcher_round.webp
+                        ic_launcher.webp

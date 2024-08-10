@@ -1,0 +1,607 @@
+
+// Contenuto di entities/Ricorrenza.java
+
+package it.faustobe.santibailor.data.entities;
+
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import org.jetbrains.annotations.Nullable;
+
+@Entity(tableName = "santi")
+public class Ricorrenza {
+    @PrimaryKey
+    private int id;
+
+    @ColumnInfo(name = "id_mesi")
+    private int idMese;
+
+    private int giorno;
+
+    @ColumnInfo(name = "santo")
+    @NonNull
+    private String nome;
+
+    private String bio;
+    private String img;
+    private String prefix;
+    private String suffix;
+
+    @ColumnInfo(name = "tipo_ricorrenza_id", defaultValue = "1")
+    private int tipoRicorrenzaId;
+
+    // Getter e Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    public int getIdMese() { return idMese; }
+    public void setIdMese(int idMese) { this.idMese = idMese; }
+
+    public int getGiorno() { return giorno; }
+    public void setGiorno(int giorno) { this.giorno = giorno; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getImg() { return img; }
+    public void setImg(String img) { this.img = img; }
+
+    public String getImageUrl() { return img; }
+    public void setImageUrl(String imageUrl) { this.img = imageUrl; }
+
+    public String getPrefix() { return prefix; }
+    public void setPrefix(String prefix) { this.prefix = prefix; }
+
+    public String getSuffix() { return suffix; }
+    public void setSuffix(String suffix) { this.suffix = suffix; }
+
+    public int getTipoRicorrenzaId() { return tipoRicorrenzaId; }
+    public void setTipoRicorrenzaId(int tipoRicorrenzaId) { this.tipoRicorrenzaId = tipoRicorrenzaId; }
+}
+
+// Contenuto di dao/RicorrenzaDao.java
+
+package it.faustobe.santibailor.data.dao;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
+
+import java.util.List;
+
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+
+@Dao
+public interface RicorrenzaDao {
+    /*@Query("SELECT * FROM santi WHERE giorno = :giorno AND id_mesi = :mese")
+    LiveData<List<Ricorrenza>> getRicorrenzeDelGiorno(int giorno, int mese);*/
+
+    @Query("SELECT r.*, t.nome AS tipoNome FROM santi r " +
+            "LEFT JOIN tipo_ricorrenza t ON r.tipo_ricorrenza_id = t.id " +
+            "WHERE r.giorno = :giorno AND r.id_mesi = :mese")
+    LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese);
+
+    @Query("SELECT r.*, t.nome AS tipoNome FROM santi r " +
+            "LEFT JOIN tipo_ricorrenza t ON r.tipo_ricorrenza_id = t.id " +
+            "WHERE r.giorno = :giorno AND r.id_mesi = :mese AND r.tipo_ricorrenza_id = :tipoId")
+    LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiornoPerTipo(int giorno, int mese, int tipoId);
+
+    @Query("SELECT * FROM santi WHERE tipo_ricorrenza_id = :tipo")
+    LiveData<List<Ricorrenza>> getRicorrenzePerTipo(String tipo);
+
+    @Query("SELECT * FROM santi WHERE id = :id")
+    LiveData<Ricorrenza> getRicorrenzaById(int id);
+
+    @Query("SELECT * FROM santi WHERE santo LIKE :nome")
+    LiveData<List<Ricorrenza>> cercaRicorrenzePerNome(String nome);
+
+    @Query("SELECT * FROM santi ORDER BY id_mesi, giorno")
+    LiveData<List<Ricorrenza>> getAllRicorrenze();
+
+    @Insert
+    void insert(Ricorrenza ricorrenza);
+
+    @Update
+    void update(Ricorrenza ricorrenza);
+
+    @Delete
+    void delete(Ricorrenza ricorrenza);
+
+    @Insert
+    void insertMultiple(List<Ricorrenza> ricorrenze);
+
+    @Delete
+    void deleteMultiple(List<Ricorrenza> ricorrenze);
+}
+
+// Contenuto di repository/RicorrenzaRepository.java
+
+package it.faustobe.santibailor.data.repository;
+
+import android.app.Application;
+import androidx.lifecycle.LiveData;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.dao.RicorrenzaDao;
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.data.entities.TipoRicorrenza;
+
+public class RicorrenzaRepository {
+    private RicorrenzaDao ricorrenzaDao;
+    private ExecutorService executorService;
+
+    public RicorrenzaRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        ricorrenzaDao = db.ricorrenzaDao();
+        executorService = Executors.newSingleThreadExecutor();
+    }
+
+    /*public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiorno(giorno, mese);
+    }*/
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenza.RELIGIOSA);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenza.LAICA);
+    }
+
+    public void insert(Ricorrenza ricorrenza) {
+        executorService.execute(() -> ricorrenzaDao.insert(ricorrenza));
+    }
+
+    public void update(Ricorrenza ricorrenza) {
+        executorService.execute(() -> ricorrenzaDao.update(ricorrenza));
+    }
+
+    public void delete(Ricorrenza ricorrenza) {
+        executorService.execute(() -> ricorrenzaDao.delete(ricorrenza));
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public LiveData<List<Ricorrenza>> getRicorrenzePerTipo(String tipo) {
+        return ricorrenzaDao.getRicorrenzePerTipo(tipo);
+    }
+
+    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
+        return ricorrenzaDao.getRicorrenzaById(id);
+    }
+
+    public LiveData<List<Ricorrenza>> cercaRicorrenzePerNome(String nome) {
+        return ricorrenzaDao.cercaRicorrenzePerNome("%" + nome + "%");
+    }
+
+    public LiveData<List<Ricorrenza>> getAllRicorrenze() {
+        return ricorrenzaDao.getAllRicorrenze();
+    }
+}
+
+
+// Contenuto di viewmodel/RicorrenzaViewModel.java
+
+package it.faustobe.santibailor.viewmodel;
+
+import android.app.Application;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+
+public class RicorrenzaViewModel extends AndroidViewModel {
+    private RicorrenzaRepository repository;
+    private final MutableLiveData<Date> selectedDate = new MutableLiveData<>();
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeDelGiorno;
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeReligiose;
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeLaiche;
+
+    public RicorrenzaViewModel(Application application) {
+        super(application);
+        repository = new RicorrenzaRepository(application);
+        selectedDate.setValue(new Date()); // Imposta la data corrente di default
+
+        ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1; // Calendar.MONTH è zero-based
+            return repository.getRicorrenzeDelGiorno(giorno, mese);
+        });
+
+        ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+            return repository.getRicorrenzeReligiose(giorno, mese);
+        });
+
+        ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+            return repository.getRicorrenzeLaiche(giorno, mese);
+        });
+    }
+
+    public void setDate(Date date) {
+        selectedDate.setValue(date);
+    }
+
+    public LiveData<Date> getSelectedDate() {
+        return selectedDate;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno() {
+        return ricorrenzeDelGiorno;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose() {
+        return ricorrenzeReligiose;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche() {
+        return ricorrenzeLaiche;
+    }
+
+    public void moveToNextDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.setValue(calendar.getTime());
+    }
+
+    public void moveToPreviousDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        selectedDate.setValue(calendar.getTime());
+    }
+}
+
+// Contenuto di home/HomeFragment.java
+
+package it.faustobe.santibailor.ui.home;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.databinding.FragmentHomeBinding;
+import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
+
+public class HomeFragment extends Fragment {
+
+    private FragmentHomeBinding binding;
+    private RicorrenzaViewModel ricorrenzaViewModel;
+
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+
+        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
+
+        setupDateDisplay();
+        setupSaintOfDay();
+        setupPersonalInfo();
+        setupBottomNavigation();
+
+        return root;
+    }
+
+    private void loadBackgroundImage() {
+        Glide.with(this)
+                .load(R.drawable.background_saint)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(binding.backgroundImage);
+    }
+
+    private void setupDateDisplay() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ITALIAN);
+
+        binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
+        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        binding.tvMonth.setText(monthFormat.format(calendar.getTime()));
+    }
+
+    private void setupSaintOfDay() {
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
+            if (ricorrenze != null && !ricorrenze.isEmpty()) {
+                binding.tvSaintOfDay.setText(ricorrenze.get(0).ricorrenza.getNome());
+            }
+        });
+    }
+
+    private void setupPersonalInfo() {
+        // Qui dovresti recuperare le informazioni personali dal tuo database o dalle preferenze
+        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
+
+        StringBuilder todoList = new StringBuilder("- paga bolletta luce\n");
+        todoList.append("- cambia filtro aria della cappa\n");
+        todoList.append("- compra regalo per Denise - compleanno fra 5 gg\n");
+        todoList.append("- finisci rapporto AZS - consegna fra 3 gg");
+        binding.tvTodoList.setText(todoList.toString());
+
+        StringBuilder todayEvents = new StringBuilder("oggi:\n");
+        todayEvents.append("* gym\n");
+        todayEvents.append("* ape con Chicca alle h 18\n");
+        todayEvents.append("+ la ricotta è in frigo da 4 giorni");
+        binding.tvTodayEvents.setText(todayEvents.toString());
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = binding.bottomNavigation;
+        bottomNav.setOnItemSelectedListener(item -> {
+            // Gestisci la navigazione qui
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_home) {
+                // Già nella home, non fare nulla
+                return true;
+            } else if (itemId == R.id.navigation_dashboard) {
+                // Naviga alla dashboard
+                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_dashboard);
+                return true;
+            } else if (itemId == R.id.navigation_notifications) {
+                // Naviga alle notifiche
+                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_notifications);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+}
+
+// Contenuto di home/RicorrenzaAdapter.java
+
+package it.faustobe.santibailor.ui.home;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.util.ImageLoadingUtil;
+
+public class RicorrenzaAdapter extends RecyclerView.Adapter<RicorrenzaAdapter.RicorrenzaViewHolder> {
+    private List<RicorrenzaConTipo> ricorrenze;
+
+    public RicorrenzaAdapter(List<RicorrenzaConTipo> ricorrenze) {
+        this.ricorrenze = ricorrenze;
+    }
+
+    @NonNull
+    @Override
+    public RicorrenzaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ricorrenza, parent, false);
+        return new RicorrenzaViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RicorrenzaViewHolder holder, int position) {
+        RicorrenzaConTipo ricorrenza = ricorrenze.get(position);
+        holder.nomeTextView.setText(ricorrenza.ricorrenza.getNome());
+        holder.tipoTextView.setText(ricorrenza.tipoNome);
+
+        // Carica l'immagine della ricorrenza
+        if (ricorrenza.ricorrenza.getImageUrl() != null) {
+            ImageLoadingUtil.loadImage(holder.imageView, ricorrenza.ricorrenza.getImageUrl());
+        } else {
+            // Carica un'immagine di default se non c'è un'immagine specifica
+            ImageLoadingUtil.loadImage(holder.imageView, R.drawable.default_ricorrenza_image);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return ricorrenze != null ? ricorrenze.size() : 0;
+    }
+
+    public void setRicorrenze(List<RicorrenzaConTipo> ricorrenze) {
+        this.ricorrenze = ricorrenze;
+        notifyDataSetChanged();
+    }
+
+    static class RicorrenzaViewHolder extends RecyclerView.ViewHolder {
+        TextView nomeTextView;
+        TextView tipoTextView;
+        ImageView imageView;
+
+        RicorrenzaViewHolder(@NonNull View itemView) {
+            super(itemView);
+            nomeTextView = itemView.findViewById(R.id.nome_ricorrenza);
+            tipoTextView = itemView.findViewById(R.id.tipo_ricorrenza);
+            imageView = itemView.findViewById(R.id.immagine_ricorrenza);
+        }
+    }
+}
+
+
+// Contenuto di layout/fragment_home.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/background_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background_saint"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/background_description"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#80000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_weekday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF0000"
+            android:textSize="72sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/tv_weekday"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_day"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
+            android:id="@+id/tv_saint_of_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_month"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_personal_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardBackgroundColor="#80FFFFFF"
+            app:cardCornerRadius="8dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_saint_of_day"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_personal_event"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_todo_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
+
+                <TextView
+                    android:id="@+id/tv_today_events"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_nav_menu"
+        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
