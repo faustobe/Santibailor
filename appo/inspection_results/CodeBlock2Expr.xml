@@ -1,0 +1,93 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>143</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment void setupDatePickers()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>93</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>327</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment$3 void onError(java.lang.String errorMessage)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>58</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/dialogs/MonthYearPickerDialog.java</file>
+  <line>54</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.dialogs</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.ui.dialogs.MonthYearPickerDialog android.app.Dialog onCreateDialog(android.os.Bundle savedInstanceState)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>58</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/EditRicorrenzaFragment.java</file>
+  <line>66</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment void setupDatePickers()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>93</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/EditRicorrenzaFragment.java</file>
+  <line>142</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment$1 void onError(java.lang.String errorMessage)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>54</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/search/SearchFragment.java</file>
+  <line>148</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.search</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.search.SearchFragment void setupListeners()" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>83</offset>
+  <length>1</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/util/MonthDayPickerHelper.java</file>
+  <line>35</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.util</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.util.MonthDayPickerHelper void showPicker(android.content.Context context, it.faustobe.santibailor.util.MonthDayPickerHelper.OnDateSetListener listener)" />
+  <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+  <description>Statement lambda can be replaced with expression lambda</description>
+  <highlighted_element>{</highlighted_element>
+  <language>JAVA</language>
+  <offset>74</offset>
+  <length>1</length>
+</problem>
+</problems>

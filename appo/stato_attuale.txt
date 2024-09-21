@@ -1,0 +1,34 @@
+# Stato dell'Arte del Progetto SantiBailor
+
+## Progressi Raggiunti
+1. Implementazione della struttura ottimizzata del `SearchFragment`.
+2. Integrazione della persistenza dei dati di ricerca utilizzando `SharedPreferences`.
+3. Implementazione della logica di ricerca avanzata nel `RicorrenzaViewModel` con utilizzo di `ExecutorService` per operazioni in background.
+4. Aggiunta di metodo sincrono `ricercaAvanzataSync` in `RicorrenzaDao` e `RicorrenzaRepository`.
+5. Implementazione di debounce per l'input dell'utente nel `SearchFragment`.
+6. Ottimizzazione delle prestazioni della ricerca spostando operazioni pesanti fuori dal thread principale.
+7. Miglioramento della gestione dello stato e del ciclo di vita nel `SearchFragment`.
+
+## Stato Attuale
+1. La funzionalità di ricerca avanzata è ora funzionante e ottimizzata per le prestazioni.
+2. L'interfaccia utente rimane reattiva durante le operazioni di ricerca.
+3. I risultati della ricerca vengono visualizzati correttamente.
+4. La persistenza dei dati di ricerca tra le sessioni è implementata.
+
+## Problemi Risolti
+1. Risolto il problema di blocco dell'interfaccia utente durante la ricerca.
+2. Corretta l'implementazione di `ricercaAvanzataSync` nel `RicorrenzaRepository`.
+3. Migliorata la gestione degli input dell'utente con l'implementazione del debounce.
+
+## Prossimi Passi
+1. Risolvere i problemi minori con il bottom menu.
+2. Implementare la gestione degli impegni con la matrice di Eisenhower.
+3. Aggiungere la funzionalità delle liste della spesa.
+4. Considerare l'implementazione di operazioni più complesse utilizzando il pattern ExecutorService per le nuove funzionalità.
+5. Continuare a ottimizzare le prestazioni e la reattività dell'app.
+6. Implementare test unitari e di integrazione per le nuove funzionalità.
+
+## Considerazioni Aggiuntive
+- Valutare l'uso di Coroutines di Kotlin come alternativa a ExecutorService per una gestione più semplice delle operazioni asincrone.
+- Considerare l'implementazione di un meccanismo di caching per i risultati della ricerca per migliorare ulteriormente le prestazioni.
+- Pianificare l'architettura per l'integrazione delle nuove funzionalità (gestione impegni e liste della spesa) mantenendo una struttura pulita e modulare.

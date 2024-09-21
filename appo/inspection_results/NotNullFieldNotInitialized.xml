@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>21</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza nome" />
+  <problem_class id="NotNullFieldNotInitialized" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull field is not initialized</problem_class>
+  <description>Not-null fields must be initialized</description>
+  <highlighted_element>@NonNull</highlighted_element>
+  <language>JAVA</language>
+  <offset>4</offset>
+  <length>8</length>
+</problem>
+</problems>

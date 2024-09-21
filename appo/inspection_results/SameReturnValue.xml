@@ -1,0 +1,16 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/DatabaseEntity.java</file>
+  <line>6</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.DatabaseEntity java.lang.String getTableName()" />
+  <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+  <hints />
+  <description>All implementations of method &lt;code&gt;getTableName()&lt;/code&gt; always return &lt;code&gt;santi&lt;/code&gt;</description>
+  <highlighted_element>getTableName</highlighted_element>
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>12</length>
+</problem>
+</problems>

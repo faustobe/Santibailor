@@ -1,0 +1,41 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_item.xml</file>
+  <line>52</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_item.xml" />
+  <problem_class id="AndroidLintLabelFor" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing accessibility label</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing accessibility label: provide either a view with an &lt;code&gt;android:labelFor&lt;/code&gt; that references this view or provide an &lt;code&gt;android:hint&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>AutoCompleteTextView</highlighted_element>
+  <language>XML</language>
+  <offset>13</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_edit_ricorrenza.xml</file>
+  <line>47</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_edit_ricorrenza.xml" />
+  <problem_class id="AndroidLintLabelFor" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing accessibility label</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing accessibility label: provide either a view with an &lt;code&gt;android:labelFor&lt;/code&gt; that references this view or provide an &lt;code&gt;android:hint&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>AutoCompleteTextView</highlighted_element>
+  <language>XML</language>
+  <offset>17</offset>
+  <length>20</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_search.xml</file>
+  <line>37</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_search.xml" />
+  <problem_class id="AndroidLintLabelFor" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing accessibility label</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing accessibility label: provide either a view with an &lt;code&gt;android:labelFor&lt;/code&gt; that references this view or provide an &lt;code&gt;android:hint&lt;/code&gt;&lt;/html&gt;</description>
+  <highlighted_element>AutoCompleteTextView</highlighted_element>
+  <language>XML</language>
+  <offset>13</offset>
+  <length>20</length>
+</problem>
+</problems>

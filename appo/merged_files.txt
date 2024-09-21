@@ -1,338 +1,1077 @@
-// File creato il: 2024-08-10 17:54:10
+// File creato il: 2024-09-20 20:44:59
 
-// Contenuto di home/HomeFragment.java
+// Contenuto di model/TipoRicorrenza.java
 
-package it.faustobe.santibailor.ui.home;
+package it.faustobe.santibailor.domain.model;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModel;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
+public class TipoRicorrenza {
+    public static final int RELIGIOSA = 1;
+    public static final int LAICA = 2;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+    private int id;
+    private String nome;
 
-import it.faustobe.santibailor.R;
-import it.faustobe.santibailor.databinding.FragmentHomeBinding;
-import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
-
-public class HomeFragment extends Fragment {
-
-    private FragmentHomeBinding binding;
-    private RicorrenzaViewModel ricorrenzaViewModel;
-    private RicorrenzaAdapter ricorrenzaAdapter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
+    public TipoRicorrenza(int id, String nome) {
+        setId(id);
+        setNome(nome);
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        ricorrenzaViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(RicorrenzaViewModel.class);
-
-        setupDateDisplay();
-        setupSaintOfDay();
-        setupPersonalInfo();
-        setupBottomNavigation();
-        setupRecyclerView();
-        setupFab();
-
-        return root;
+    public int getId() { return id; }
+    public void setId(int id) {
+        if (id < 0) throw new IllegalArgumentException("ID non può essere negativo");
+        this.id = id;
     }
 
-    private void loadBackgroundImage() {
-        Glide.with(this)
-                .load(R.drawable.background_saint)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .centerCrop()
-                .into(binding.backgroundImage);
-    }
-
-    private void setupDateDisplay() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ITALIAN);
-
-        binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
-        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        binding.tvMonth.setText(monthFormat.format(calendar.getTime()));
-    }
-
-    private void setupSaintOfDay() {
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            if (ricorrenze != null && !ricorrenze.isEmpty()) {
-                binding.tvSaintOfDay.setText(ricorrenze.get(0).ricorrenza.getNome());
-            }
-        });
-    }
-
-    private void setupPersonalInfo() {
-        // Qui dovresti recuperare le informazioni personali dal tuo database o dalle preferenze
-        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
-
-        StringBuilder todoList = new StringBuilder("- paga bolletta luce\n");
-        todoList.append("- cambia filtro aria della cappa\n");
-        todoList.append("- compra regalo per Denise - compleanno fra 5 gg\n");
-        todoList.append("- finisci rapporto AZS - consegna fra 3 gg");
-        binding.tvTodoList.setText(todoList.toString());
-
-        StringBuilder todayEvents = new StringBuilder("oggi:\n");
-        todayEvents.append("* gym\n");
-        todayEvents.append("* ape con Chicca alle h 18\n");
-        todayEvents.append("+ la ricotta è in frigo da 4 giorni");
-        binding.tvTodayEvents.setText(todayEvents.toString());
-    }
-
-    private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = binding.bottomNavigation;
-        bottomNav.setOnItemSelectedListener(item -> {
-            // Gestisci la navigazione qui
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_home) {
-                // Già nella home, non fare nulla
-                return true;
-            } else if (itemId == R.id.navigation_dashboard) {
-                // Naviga alla dashboard
-                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_dashboard);
-                return true;
-            } else if (itemId == R.id.navigation_notifications) {
-                // Naviga alle notifiche
-                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_notifications);
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private void setupRecyclerView() {
-        ricorrenzaAdapter = new RicorrenzaAdapter();
-        binding.recyclerViewRicorrenze.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewRicorrenze.setAdapter(ricorrenzaAdapter);
-
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            ricorrenzaAdapter.setRicorrenze(ricorrenze);
-        });
-    }
-
-    private void setupFab() {
-        binding.fabAddRicorrenza.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_editRicorrenzaFragment);
-        });
+    public String getNome() { return nome; }
+    public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome non può essere vuoto");
+        this.nome = nome;
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TipoRicorrenza that = (TipoRicorrenza) o;
+        return id == that.id &&
+                Objects.equals(nome, that.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nome);
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+
+    public boolean isReligiosa() {
+        return this.id == RELIGIOSA;
+    }
+
+    public boolean isLaica() {
+        return this.id == LAICA;
     }
 }
 
-// Contenuto di home/EditRicorrenzaFragment.java
+// Contenuto di model/RicorrenzaConTipo.java
 
-package it.faustobe.santibailor.ui.home;
+package it.faustobe.santibailor.domain.model;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
+import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModel;
-import androidx.navigation.Navigation;
+public class RicorrenzaConTipo {
+    private Ricorrenza ricorrenza;
+    private TipoRicorrenza tipoRicorrenza;
 
-import com.bumptech.glide.Glide;
-
-import it.faustobe.santibailor.R;
-import it.faustobe.santibailor.data.entities.Ricorrenza;
-import it.faustobe.santibailor.databinding.FragmentEditRicorrenzaBinding;
-import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
-
-public class EditRicorrenzaFragment extends Fragment {
-
-    private FragmentEditRicorrenzaBinding binding;
-    private RicorrenzaViewModel ricorrenzaViewModel;
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private Ricorrenza ricorrenzaToEdit;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
+    public RicorrenzaConTipo(Ricorrenza ricorrenza, TipoRicorrenza tipoRicorrenza) {
+        setRicorrenza(ricorrenza);
+        setTipoRicorrenza(tipoRicorrenza);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentEditRicorrenzaBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    public Ricorrenza getRicorrenza() { return ricorrenza; }
+    public void setRicorrenza(Ricorrenza ricorrenza) {
+        if (ricorrenza == null) throw new IllegalArgumentException("Ricorrenza non può essere null");
+        this.ricorrenza = ricorrenza;
+    }
+
+    public TipoRicorrenza getTipoRicorrenza() { return tipoRicorrenza; }
+    public void setTipoRicorrenza(TipoRicorrenza tipoRicorrenza) {
+        if (tipoRicorrenza == null) throw new IllegalArgumentException("TipoRicorrenza non può essere null");
+        this.tipoRicorrenza = tipoRicorrenza;
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        ricorrenzaViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(RicorrenzaViewModel.class);
-
-        // Controlla se stiamo modificando una ricorrenza esistente
-        if (getArguments() != null && getArguments().containsKey("ricorrenzaId")) {
-            int ricorrenzaId = getArguments().getInt("ricorrenzaId");
-            ricorrenzaViewModel.getRicorrenzaById(ricorrenzaId).observe(getViewLifecycleOwner(), ricorrenza -> {
-                if (ricorrenza != null) {
-                    ricorrenzaToEdit = ricorrenza;
-                    populateFields(ricorrenza);
-                }
-            });
-        }
-
-        setupListeners();
-    }
-
-    private void setupListeners() {
-        binding.btnCaricaImmagine.setOnClickListener(v -> openImageChooser());
-
-        binding.btnSalva.setOnClickListener(v -> saveRicorrenza());
-    }
-
-    private void openImageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Seleziona un'immagine"), PICK_IMAGE_REQUEST);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RicorrenzaConTipo that = (RicorrenzaConTipo) o;
+        return Objects.equals(ricorrenza, that.ricorrenza) &&
+                Objects.equals(tipoRicorrenza, that.tipoRicorrenza);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(this).load(imageUri).into(binding.ivImmagine);
-        }
-    }
-
-    private void populateFields(Ricorrenza ricorrenza) {
-        binding.etNome.setText(ricorrenza.getNome());
-        binding.etGiorno.setText(String.valueOf(ricorrenza.getGiorno()));
-        binding.etMese.setText(String.valueOf(ricorrenza.getIdMese()));
-        binding.etTipo.setText(String.valueOf(ricorrenza.getTipoRicorrenzaId()));
-        binding.etDescrizione.setText(ricorrenza.getBio());
-
-        if (ricorrenza.getImageUrl() != null && !ricorrenza.getImageUrl().isEmpty()) {
-            Glide.with(this).load(ricorrenza.getImageUrl()).into(binding.ivImmagine);
-        }
-    }
-
-    private void saveRicorrenza() {
-        String nome = binding.etNome.getText().toString().trim();
-        String giornoStr = binding.etGiorno.getText().toString().trim();
-        String meseStr = binding.etMese.getText().toString().trim();
-        String tipoStr = binding.etTipo.getText().toString().trim();
-        String descrizione = binding.etDescrizione.getText().toString().trim();
-
-        if (nome.isEmpty() || giornoStr.isEmpty() || meseStr.isEmpty() || tipoStr.isEmpty()) {
-            Toast.makeText(getContext(), "Per favore, compila tutti i campi obbligatori", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        int giorno = Integer.parseInt(giornoStr);
-        int mese = Integer.parseInt(meseStr);
-        int tipo = Integer.parseInt(tipoStr);
-
-        Ricorrenza ricorrenza = (ricorrenzaToEdit != null) ? ricorrenzaToEdit : new Ricorrenza();
-        ricorrenza.setNome(nome);
-        ricorrenza.setGiorno(giorno);
-        ricorrenza.setIdMese(mese);
-        ricorrenza.setTipoRicorrenzaId(tipo);
-        ricorrenza.setBio(descrizione);
-
-        if (imageUri != null) {
-            // Qui dovresti implementare la logica per salvare l'immagine e ottenere l'URL
-            // Per ora, impostiamo semplicemente l'URI come stringa
-            ricorrenza.setImageUrl(imageUri.toString());
-        }
-
-        if (ricorrenzaToEdit != null) {
-            ricorrenzaViewModel.update(ricorrenza);
-        } else {
-            ricorrenzaViewModel.insert(ricorrenza);
-        }
-
-        // Torna alla schermata precedente
-        Navigation.findNavController(requireView()).navigateUp();
+    public int hashCode() {
+        return Objects.hash(ricorrenza, tipoRicorrenza);
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public String toString() {
+        return "RicorrenzaConTipo{" +
+                "ricorrenza=" + ricorrenza +
+                ", tipoRicorrenza=" + tipoRicorrenza +
+                '}';
+    }
+}
+
+// Contenuto di model/Ricorrenza.java
+
+package it.faustobe.santibailor.domain.model;
+
+import java.util.Objects;
+
+public class Ricorrenza {
+    private int id;
+    private int idMese;
+    private int giorno;
+    private String nome;
+    private String bio;
+    private String img;
+    private String prefix;
+    private String suffix;
+    private int tipoRicorrenzaId;
+
+    public Ricorrenza(int id, int idMese, int giorno, String nome, String bio, String img, String prefix, String suffix, int tipoRicorrenzaId) {
+        setId(id);
+        setIdMese(idMese);
+        setGiorno(giorno);
+        setNome(nome);
+        setBio(bio);
+        setImg(img);
+        setPrefix(prefix);
+        setSuffix(suffix);
+        setTipoRicorrenzaId(tipoRicorrenzaId);
+    }
+
+    public Ricorrenza() {
+        // Costruttore vuoto
+    }
+
+    // Getter e setter con validazione
+
+    public int getId() { return id; }
+    public void setId(int id) {
+        if (id < 0) throw new IllegalArgumentException("ID non può essere negativo");
+        this.id = id;
+    }
+
+    public int getIdMese() { return idMese; }
+    public void setIdMese(int idMese) {
+        if (idMese < 1 || idMese > 12) throw new IllegalArgumentException("Mese non valido");
+        this.idMese = idMese;
+    }
+
+    public int getGiorno() { return giorno; }
+    public void setGiorno(int giorno) {
+        if (giorno < 1 || giorno > 31) throw new IllegalArgumentException("Giorno non valido");
+        this.giorno = giorno;
+    }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) throw new IllegalArgumentException("Nome non può essere vuoto");
+        this.nome = nome;
+    }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getImg() { return img; }
+    public void setImg(String img) { this.img = img; }
+
+    public String getPrefix() { return prefix; }
+    public void setPrefix(String prefix) { this.prefix = prefix; }
+
+    public String getSuffix() { return suffix; }
+    public void setSuffix(String suffix) { this.suffix = suffix; }
+
+    public int getTipoRicorrenzaId() { return tipoRicorrenzaId; }
+    public void setTipoRicorrenzaId(int tipoRicorrenzaId) {
+        if (tipoRicorrenzaId < 0) throw new IllegalArgumentException("ID tipo ricorrenza non valido");
+        this.tipoRicorrenzaId = tipoRicorrenzaId;
+    }
+
+    public String getImageUrl() { return img; }
+
+    // Metodi di business logic
+
+    public boolean isReligiosa() {
+        return this.tipoRicorrenzaId == TipoRicorrenza.RELIGIOSA;
+    }
+
+    public boolean isLaica() {
+        return this.tipoRicorrenzaId == TipoRicorrenza.LAICA;
+    }
+
+    public String getFullName() {
+        StringBuilder fullName = new StringBuilder();
+        if (prefix != null && !prefix.isEmpty()) {
+            fullName.append(prefix).append(" ");
+        }
+        fullName.append(nome);
+        if (suffix != null && !suffix.isEmpty()) {
+            fullName.append(" ").append(suffix);
+        }
+        return fullName.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ricorrenza that = (Ricorrenza) o;
+        return id == that.id &&
+                idMese == that.idMese &&
+                giorno == that.giorno &&
+                tipoRicorrenzaId == that.tipoRicorrenzaId &&
+                Objects.equals(nome, that.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, idMese, giorno, nome, tipoRicorrenzaId);
+    }
+
+    @Override
+    public String toString() {
+        return "Ricorrenza{" +
+                "id=" + id +
+                ", idMese=" + idMese +
+                ", giorno=" + giorno +
+                ", nome='" + nome + '\'' +
+                ", tipoRicorrenzaId=" + tipoRicorrenzaId +
+                '}';
     }
 }
 
 
-// Contenuto di viewmodel/RicorrenzaViewModel.java
+// Contenuto di entities/RicorrenzaEntity.java
 
-package it.faustobe.santibailor.viewmodel;
+package it.faustobe.santibailor.data.local.entities;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "santi")
+public class RicorrenzaEntity implements DatabaseEntity, Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    @ColumnInfo(name = "id_mesi")
+    private int idMese;
+
+    private int giorno;
+
+    @ColumnInfo(name = "santo")
+    @NonNull
+    private String nome;
+
+    private String bio;
+
+    @ColumnInfo(name = "image_url")
+    private String imageUrl;
+
+    private String prefix;
+    private String suffix;
+
+    @ColumnInfo(name = "tipo_ricorrenza_id", defaultValue = "1")
+    private int tipoRicorrenzaId;
+
+    // Costruttore di default
+    public RicorrenzaEntity() {}
+
+    // Implementazione Parcelable
+    protected RicorrenzaEntity(Parcel in) {
+        id = in.readInt();
+        idMese = in.readInt();
+        giorno = in.readInt();
+        nome = in.readString();
+        bio = in.readString();
+        imageUrl = in.readString();
+        prefix = in.readString();
+        suffix = in.readString();
+        tipoRicorrenzaId = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(idMese);
+        dest.writeInt(giorno);
+        dest.writeString(nome);
+        dest.writeString(bio);
+        dest.writeString(imageUrl);
+        dest.writeString(prefix);
+        dest.writeString(suffix);
+        dest.writeInt(tipoRicorrenzaId);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<RicorrenzaEntity> CREATOR = new Creator<RicorrenzaEntity>() {
+        @Override
+        public RicorrenzaEntity createFromParcel(Parcel in) {
+            return new RicorrenzaEntity(in);
+        }
+
+        @Override
+        public RicorrenzaEntity[] newArray(int size) {
+            return new RicorrenzaEntity[size];
+        }
+    };
+    // Getter e Setter
+    @Override
+    public int getId() { return id; }
+    @Override
+    public void setId(int id) { this.id = id; }
+    @Override
+    public String getTableName() { return "santi"; }
+
+    public int getIdMese() { return idMese; }
+    public void setIdMese(int idMese) { this.idMese = idMese; }
+
+    public int getGiorno() { return giorno; }
+    public void setGiorno(int giorno) { this.giorno = giorno; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getBio() { return bio; }
+    public void setBio(String bio) { this.bio = bio; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getPrefix() { return prefix; }
+    public void setPrefix(String prefix) { this.prefix = prefix; }
+
+    public String getSuffix() { return suffix; }
+    public void setSuffix(String suffix) { this.suffix = suffix; }
+
+    public int getTipoRicorrenzaId() { return tipoRicorrenzaId; }
+    public void setTipoRicorrenzaId(int tipoRicorrenzaId) { this.tipoRicorrenzaId = tipoRicorrenzaId; }
+}
+
+// Contenuto di entities/TipoRicorrenzaEntity.java
+
+package it.faustobe.santibailor.data.local.entities;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "tipo_ricorrenza")
+public class TipoRicorrenzaEntity implements Parcelable {
+    @PrimaryKey
+    @ColumnInfo(name = "id")
+    private int id;
+
+    @NonNull
+    @ColumnInfo(name = "nome")
+    private String nome;
+
+    public static final int RELIGIOSA = 1;
+    public static final int LAICA = 2;
+
+    // Costruttore normale
+    public TipoRicorrenzaEntity(int id, @NonNull String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return nome;
+    }
+
+    // Getter e Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
+    @NonNull
+    public String getNome() { return nome; }
+    public void setNome(@NonNull String nome) { this.nome = nome; }
+
+    // Implementazione Parcelable
+    protected TipoRicorrenzaEntity(Parcel in) {
+        id = in.readInt();
+        nome = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(nome);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<TipoRicorrenzaEntity> CREATOR = new Creator<TipoRicorrenzaEntity>() {
+        @Override
+        public TipoRicorrenzaEntity createFromParcel(Parcel in) {
+            return new TipoRicorrenzaEntity(in);
+        }
+
+        @Override
+        public TipoRicorrenzaEntity[] newArray(int size) {
+            return new TipoRicorrenzaEntity[size];
+        }
+    };
+}
+
+
+// Contenuto di entities/RicorrenzaConTipoEntity.java
+
+package it.faustobe.santibailor.data.local.entities;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import androidx.room.Embedded;
+import androidx.room.Ignore;
+import androidx.room.Relation;
+
+public class RicorrenzaConTipoEntity implements Parcelable {
+    @Embedded
+    public RicorrenzaEntity ricorrenza;
+
+
+    @Relation(
+            parentColumn = "tipo_ricorrenza_id",
+            entityColumn = "id"
+    )
+    public TipoRicorrenzaEntity tipoRicorrenza;
+
+    // Costruttore vuoto per Room
+    public RicorrenzaConTipoEntity() {}
+
+    // Costruttore con parametri, ignorato da Room
+    @Ignore
+    public RicorrenzaConTipoEntity(RicorrenzaEntity ricorrenzaEntity, TipoRicorrenzaEntity tipoRicorrenzaEntity) {
+        this.ricorrenza = ricorrenza;
+        this.tipoRicorrenza = tipoRicorrenza;
+    }
+
+    // Costruttore per Parcelable, ignorato da Room
+    @Ignore
+    protected RicorrenzaConTipoEntity(Parcel in) {
+        ricorrenza = in.readParcelable(RicorrenzaEntity.class.getClassLoader(), RicorrenzaEntity.class);
+        tipoRicorrenza = in.readParcelable(TipoRicorrenzaEntity.class.getClassLoader(), TipoRicorrenzaEntity.class);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(ricorrenza, flags);
+        dest.writeParcelable(tipoRicorrenza, flags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<RicorrenzaConTipoEntity> CREATOR = new Creator<RicorrenzaConTipoEntity>() {
+        @Override
+        public RicorrenzaConTipoEntity createFromParcel(Parcel in) {
+            return new RicorrenzaConTipoEntity(in);
+        }
+
+        @Override
+        public RicorrenzaConTipoEntity[] newArray(int size) {
+            return new RicorrenzaConTipoEntity[size];
+        }
+    };
+
+    public RicorrenzaEntity getRicorrenza() {
+        return ricorrenza;
+    }
+
+    public void setRicorrenza(RicorrenzaEntity ricorrenza) {
+        this.ricorrenza = ricorrenza;
+    }
+
+    public TipoRicorrenzaEntity getTipoRicorrenza() {
+        return tipoRicorrenza;
+    }
+
+    public void setTipoRicorrenza(TipoRicorrenzaEntity tipoRicorrenza) {
+        this.tipoRicorrenza = tipoRicorrenza;
+    }
+}
+
+// Contenuto di repository/RicorrenzaRepository.java
+
+package it.faustobe.santibailor.data.repository;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.TextUtils;
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.Transformations;
+import androidx.sqlite.db.SimpleSQLiteQuery;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
+import it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaConTipoEntity;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
+import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
+import it.faustobe.santibailor.data.mapper.RicorrenzaMapper;
+import it.faustobe.santibailor.domain.model.RicorrenzaConTipo;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
+
+public class RicorrenzaRepository {
+    private final RicorrenzaDao ricorrenzaDao;
+    private final TipoRicorrenzaDao tipoRicorrenzaDao;
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
+
+    private static final String TAG = "RicorrenzaRepository";
+
+    public RicorrenzaRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        this.ricorrenzaDao = db.ricorrenzaDao();
+        this.tipoRicorrenzaDao = db.tipoRicorrenzaDao();
+        this.executorService = Executors.newSingleThreadExecutor();
+        this.mainHandler = new Handler(Looper.getMainLooper());
+    }
+
+    private void addNomeCondition(StringBuilder queryBuilder, List<Object> params, String nome) {
+        if (!TextUtils.isEmpty(nome)) {
+            queryBuilder.append(" AND r.santo LIKE ?");
+            params.add("%" + nome + "%");
+        }
+    }
+
+    private void addTipoCondition(StringBuilder queryBuilder, List<Object> params, Integer tipo) {
+        if (tipo != null && tipo != 0) {
+            queryBuilder.append(" AND r.tipo_ricorrenza_id = ?");
+            params.add(tipo);
+        }
+    }
+
+    private void addDataCondition(StringBuilder queryBuilder, List<Object> params, String dataInizio, String dataFine) {
+        if (!TextUtils.isEmpty(dataInizio) || !TextUtils.isEmpty(dataFine)) {
+            queryBuilder.append(" AND (");
+            addDataInizioCondition(queryBuilder, params, dataInizio);
+            if (!TextUtils.isEmpty(dataInizio) && !TextUtils.isEmpty(dataFine)) {
+                queryBuilder.append(" AND ");
+            }
+            addDataFineCondition(queryBuilder, params, dataFine);
+            queryBuilder.append(")");
+        }
+    }
+
+    private void addDataInizioCondition(StringBuilder queryBuilder, List<Object> params, String dataInizio) {
+        if (!TextUtils.isEmpty(dataInizio)) {
+            String[] parts = dataInizio.split("/");
+            if (parts.length == 2) {
+                int giorno = Integer.parseInt(parts[0]);
+                int mese = Integer.parseInt(parts[1]);
+                queryBuilder.append("(r.id_mesi > ? OR (r.id_mesi = ? AND r.giorno >= ?))");
+                params.add(mese);
+                params.add(mese);
+                params.add(giorno);
+            }
+        }
+    }
+
+    private void addDataFineCondition(StringBuilder queryBuilder, List<Object> params, String dataFine) {
+        if (!TextUtils.isEmpty(dataFine)) {
+            String[] parts = dataFine.split("/");
+            if (parts.length == 2) {
+                int giorno = Integer.parseInt(parts[0]);
+                int mese = Integer.parseInt(parts[1]);
+                queryBuilder.append("(r.id_mesi < ? OR (r.id_mesi = ? AND r.giorno <= ?))");
+                params.add(mese);
+                params.add(mese);
+                params.add(giorno);
+            }
+        }
+    }
+
+    public void updateImageUrl(int ricorrenzaId, String imageUrl) {
+        executorService.execute(() -> ricorrenzaDao.updateImageUrl(ricorrenzaId, imageUrl));
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose(int giorno, int mese) {
+        return Transformations.map(
+                ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenzaEntity.RELIGIOSA),
+                entities -> entities.stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList())
+        );
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche(int giorno, int mese) {
+        return Transformations.map(
+                ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenzaEntity.LAICA),
+                entities -> entities.stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList())
+        );
+    }
+
+    public List<RicorrenzaConTipo> getRicorrenzeDelGiornoPaginate(int giorno, int mese, int offset, int limit) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPaginate(giorno, mese, offset, limit)
+                .stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
+    }
+
+    public List<RicorrenzaConTipo> getRicorrenzeReligiosePaginate(int giorno, int mese, int offset, int limit) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipoPaginate(giorno, mese, TipoRicorrenzaEntity.RELIGIOSA, offset, limit)
+                .stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
+    }
+
+    public List<RicorrenzaConTipo> getRicorrenzeLaichePaginate(int giorno, int mese, int offset, int limit) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipoPaginate(giorno, mese, TipoRicorrenzaEntity.LAICA, offset, limit)
+                .stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
+    }
+
+    public int getCountRicorrenzeDelGiorno(int giorno, int mese) {
+        return ricorrenzaDao.getCountRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public int getCountRicorrenzeReligiose(int giorno, int mese) {
+        return ricorrenzaDao.getCountRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenzaEntity.RELIGIOSA);
+    }
+
+    public int getCountRicorrenzeLaiche(int giorno, int mese) {
+        return ricorrenzaDao.getCountRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenzaEntity.LAICA);
+    }
+
+    public void update(RicorrenzaConTipo ricorrenzaConTipo) {
+        executorService.execute(() -> ricorrenzaDao.update(RicorrenzaMapper.toEntity(ricorrenzaConTipo.getRicorrenza())));
+    }
+
+    public void delete(RicorrenzaConTipo ricorrenzaConTipo) {
+        executorService.execute(() -> ricorrenzaDao.delete(RicorrenzaMapper.toEntity(ricorrenzaConTipo.getRicorrenza())));
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese) {
+        return Transformations.map(
+                ricorrenzaDao.getRicorrenzeDelGiorno(giorno, mese),
+                entities -> entities.stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList())
+        );
+    }
+
+    public int contaRicorrenzePerGiornoMese(int giorno, int mese) {
+        return ricorrenzaDao.contaRicorrenzePerGiornoMese(giorno, mese);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzePerGiornoMese(int giorno, int mese) {
+        return Transformations.switchMap(ricorrenzaDao.getRicorrenzePerGiornoMeseLiveData(giorno, mese), entities -> {
+            MediatorLiveData<List<RicorrenzaConTipo>> result = new MediatorLiveData<>();
+
+            if (entities == null || entities.isEmpty()) {
+                result.setValue(Collections.emptyList());
+                return result;
+            }
+
+            List<RicorrenzaConTipo> ricorrenzeConTipo = new ArrayList<>();
+            AtomicInteger loadedCount = new AtomicInteger(0);
+
+            for (RicorrenzaEntity entity : entities) {
+                LiveData<TipoRicorrenzaEntity> tipoSource = tipoRicorrenzaDao.getTipoRicorrenzaById(entity.getTipoRicorrenzaId());
+                result.addSource(tipoSource, tipoEntity -> {
+                    if (tipoEntity != null) {
+                        ricorrenzeConTipo.add(new RicorrenzaConTipo(
+                                RicorrenzaMapper.toDomain(entity),
+                                RicorrenzaMapper.toDomain(tipoEntity)
+                        ));
+                    }
+                    if (loadedCount.incrementAndGet() == entities.size()) {
+                        result.setValue(ricorrenzeConTipo);
+                        for (RicorrenzaEntity e : entities) {
+                            result.removeSource(tipoRicorrenzaDao.getTipoRicorrenzaById(e.getTipoRicorrenzaId()));
+                        }
+                    }
+                });
+            }
+
+            return result;
+        });
+    }
+
+    public long insert(RicorrenzaConTipo ricorrenzaConTipo) {
+        RicorrenzaEntity entity = RicorrenzaMapper.toEntity(ricorrenzaConTipo.getRicorrenza());
+        entity.setId(0);  // Assicuriamoci che l'ID non sia impostato prima dell'inserimento
+        return ricorrenzaDao.insert(entity);
+    }
+
+    public LiveData<RicorrenzaConTipo> getRicorrenzaById(int id) {
+        MediatorLiveData<RicorrenzaConTipo> result = new MediatorLiveData<>();
+
+        LiveData<RicorrenzaEntity> ricorrenzaSource = ricorrenzaDao.getRicorrenzaById(id);
+        result.addSource(ricorrenzaSource, ricorrenzaEntity -> {
+            if (ricorrenzaEntity != null) {
+                LiveData<TipoRicorrenzaEntity> tipoSource = tipoRicorrenzaDao.getTipoRicorrenzaById(ricorrenzaEntity.getTipoRicorrenzaId());
+                result.addSource(tipoSource, tipoEntity -> {
+                    if (tipoEntity != null) {
+                        RicorrenzaConTipo ricorrenzaConTipo = new RicorrenzaConTipo(
+                                RicorrenzaMapper.toDomain(ricorrenzaEntity),
+                                RicorrenzaMapper.toDomain(tipoEntity)
+                        );
+                        result.postValue(ricorrenzaConTipo);
+                    }
+                    result.removeSource(tipoSource);
+                });
+            } else {
+                result.postValue(null);
+            }
+            result.removeSource(ricorrenzaSource);
+        });
+
+        return result;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> ricercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        Log.d(TAG, "ricercaAvanzata: nome=" + nome + ", tipo=" + tipo +
+                ", dataInizio=" + dataInizio + ", dataFine=" + dataFine);
+
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        Log.d(TAG, "Parametri query: meseInizio=" + meseInizio + ", meseFine=" + meseFine +
+                ", giornoInizio=" + giornoInizio + ", giornoFine=" + giornoFine);
+
+        return Transformations.map(
+                ricorrenzaDao.ricercaAvanzata(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine),
+                result -> {
+                    Log.d(TAG, "Risultati ricerca avanzata: " + (result != null ? result.size() : 0));
+                    return result != null ? result.stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList()) : new ArrayList<>();
+                }
+        );
+    }
+
+    public List<RicorrenzaConTipo> ricercaAvanzataPaginata(String nome, Integer tipo, String dataInizio, String dataFine, int limit, int offset) {
+        StringBuilder queryBuilder = new StringBuilder("SELECT r.*, t.nome AS tipo_nome FROM santi r LEFT JOIN tipo_ricorrenza t ON r.tipo_ricorrenza_id = t.id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        addNomeCondition(queryBuilder, params, nome);
+        addTipoCondition(queryBuilder, params, tipo);
+        addDataCondition(queryBuilder, params, dataInizio, dataFine);
+
+        queryBuilder.append(" ORDER BY r.id_mesi, r.giorno LIMIT ? OFFSET ?");
+        params.add(limit);
+        params.add(offset);
+
+        String query = queryBuilder.toString();
+        Log.d(TAG, "query in RicercaAvanzataPaginata -> " + query);
+        List<RicorrenzaConTipoEntity> entities = ricorrenzaDao.eseguiRicercaAvanzata(new SimpleSQLiteQuery(query, params.toArray()));
+        return entities.stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
+    }
+
+    // ... altri metodi ausiliari come addNomeCondition, addTipoCondition, ecc. rimangono invariati
+
+    public int contaTotaleRisultati(String nome, Integer tipo, String dataInizio, String dataFine) {
+        int meseInizio = 1, meseFine = 12, giornoInizio = 1, giornoFine = 31;
+
+        if (!TextUtils.isEmpty(dataInizio)) {
+            String[] parts = dataInizio.split("/");
+            if (parts.length == 2) {
+                giornoInizio = Integer.parseInt(parts[0]);
+                meseInizio = Integer.parseInt(parts[1]);
+            }
+        }
+
+        if (!TextUtils.isEmpty(dataFine)) {
+            String[] parts = dataFine.split("/");
+            if (parts.length == 2) {
+                giornoFine = Integer.parseInt(parts[0]);
+                meseFine = Integer.parseInt(parts[1]);
+            }
+        }
+
+        return ricorrenzaDao.contaRisultatiRicercaAvanzata(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine);
+    }
+
+    public int getTotalDatabaseItemCount() {
+        return ricorrenzaDao.getTotalItemCount();
+    }
+
+    public List<TipoRicorrenza> getAllTipiRicorrenza() {
+        return tipoRicorrenzaDao.getAllTipiRicorrenza()
+                .stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
+    }
+
+    private Integer getMonthFromDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return null;
+        }
+        String[] parts = date.split("/");
+        if (parts.length == 2) {
+            return Integer.parseInt(parts[1]);
+        }
+        return null;
+    }
+
+    private Integer getDayFromDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return null;
+        }
+        String[] parts = date.split("/");
+        if (parts.length == 2) {
+            return Integer.parseInt(parts[0]);
+        }
+        return null;
+    }
+
+    public int getTotalItemCount() {
+        return ricorrenzaDao.getTotalItemCount();
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getAllRicorrenze() {
+        return Transformations.switchMap(ricorrenzaDao.getAllRicorrenze(), entities -> {
+            MediatorLiveData<List<RicorrenzaConTipo>> result = new MediatorLiveData<>();
+
+            if (entities == null || entities.isEmpty()) {
+                result.setValue(Collections.emptyList());
+                return result;
+            }
+
+            List<RicorrenzaConTipo> ricorrenzeConTipo = new ArrayList<>();
+            AtomicInteger loadedCount = new AtomicInteger(0);
+
+            for (RicorrenzaEntity entity : entities) {
+                LiveData<TipoRicorrenzaEntity> tipoSource = tipoRicorrenzaDao.getTipoRicorrenzaById(entity.getTipoRicorrenzaId());
+                result.addSource(tipoSource, tipoEntity -> {
+                    if (tipoEntity != null) {
+                        ricorrenzeConTipo.add(new RicorrenzaConTipo(
+                                RicorrenzaMapper.toDomain(entity),
+                                RicorrenzaMapper.toDomain(tipoEntity)
+                        ));
+                    }
+                    if (loadedCount.incrementAndGet() == entities.size()) {
+                        result.setValue(ricorrenzeConTipo);
+                        for (RicorrenzaEntity e : entities) {
+                            result.removeSource(tipoRicorrenzaDao.getTipoRicorrenzaById(e.getTipoRicorrenzaId()));
+                        }
+                    }
+                });
+            }
+
+            return result;
+        });
+    }
+
+    public void shutdown() {
+        executorService.shutdown();
+    }
+}
+
+// Contenuto di mapper/RicorrenzaMapper.java
+
+package it.faustobe.santibailor.data.mapper;
+
+import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
+import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaConTipoEntity;
+import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
+import it.faustobe.santibailor.domain.model.RicorrenzaConTipo;
+
+public class RicorrenzaMapper {
+
+    public static Ricorrenza toDomain(RicorrenzaEntity entity) {
+        if (entity == null) {
+            return null; // o crea una Ricorrenza con valori di default
+        }
+        return new Ricorrenza(
+                entity.getId(),
+                entity.getIdMese(),
+                entity.getGiorno(),
+                entity.getNome(),
+                entity.getBio(),
+                entity.getImageUrl(),
+                entity.getPrefix(),
+                entity.getSuffix(),
+                entity.getTipoRicorrenzaId()
+        );
+    }
+
+    public static RicorrenzaEntity toEntity(Ricorrenza domain) {
+        RicorrenzaEntity entity = new RicorrenzaEntity();
+        entity.setId(domain.getId());
+        entity.setIdMese(domain.getIdMese());
+        entity.setGiorno(domain.getGiorno());
+        entity.setNome(domain.getNome());
+        entity.setBio(domain.getBio());
+        entity.setImageUrl(domain.getImg());
+        entity.setPrefix(domain.getPrefix());
+        entity.setSuffix(domain.getSuffix());
+        entity.setTipoRicorrenzaId(domain.getTipoRicorrenzaId());
+        return entity;
+    }
+
+    public static TipoRicorrenza toDomain(TipoRicorrenzaEntity entity) {
+        if (entity == null) {
+            return new TipoRicorrenza(0, "Sconosciuto");
+        }
+        return new TipoRicorrenza(entity.getId(), entity.getNome());
+    }
+
+    public static TipoRicorrenzaEntity toEntity(TipoRicorrenza domain) {
+        return new TipoRicorrenzaEntity(domain.getId(), domain.getNome());
+    }
+
+    public static RicorrenzaConTipo toDomain(RicorrenzaConTipoEntity entity) {
+        if (entity == null) {
+            return null; // o gestisci questo caso come preferisci
+        }
+
+        Ricorrenza ricorrenza = toDomain(entity.getRicorrenza());
+
+        TipoRicorrenza tipoRicorrenza;
+        if (entity.getTipoRicorrenza() != null) {
+            tipoRicorrenza = toDomain(entity.getTipoRicorrenza());
+        } else {
+            // Usa un valore di default se TipoRicorrenza è null
+            tipoRicorrenza = new TipoRicorrenza(0, "Sconosciuto");
+        }
+
+        return new RicorrenzaConTipo(ricorrenza, tipoRicorrenza);
+    }
+
+    public static RicorrenzaConTipoEntity toEntity(RicorrenzaConTipo domain) {
+        RicorrenzaEntity ricorrenzaEntity = toEntity(domain.getRicorrenza());
+        TipoRicorrenzaEntity tipoRicorrenzaEntity = toEntity(domain.getTipoRicorrenza());
+        return new RicorrenzaConTipoEntity(ricorrenzaEntity, tipoRicorrenzaEntity);
+    }
+}
+
+// Contenuto di viewmodels/RicorrenzaViewModel.java
+
+package it.faustobe.santibailor.presentation.common.viewmodels;
+
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.SharedPreferences;
+import android.content.Context;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import it.faustobe.santibailor.data.entities.Ricorrenza;
-import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+import android.widget.ImageView;
+
+import it.faustobe.santibailor.MyApplication;
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
+import it.faustobe.santibailor.data.repository.GenericRepository;
 import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.RicorrenzaConTipo;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
+import it.faustobe.santibailor.util.ImageManager;
+import it.faustobe.santibailor.util.PaginationHelper;
 
 public class RicorrenzaViewModel extends AndroidViewModel {
-    private RicorrenzaRepository repository;
+    private static final String PREFS_NAME = "RicorrenzaPrefs";
+    private static final String KEY_TIPO_RICORRENZA = "tipoRicorrenza";
+    private final SharedPreferences sharedPreferences;
+    private final Gson gson;
+    private static final String KEY_SEARCH_CRITERIA = "search_criteria";
+    private static final String KEY_SEARCH_RESULTS = "search_results";
+    private final MutableLiveData<Boolean> deleteResult = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+    private static final String TAG = "RicorrenzaViewModel";
+    private final MutableLiveData<SearchCriteria> searchCriteria = new MutableLiveData<>();
+    private final MutableLiveData<List<RicorrenzaConTipo>> risultatiRicercaAvanzata = new MutableLiveData<>();
+    private final MutableLiveData<Integer> totalPages = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> totalDatabaseItemCount = new MutableLiveData<>();
+    private RicorrenzaRepository ricorrenzaRepository;
+    private final SavedStateHandle savedStateHandle;
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
+
     private final MutableLiveData<Date> selectedDate = new MutableLiveData<>();
     private final LiveData<List<RicorrenzaConTipo>> ricorrenzeDelGiorno;
     private final LiveData<List<RicorrenzaConTipo>> ricorrenzeReligiose;
     private final LiveData<List<RicorrenzaConTipo>> ricorrenzeLaiche;
+    private final LiveData<List<RicorrenzaConTipo>> risultatiRicerca;
+    private final MutableLiveData<String> imageLoadingStatus = new MutableLiveData<>();
+    private final MutableLiveData<SearchParams> searchParams = new MutableLiveData<>();
 
-    public RicorrenzaViewModel(Application application) {
+    private final MutableLiveData<List<RicorrenzaConTipo>> ricorrenzeDelGiornoPaginate = new MutableLiveData<>();
+    private final MutableLiveData<List<RicorrenzaConTipo>> ricorrenzeReligiosePaginate = new MutableLiveData<>();
+    private final MutableLiveData<List<RicorrenzaConTipo>> ricorrenzeLaichePaginate = new MutableLiveData<>();
+
+    private final PaginationHelper<RicorrenzaConTipo> paginationHelper;
+    private final PaginationHelper<RicorrenzaConTipo> paginationHelperDelGiorno;
+    private final PaginationHelper<RicorrenzaConTipo> paginationHelperReligiose;
+    private final PaginationHelper<RicorrenzaConTipo> paginationHelperLaiche;
+
+    private static final int PAGE_SIZE = 20;
+    private final MutableLiveData<Integer> currentPage = new MutableLiveData<>(0);
+    private final MutableLiveData<Boolean> isLastPage = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Integer> totalSearchResults = new MutableLiveData<>(0);
+    private final MutableLiveData<TipoRicorrenza> selectedTipo = new MutableLiveData<>();
+    private final MutableLiveData<List<TipoRicorrenza>> listaTipoLiveData = new MutableLiveData<>();
+    private long lastLoadTime = 0;
+    private static final long CACHE_DURATION = 5 * 60 * 1000;// 5 minuti in millisecondi
+    private GenericRepository<Ricorrenza, RicorrenzaEntity, RicorrenzaConTipo> genericRepository;
+    private final ImageManager imageManager;
+
+
+
+    public RicorrenzaViewModel(Application application, SavedStateHandle savedStateHandle) {
         super(application);
-        repository = new RicorrenzaRepository(application);
+        this.sharedPreferences = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        this.gson = new Gson();
+        this.savedStateHandle = savedStateHandle;
+        this.ricorrenzaRepository = new RicorrenzaRepository(application);
+        this.executorService = Executors.newSingleThreadExecutor();
+        this.mainHandler = new Handler(Looper.getMainLooper());
+        this.paginationHelper = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperDelGiorno = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperReligiose = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperLaiche = new PaginationHelper<>(PAGE_SIZE);
+        this.imageManager = initializeImageManager(application);
+
         selectedDate.setValue(new Date());
+        initializeRepositories(application);
 
         ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             int giorno = cal.get(Calendar.DAY_OF_MONTH);
             int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeDelGiorno(giorno, mese);
+            loadRicorrenzeDelGiorno(giorno, mese);
+            return ricorrenzeDelGiornoPaginate;
         });
 
         ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
@@ -340,7 +1079,8 @@ public class RicorrenzaViewModel extends AndroidViewModel {
             cal.setTime(date);
             int giorno = cal.get(Calendar.DAY_OF_MONTH);
             int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeReligiose(giorno, mese);
+            loadRicorrenzeReligiose(giorno, mese);
+            return ricorrenzeReligiosePaginate;
         });
 
         ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
@@ -348,16 +1088,351 @@ public class RicorrenzaViewModel extends AndroidViewModel {
             cal.setTime(date);
             int giorno = cal.get(Calendar.DAY_OF_MONTH);
             int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeLaiche(giorno, mese);
+            loadRicorrenzeLaiche(giorno, mese);
+            return ricorrenzeLaichePaginate;
         });
+
+        risultatiRicerca = Transformations.switchMap(searchParams, params ->
+                ricorrenzaRepository.ricercaAvanzata(params.nome, params.tipo, params.dataInizio, params.dataFine)
+        );
+
+        loadTipiRicorrenza();
+    }
+/*
+    RicorrenzaViewModel(Application application,
+                        SavedStateHandle savedStateHandle,
+                        RicorrenzaRepository repository,
+                        GenericRepository genericRepo,
+                        ExecutorService executorService,
+                        Handler mainHandler,
+                        SharedPreferences sharedPreferences, ImageManager imageManager) {
+        super(application);
+        this.imageManager = imageManager;
+        AppDatabase db = AppDatabase.getDatabase(application);
+        this.savedStateHandle = savedStateHandle;
+        this.ricorrenzaRepository = repository != null ? repository : new RicorrenzaRepository(application);
+        this.genericRepository = genericRepo != null ? genericRepo : initializeGenericRepository(application);
+        this.executorService = (executorService != null) ? executorService : Executors.newSingleThreadExecutor();
+        this.mainHandler = (mainHandler != null) ? mainHandler : new Handler(Looper.getMainLooper());
+        this.sharedPreferences = (sharedPreferences != null) ? sharedPreferences : application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+
+        // Inizializzazione degli altri campi
+        this.gson = new Gson();
+        this.paginationHelper = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperDelGiorno = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperReligiose = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperLaiche = new PaginationHelper<>(PAGE_SIZE);
+
+        // Inizializzazione di altri LiveData e campi necessari
+        this.selectedDate.setValue(new Date());
+
+        savedStateHandle.getLiveData(KEY_SEARCH_CRITERIA, new SearchCriteria(null, null, null, null))
+                .observeForever(criteria -> {
+                    if (criteria != null) {
+                        LiveData<List<RicorrenzaConTipo>> searchResults = ricorrenzaRepository.ricercaAvanzata(
+                                criteria.nome,
+                                criteria.tipo,
+                                criteria.dataInizio,
+                                criteria.dataFine
+                        );
+                        if (searchResults != null) {
+                            searchResults.observeForever(results -> savedStateHandle.set(KEY_SEARCH_RESULTS, results));
+                        } else {
+                            // Gestisci il caso in cui ricercaAvanzata restituisce null
+                            savedStateHandle.set(KEY_SEARCH_RESULTS, new ArrayList<>());
+                        }
+                    }
+                });
+        loadTipiRicorrenza();
+
+        // Il resto del codice rimane invariato
+        ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            Log.d(TAG, "Debug - Richiesta ricorrenze per: giorno=" + giorno + ", mese=" + mese);
+            loadRicorrenzeDelGiorno(giorno, mese);
+            return ricorrenzeDelGiornoPaginate;
+        });
+
+        // Modifica ricorrenzeReligiose
+        ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            Log.d(TAG, "Debug - Richiesta ricorrenze religiose per: giorno=" + giorno + ", mese=" + mese);
+            loadRicorrenzeReligiose(giorno, mese);
+            return ricorrenzeReligiosePaginate;
+        });
+
+        // Modifica ricorrenzeLaiche
+        ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            Log.d(TAG, "Debug - Richiesta ricorrenze laiche per: giorno=" + giorno + ", mese=" + mese);
+            loadRicorrenzeLaiche(giorno, mese);
+            return ricorrenzeLaichePaginate;
+        });
+
+        risultatiRicerca = Transformations.switchMap(searchParams, params -> {
+            Log.d(TAG, "Esecuzione ricerca avanzata con parametri: " + params);
+            return ricorrenzaRepository.ricercaAvanzata(
+                    params.nome,
+                    params.tipo,
+                    params.dataInizio,
+                    params.dataFine
+            );
+        });
+
+        savedStateHandle.getLiveData(KEY_SEARCH_CRITERIA, new SearchCriteria(null, null, null, null))
+                .observeForever(criteria -> {
+                    if (criteria != null) {
+                        ricorrenzaRepository.ricercaAvanzata(
+                                criteria.nome,
+                                criteria.tipo,
+                                criteria.dataInizio,
+                                criteria.dataFine
+                        ).observeForever(results -> savedStateHandle.set(KEY_SEARCH_RESULTS, results));
+                    }
+                });
+    }
+
+
+ */
+    public static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final SavedStateHandle savedStateHandle;
+
+        public Factory(Application application, SavedStateHandle savedStateHandle) {
+            this.application = application;
+            this.savedStateHandle = savedStateHandle;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends androidx.lifecycle.ViewModel> T create(Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(RicorrenzaViewModel.class)) {
+                return (T) new RicorrenzaViewModel(application, savedStateHandle);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
+    private void initializeRepositories(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        this.ricorrenzaRepository = new RicorrenzaRepository(application);
+        this.genericRepository = initializeGenericRepository(application);
+    }
+
+    private GenericRepository<Ricorrenza, RicorrenzaEntity, RicorrenzaConTipo> initializeGenericRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        return new GenericRepository<>(
+                db.ricorrenzaDao(),
+                this::convertToEntity,
+                this::convertToCombined
+        );
+    }
+
+    private RicorrenzaEntity convertToEntity(RicorrenzaConTipo ricorrenzaConTipo) {
+        RicorrenzaEntity entity = new RicorrenzaEntity();
+        Ricorrenza ricorrenza = ricorrenzaConTipo.getRicorrenza();
+        entity.setId(ricorrenza.getId());
+        // ... imposta altri campi ...
+        return entity;
+    }
+
+    private RicorrenzaConTipo convertToDomain(RicorrenzaEntity entity) {
+        Ricorrenza ricorrenza = new Ricorrenza(
+                entity.getId(),
+                entity.getIdMese(),
+                entity.getGiorno(),
+                entity.getNome(),
+                entity.getBio(),
+                entity.getImageUrl(),
+                entity.getPrefix(),
+                entity.getSuffix(),
+                entity.getTipoRicorrenzaId()
+        );
+        TipoRicorrenza tipoRicorrenza = new TipoRicorrenza(entity.getTipoRicorrenzaId(), ""); // Assumiamo che il nome del tipo non sia nell'entità
+        return new RicorrenzaConTipo(ricorrenza, tipoRicorrenza);
+    }
+
+    private RicorrenzaConTipo convertToCombined(RicorrenzaEntity entity) {
+        Ricorrenza ricorrenza = new Ricorrenza(/* ... */);
+        TipoRicorrenza tipoRicorrenza = new TipoRicorrenza(entity.getTipoRicorrenzaId(), "");
+        return new RicorrenzaConTipo(ricorrenza, tipoRicorrenza);
+    }
+
+    public LiveData<List<TipoRicorrenza>> getListaTipo() {
+        return listaTipoLiveData;
+    }
+
+    public RicorrenzaRepository getRicorrenzaRepository() {
+        return ricorrenzaRepository;
+    }
+
+    public void setSelectedTipo(TipoRicorrenza tipo) {
+        if (tipo != null && "Tutte".equals(tipo.getNome())) {
+            selectedTipo.setValue(null);  // Usiamo null per "Tutte"
+        } else {
+            selectedTipo.setValue(tipo);
+        }
+    }
+
+    public LiveData<TipoRicorrenza> getSelectedTipo() {
+        return selectedTipo;
+    }
+
+    // Metodo per impostare lo stato dell'ultima pagina
+    private void setIsLastPage(boolean lastPage) {
+        isLastPage.postValue(lastPage);
+    }
+
+    public void loadTipiRicorrenza() {
+        long currentTime = System.currentTimeMillis();
+        Log.d(TAG, "loadTipiRicorrenza called. Current time: " + currentTime + ", Last load time: " + lastLoadTime);
+        if (currentTime - lastLoadTime > CACHE_DURATION || listaTipoLiveData.getValue() == null) {
+            Log.d(TAG, "Reloading tipi ricorrenza from repository");
+            executorService.execute(() -> {
+                List<TipoRicorrenza> tipos = ricorrenzaRepository.getAllTipiRicorrenza();
+                Log.d(TAG, "Received " + tipos.size() + " tipi ricorrenza from repository");
+                if (tipos.isEmpty() || !tipos.get(0).getNome().equals("Tutte")) {
+                    tipos.add(0, new TipoRicorrenza(0, "Tutte"));
+                    Log.d(TAG, "Added 'Tutte' to tipi ricorrenza list");
+                }
+                mainHandler.post(() -> {
+                    listaTipoLiveData.setValue(tipos);
+                    lastLoadTime = currentTime;
+                    Log.d(TAG, "Updated listaTipoLiveData with " + tipos.size() + " items");
+                });
+            });
+        }else {
+            Log.d(TAG, "Using cached tipi ricorrenza data");
+        }
+    }
+
+    public void loadImage(String url, ImageView imageView, int placeholderResId) {
+        imageManager.loadImage(url, imageView, placeholderResId);
+    }
+
+    public LiveData<List<TipoRicorrenza>> getAllTipoRicorrenza() {
+        if (listaTipoLiveData.getValue() == null) {
+            Log.d(TAG, "getAllTipoRicorrenza: listaTipoLiveData is null, calling loadTipiRicorrenza");
+            loadTipiRicorrenza();
+        } else {
+            Log.d(TAG, "getAllTipoRicorrenza: returning cached data with " + listaTipoLiveData.getValue().size() + " items");
+        }
+        return listaTipoLiveData;
+    }
+
+    private ImageManager initializeImageManager(Application application) {
+        if (application instanceof MyApplication) {
+            return ((MyApplication) application).getImageManager();
+        } else {
+            // Fallback nel caso in cui MyApplication non sia utilizzata
+            return new ImageManager(application);
+        }
     }
 
     public void setDate(Date date) {
         selectedDate.setValue(date);
     }
 
-    public LiveData<Date> getSelectedDate() {
-        return selectedDate;
+    public void loadNextPageRicorrenzeDelGiorno(int giorno, int mese) {
+        executorService.execute(() -> {
+            paginationHelperDelGiorno.loadNextPage(new PaginationHelper.DataLoader<RicorrenzaConTipo>() {
+                @Override
+                public List<RicorrenzaConTipo> loadData(int offset, int limit) {
+                    return ricorrenzaRepository.getRicorrenzeDelGiornoPaginate(giorno, mese, offset, limit);
+                }
+
+                @Override
+                public int getTotalCount() {
+                    return ricorrenzaRepository.getCountRicorrenzeDelGiorno(giorno, mese);
+                }
+            });
+            mainHandler.post(() -> {
+                List<RicorrenzaConTipo> currentList = ricorrenzeDelGiornoPaginate.getValue();
+                if (currentList == null) {
+                    currentList = new ArrayList<>();
+                }
+                currentList.addAll(paginationHelperDelGiorno.getCurrentPageItems());
+                ricorrenzeDelGiornoPaginate.setValue(currentList);
+            });
+        });
+    }
+
+    public void loadRicorrenzeDelGiorno(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<RicorrenzaConTipo> ricorrenze = ricorrenzaRepository.getRicorrenzeDelGiornoPaginate(giorno, mese, 0, PAGE_SIZE);
+            mainHandler.post(() -> ricorrenzeDelGiornoPaginate.setValue(ricorrenze));
+        });
+    }
+
+    public void loadRicorrenzeReligiose(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<RicorrenzaConTipo> ricorrenze = ricorrenzaRepository.getRicorrenzeReligiosePaginate(giorno, mese, 0, PAGE_SIZE);
+            mainHandler.post(() -> ricorrenzeReligiosePaginate.setValue(ricorrenze));
+        });
+    }
+
+    public void loadRicorrenzeLaiche(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<RicorrenzaConTipo> ricorrenze = ricorrenzaRepository.getRicorrenzeLaichePaginate(giorno, mese, 0, PAGE_SIZE);
+            mainHandler.post(() -> ricorrenzeLaichePaginate.setValue(ricorrenze));
+        });
+    }
+
+    public void loadNextPageRicorrenzeReligiose(int giorno, int mese) {
+        executorService.execute(() -> {
+            paginationHelperReligiose.loadNextPage(new PaginationHelper.DataLoader<RicorrenzaConTipo>() {
+                @Override
+                public List<RicorrenzaConTipo> loadData(int offset, int limit) {
+                    return ricorrenzaRepository.getRicorrenzeReligiosePaginate(giorno, mese, offset, limit);
+                }
+
+                @Override
+                public int getTotalCount() {
+                    return ricorrenzaRepository.getCountRicorrenzeReligiose(giorno, mese);
+                }
+            });
+            mainHandler.post(() -> {
+                List<RicorrenzaConTipo> currentList = ricorrenzeReligiosePaginate.getValue();
+                if (currentList == null) {
+                    currentList = new ArrayList<>();
+                }
+                currentList.addAll(paginationHelperReligiose.getCurrentPageItems());
+                ricorrenzeReligiosePaginate.setValue(currentList);
+            });
+        });
+    }
+
+    public void loadNextPageRicorrenzeLaiche(int giorno, int mese) {
+        executorService.execute(() -> {
+            paginationHelperLaiche.loadNextPage(new PaginationHelper.DataLoader<RicorrenzaConTipo>() {
+                @Override
+                public List<RicorrenzaConTipo> loadData(int offset, int limit) {
+                    return ricorrenzaRepository.getRicorrenzeLaichePaginate(giorno, mese, offset, limit);
+                }
+
+                @Override
+                public int getTotalCount() {
+                    return ricorrenzaRepository.getCountRicorrenzeLaiche(giorno, mese);
+                }
+            });
+            mainHandler.post(() -> {
+                List<RicorrenzaConTipo> currentList = ricorrenzeLaichePaginate.getValue();
+                if (currentList == null) {
+                    currentList = new ArrayList<>();
+                }
+                currentList.addAll(paginationHelperLaiche.getCurrentPageItems());
+                ricorrenzeLaichePaginate.setValue(currentList);
+            });
+        });
     }
 
     public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno() {
@@ -388,32 +1463,860 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         selectedDate.setValue(calendar.getTime());
     }
 
-    // Nuovo metodo per inserire una ricorrenza
-    public void insert(Ricorrenza ricorrenza) {
-        repository.insert(ricorrenza);
+    public LiveData<List<RicorrenzaConTipo>> getRisultatiRicerca() {
+        return risultatiRicerca;
     }
 
-    // Nuovo metodo per aggiornare una ricorrenza
-    public void update(Ricorrenza ricorrenza) {
-        repository.update(ricorrenza);
+    // Nuovo metodo getter per PAGE_SIZE
+    public int getPageSize() {
+        return PAGE_SIZE;
     }
 
-    // Nuovo metodo per ottenere una ricorrenza specifica per ID
-    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
-        return repository.getRicorrenzaById(id);
+    // Nuovo metodo getter per selectedDate
+    public LiveData<Date> getSelectedDate() {
+        return selectedDate;
     }
 
-    public static class Factory implements ViewModelProvider.Factory {
-        private Application mApplication;
+    public void update(RicorrenzaConTipo ricorrenzaConTipo) {
+        ricorrenzaRepository.update(ricorrenzaConTipo);
+    }
 
-        public Factory(Application application) {
-            mApplication = application;
+    public void delete(RicorrenzaConTipo ricorrenzaConTipo) {
+        ricorrenzaRepository.delete(ricorrenzaConTipo);
+    }
+
+    public LiveData<RicorrenzaConTipo> getRicorrenzaById(int id) {
+        return ricorrenzaRepository.getRicorrenzaById(id);
+    }
+
+    public LiveData<Boolean> getDeleteResult() {
+        return deleteResult;
+    }
+
+    public void insert(RicorrenzaConTipo ricorrenzaConTipo, OnInsertCompleteListener listener) {
+        executorService.execute(() -> {
+            long newId = ricorrenzaRepository.insert(ricorrenzaConTipo);
+            mainHandler.post(() -> {
+                if (newId > 0) {
+                    listener.onInsertSuccess((int) newId);
+                } else {
+                    listener.onInsertFailure("Inserimento fallito");
+                }
+            });
+        });
+    }
+
+    public void deleteRicorrenza(RicorrenzaConTipo ricorrenzaConTipo) {
+        genericRepository.delete(ricorrenzaConTipo, new GenericRepository.OnOperationCompleteListener() {
+            @Override
+            public void onSuccess(int id) {
+                deleteResult.postValue(true);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                deleteResult.postValue(false);
+            }
+        });
+    }
+
+    private final MutableLiveData<Integer> totalItemCount = new MutableLiveData<>();
+
+    public void loadTotalItemCount() {
+        executorService.execute(() -> {
+            int count = ricorrenzaRepository.getTotalItemCount();
+            totalDatabaseItemCount.postValue(count);
+        });
+    }
+
+    public LiveData<Integer> getTotalItemCount() {
+        return totalDatabaseItemCount;
+    }
+
+    public void updateRicorrenzaImage(int ricorrenzaId, String imageUrl) {
+        executorService.execute(() -> {
+            ricorrenzaRepository.updateImageUrl(ricorrenzaId, imageUrl);
+            imageLoadingStatus.postValue("Immagine aggiornata con successo");
+        });
+    }
+
+    public LiveData<String> getImageLoadingStatus() {
+        return imageLoadingStatus;
+    }
+
+    public void setSearchParams(String nome, Integer tipo, String dataInizio, String dataFine) {
+        searchParams.setValue(new SearchParams(nome, tipo, dataInizio, dataFine));
+        eseguiRicercaAvanzata(nome, tipo, dataInizio, dataFine);
+    }
+
+    // Classe interna per rappresentare i parametri di ricerca
+    private static class SearchParams {
+        final String nome;
+        final Integer tipo;
+        final String dataInizio;
+        final String dataFine;
+
+        SearchParams(String nome, Integer tipo, String dataInizio, String dataFine) {
+            this.nome = nome;
+            this.tipo = tipo;
+            this.dataInizio = dataInizio;
+            this.dataFine = dataFine;
         }
 
         @Override
-        public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new RicorrenzaViewModel(mApplication);
+        public String toString() {
+            return "SearchParams{" +
+                    "nome='" + nome + '\'' +
+                    ", tipo=" + tipo +
+                    ", dataInizio='" + dataInizio + '\'' +
+                    ", dataFine='" + dataFine + '\'' +
+                    '}';
         }
+
+    }
+
+    public void resetSearch() {
+        paginationHelper.reset();
+        currentPage.setValue(0);
+        isLastPage.setValue(false);
+        isLoading.setValue(false);
+        totalSearchResults.setValue(0);
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+    }
+
+    // Metodi setter per i LiveData
+    private void setIsLoading(boolean loading) {
+        isLoading.postValue(loading);
+    }
+
+    public void eseguiRicercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        isLoading.setValue(true);
+        lastSearchParams = new SearchParams(nome, tipo, dataInizio, dataFine);
+
+        paginationHelper.reset();
+        currentPage.setValue(0);
+
+        executorService.execute(() -> {
+            try {
+                paginationHelper.loadNextPage(new PaginationHelper.DataLoader<RicorrenzaConTipo>() {
+                    @Override
+                    public List<RicorrenzaConTipo> loadData(int offset, int limit) {
+                        return ricorrenzaRepository.ricercaAvanzataPaginata(
+                                nome, tipo, dataInizio, dataFine, limit, offset);
+                    }
+
+                    @Override
+                    public int getTotalCount() {
+                        return ricorrenzaRepository.contaTotaleRisultati(nome, tipo, dataInizio, dataFine);
+                    }
+                });
+
+                mainHandler.post(() -> {
+                    List<RicorrenzaConTipo> results = paginationHelper.getCurrentPageItems();
+                    int totalResults = paginationHelper.getTotalCount();
+
+                    totalSearchResults.setValue(totalResults);
+                    risultatiRicercaAvanzata.setValue(results);
+
+                    isLastPage.setValue(!paginationHelper.hasNextPage());
+                    isLoading.setValue(false);
+                    currentPage.setValue(paginationHelper.getCurrentPage());
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    isLoading.setValue(false);
+                });
+            }
+        });
+    }
+
+    // Nuovo metodo per caricare le pagine successive
+    public void loadNextPage() {
+        if (isLoading.getValue() != null && isLoading.getValue()) return;
+        if (isLastPage.getValue() != null && isLastPage.getValue()) return;
+
+        isLoading.setValue(true);
+
+        executorService.execute(() -> {
+            try {
+                paginationHelper.loadNextPage(new PaginationHelper.DataLoader<RicorrenzaConTipo>() {
+                    @Override
+                    public List<RicorrenzaConTipo> loadData(int offset, int limit) {
+                        return ricorrenzaRepository.ricercaAvanzataPaginata(
+                                lastSearchParams.nome, lastSearchParams.tipo,
+                                lastSearchParams.dataInizio, lastSearchParams.dataFine,
+                                limit, offset);
+                    }
+
+                    @Override
+                    public int getTotalCount() {
+                        return ricorrenzaRepository.contaTotaleRisultati(
+                                lastSearchParams.nome, lastSearchParams.tipo,
+                                lastSearchParams.dataInizio, lastSearchParams.dataFine);
+                    }
+                });
+
+                mainHandler.post(() -> {
+                    List<RicorrenzaConTipo> newResults = paginationHelper.getCurrentPageItems();
+                    List<RicorrenzaConTipo> currentList = risultatiRicercaAvanzata.getValue();
+                    if (currentList != null) {
+                        currentList.addAll(newResults);
+                        risultatiRicercaAvanzata.setValue(currentList);
+                    }
+
+                    isLastPage.setValue(!paginationHelper.hasNextPage());
+                    isLoading.setValue(false);
+                    currentPage.setValue(paginationHelper.getCurrentPage());
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    // Gestione degli errori
+                    isLoading.setValue(false);
+                });
+            }
+        });
+    }
+
+    private SearchParams lastSearchParams;
+
+    public void clearSearchState() {
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+        currentPage.setValue(0);
+        totalPages.setValue(0);
+        totalItemCount.setValue(0);
+        lastSearchParams = null;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRisultatiRicercaAvanzata() {
+        return risultatiRicercaAvanzata;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzePerGiornoMese(int giorno, int mese) {
+        return ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese);
+    }
+
+    public void setRisultatiRicerca(List<RicorrenzaConTipo> risultati) {
+        risultatiRicercaAvanzata.setValue(risultati != null ? risultati : new ArrayList<>());
+    }
+
+    public void clearRisultatiRicercaAvanzata() {
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+    }
+
+    private void saveSearchCriteria(SearchCriteria criteria) {
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_nome", criteria.nome);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_tipo", criteria.tipo);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataInizio", criteria.dataInizio);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataFine", criteria.dataFine);
+    }
+
+    public static class SearchCriteria implements Parcelable {
+        public final String nome;
+        public final Integer tipo;
+        public final String dataInizio;
+        public final String dataFine;
+
+        public SearchCriteria(String nome, Integer tipo, String dataInizio, String dataFine) {
+            this.nome = nome;
+            this.tipo = tipo;
+            this.dataInizio = dataInizio;
+            this.dataFine = dataFine;
+        }
+
+        protected SearchCriteria(Parcel in) {
+            nome = in.readString();
+            if (in.readByte() == 0) {
+                tipo = null;
+            } else {
+                tipo = in.readInt();
+            }
+            dataInizio = in.readString();
+            dataFine = in.readString();
+        }
+
+        public static final Parcelable.Creator<SearchCriteria> CREATOR = new Creator<SearchCriteria>() {
+            @Override
+            public SearchCriteria createFromParcel(Parcel in) {
+                return new SearchCriteria(in);
+            }
+
+            @Override
+            public SearchCriteria[] newArray(int size) {
+                return new SearchCriteria[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(nome);
+            if (tipo == null) {
+                dest.writeByte((byte) 0);
+            } else {
+                dest.writeByte((byte) 1);
+                dest.writeInt(tipo);
+            }
+            dest.writeString(dataInizio);
+            dest.writeString(dataFine);
+        }
+    }
+
+    public LiveData<Boolean> getIsLastPage() {
+        return isLastPage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<Integer> getTotalSearchResults() {
+        return totalSearchResults;
+    }
+
+    public void debugRicorrenzeOggi() {
+        Date oggi = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(oggi);
+        int giorno = cal.get(Calendar.DAY_OF_MONTH);
+        int mese = cal.get(Calendar.MONTH);
+
+        executorService.execute(() -> {
+            int count = ricorrenzaRepository.contaRicorrenzePerGiornoMese(giorno, mese);
+            ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese).observeForever(new Observer<List<RicorrenzaConTipo>>() {
+                @Override
+                public void onChanged(List<RicorrenzaConTipo> ricorrenze) {
+                    Log.d(TAG, "Ricorrenze per oggi (" + giorno + "/" + mese + "): " + count);
+                    for (RicorrenzaConTipo r : ricorrenze) {
+                        Log.d(TAG, "Ricorrenza: " + r.toString());
+                    }
+                    // Rimuovi l'observer dopo l'esecuzione per evitare leak di memoria
+                    ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese).removeObserver(this);
+                }
+            });
+        });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executorService.shutdown();
+    }
+
+    public interface OnInsertCompleteListener {
+        void onInsertSuccess(int newId);
+        void onInsertFailure(String error);
+    }
+
+}
+
+
+// Contenuto di ricorrenze/RicorrenzaAdapter.java
+
+package it.faustobe.santibailor.presentation.common.ricorrenze;
+
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.domain.model.RicorrenzaConTipo;
+import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.util.DateUtils;
+import it.faustobe.santibailor.util.ImageLoadingUtil;
+import it.faustobe.santibailor.util.RicorrenzaDiffCallback;
+
+public class RicorrenzaAdapter extends RecyclerView.Adapter<RicorrenzaAdapter.SaintViewHolder> {
+    private List<RicorrenzaConTipo> ricorrenze = new ArrayList<>();
+    private boolean isCollapsedView = false;
+    private final OnItemClickListener listener;
+    private final OnDeleteClickListener deleteListener;
+    private final RicorrenzaViewModel viewModel;
+
+    public interface OnItemClickListener {
+        void onItemClick(int ricorrenzaId);
+    }
+
+    public interface OnDeleteClickListener {
+        void onDeleteClick(RicorrenzaConTipo ricorrenza);
+    }
+
+    public RicorrenzaAdapter(OnItemClickListener listener, OnDeleteClickListener deleteListener, RicorrenzaViewModel viewModel) {
+        this.listener = listener;
+        this.deleteListener = deleteListener;
+        this.viewModel = viewModel;
+    }
+
+    @NonNull
+    @Override
+    public SaintViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ricorrenza, parent, false);
+        return new SaintViewHolder(view, listener, deleteListener, viewModel);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull SaintViewHolder holder, int position) {
+        RicorrenzaConTipo ricorrenza = ricorrenze.get(position);
+        holder.bind(ricorrenza);
+    }
+
+    @Override
+    public int getItemCount() {
+        return ricorrenze.size();
+    }
+
+    public void setRicorrenze(List<RicorrenzaConTipo> ricorrenze) {
+        this.ricorrenze = ricorrenze;
+        notifyDataSetChanged();
+    }
+
+    public void addRicorrenze(List<RicorrenzaConTipo> nuoveRicorrenze) {
+        int startPos = ricorrenze.size();
+        ricorrenze.addAll(nuoveRicorrenze);
+        notifyItemRangeInserted(startPos, nuoveRicorrenze.size());
+    }
+
+    public void setCollapsedView(boolean isCollapsed) {
+        if (this.isCollapsedView != isCollapsed) {
+            this.isCollapsedView = isCollapsed;
+            notifyDataSetChanged();
+        }
+    }
+
+    static class SaintViewHolder extends RecyclerView.ViewHolder {
+        final TextView nomeTextView;
+        final TextView tipoTextView;
+        final ImageButton deleteButton;
+        final ImageView imageView;
+        final OnItemClickListener listener;
+        final OnDeleteClickListener deleteListener;
+        final RicorrenzaViewModel viewModel;
+
+        SaintViewHolder(@NonNull View itemView, OnItemClickListener listener, OnDeleteClickListener deleteListener, RicorrenzaViewModel viewModel) {
+            super(itemView);
+            nomeTextView = itemView.findViewById(R.id.nome_ricorrenza);
+            tipoTextView = itemView.findViewById(R.id.tipo_ricorrenza);
+            deleteButton = itemView.findViewById(R.id.delete_button);
+            imageView = itemView.findViewById(R.id.image_ricorrenza);
+            this.listener = listener;
+            this.deleteListener = deleteListener;
+            this.viewModel = viewModel;
+        }
+
+        void bind(RicorrenzaConTipo ricorrenza) {
+            String displayDate = DateUtils.formatDate(ricorrenza.getRicorrenza().getGiorno(), ricorrenza.getRicorrenza().getIdMese());
+
+            nomeTextView.setText(String.format("%s %s (%s)",
+                    ricorrenza.getRicorrenza().getPrefix(),
+                    ricorrenza.getRicorrenza().getNome(),
+                    displayDate));
+
+            tipoTextView.setText(ricorrenza.getTipoRicorrenza() != null ? ricorrenza.getRicorrenza().getNome() : "");
+
+            Log.d("RicorrenzaAdapter", "Binding ricorrenza con ID: " + ricorrenza.getRicorrenza().getId());
+
+            itemView.setOnClickListener(v -> listener.onItemClick(ricorrenza.getRicorrenza().getId()));
+
+            viewModel.loadImage(ricorrenza.getRicorrenza().getImageUrl(), imageView, R.drawable.placeholder_image);
+
+            if (deleteButton != null) {
+                deleteButton.setOnClickListener(v -> deleteListener.onDeleteClick(ricorrenza));
+            }
+        }
+    }
+}
+
+// Contenuto di home/HomeFragment.java
+
+package it.faustobe.santibailor.presentation.features.home;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.animation.ObjectAnimator;
+import android.widget.Toast;
+
+import android.view.ViewTreeObserver;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+
+import it.faustobe.santibailor.domain.model.RicorrenzaConTipo;
+import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
+import it.faustobe.santibailor.presentation.features.main.MainActivity;
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaConTipoEntity;
+import it.faustobe.santibailor.databinding.FragmentHomeBinding;
+import it.faustobe.santibailor.util.DateUtils;
+import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+
+public class HomeFragment extends Fragment {
+
+    private FragmentHomeBinding binding;
+    private RicorrenzaViewModel ricorrenzaViewModel;
+    private RicorrenzaAdapter ricorrenzaAdapter;
+    private boolean isPersonalInfoExpanded = false;
+    private boolean isSaintsListExpanded = false;
+    private HomeViewModel homeViewModel;
+    private View expandPersonalInfoIcon;
+    private static final String TAG = "HomeFragment";
+    private NestedScrollView nestedScrollView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        Log.d("SearchDebug", "HomeFragment onCreateView called");
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d("SearchDebug", "HomeFragment onViewCreated called");
+
+        ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
+
+        nestedScrollView = binding.nestedScrollView;
+        setupScrollListener();
+
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                updateComponentsState();
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+
+        setupDateDisplay();
+        loadBackgroundImage();
+        setupSaintOfDay();
+        setupPersonalInfo();
+        setupSaintsList();
+        updateComponentsState();
+        setupPersonalInfoCard();
+        updateInitialVisibility();
+        observeDeleteResult();
+        setInitialSaintsListState();
+        observeRicorrenze();
+    }
+
+    private void observeRicorrenze() {
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+        ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
+        ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+    }
+
+    private void updateRicorrenzeList(List<RicorrenzaConTipo> ricorrenze) {
+        if (ricorrenze != null && !ricorrenze.isEmpty()) {
+            RicorrenzaConTipo mainSaint = ricorrenze.get(0);
+            binding.tvSaintOfDay.setText(mainSaint.getRicorrenza().getPrefix() + " " + mainSaint.getRicorrenza().getNome());
+            binding.tvSaintOfDay.setOnClickListener(v -> navigateToEditFragment(mainSaint.getRicorrenza().getId()));
+
+            if (ricorrenze.size() > 1) {
+                binding.tvSaintsListHeader.setText("Altri santi del giorno (" + (ricorrenze.size() - 1) + ")");
+                binding.saintsHeader.setVisibility(View.VISIBLE);
+            } else {
+                binding.saintsHeader.setVisibility(View.GONE);
+            }
+
+            ricorrenzaAdapter.setRicorrenze(ricorrenze);
+            binding.recyclerViewSaints.setVisibility(View.VISIBLE);
+            ricorrenzaAdapter.setRicorrenze(ricorrenze);
+            binding.recyclerViewSaints.setVisibility(ricorrenze.isEmpty() ? View.GONE : View.VISIBLE);
+            binding.recyclerViewSaints.setVisibility(ricorrenze.isEmpty() ? View.VISIBLE : View.GONE);
+        } else {
+            binding.tvSaintOfDay.setText("Nessun santo oggi");
+            binding.saintsHeader.setVisibility(View.GONE);
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+            ricorrenzaAdapter.setRicorrenze(Collections.emptyList());
+        }
+
+        setInitialSaintsListState();
+        updateComponentsState();
+    }
+
+    private void updateRicorrenzeReligiose(List<RicorrenzaConTipo> ricorrenzeReligiose) {
+        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze religiose
+        // Per ora, possiamo loggare il numero di ricorrenze religiose per debug
+        Log.d(TAG, "Ricorrenze religiose: " + (ricorrenzeReligiose != null ? ricorrenzeReligiose.size() : 0));
+    }
+
+    private void updateRicorrenzeLaiche(List<RicorrenzaConTipo> ricorrenzeLaiche) {
+        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze laiche
+        // Per ora, possiamo loggare il numero di ricorrenze laiche per debug
+        Log.d(TAG, "Ricorrenze laiche: " + (ricorrenzeLaiche != null ? ricorrenzeLaiche.size() : 0));
+    }
+
+    private void updateInitialVisibility() {
+        View personalInfoContent = binding.cardPersonalInfo.findViewById(R.id.personal_info_content);
+        if (personalInfoContent != null) {
+            personalInfoContent.setVisibility(View.GONE);
+        }
+
+        if (binding.recyclerViewSaints != null) {
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+
+        updatePersonalInfoIcon();
+        updateSaintsListIcon();
+    }
+
+    private void loadBackgroundImage() {
+        Glide.with(this)
+                .load(R.drawable.background_saint)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(binding.backgroundImage);
+    }
+
+    private void setupSaintsList() {
+        ricorrenzaAdapter = new RicorrenzaAdapter(this::navigateToEditFragment, this::showDeleteConfirmationDialog,ricorrenzaViewModel);
+        binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
+
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
+            if (ricorrenze != null && !ricorrenze.isEmpty()) {
+                RicorrenzaConTipo mainSaint = ricorrenze.get(0);
+                binding.tvSaintOfDay.setText(mainSaint.getRicorrenza().getPrefix() + " " + mainSaint.getRicorrenza().getNome());
+                binding.tvSaintOfDay.setOnClickListener(v -> navigateToEditFragment(mainSaint.getRicorrenza().getId()));
+
+                if (ricorrenze.size() > 1) {
+                    binding.tvSaintsListHeader.setText("Altri santi del giorno (" + (ricorrenze.size() - 1) + ")");
+                    binding.saintsHeader.setVisibility(View.VISIBLE);
+                } else {
+                    binding.saintsHeader.setVisibility(View.GONE);
+                }
+
+                ricorrenzaAdapter.setRicorrenze(ricorrenze);
+                // notifyDataSetChanged() non è più necessario qui
+            } else {
+                binding.tvSaintOfDay.setText("Nessun santo oggi");
+                binding.saintsHeader.setVisibility(View.GONE);
+                ricorrenzaAdapter.setRicorrenze(Collections.emptyList()); // Aggiorna con una lista vuota
+            }
+
+            setInitialSaintsListState();
+        });
+
+        binding.saintsHeader.setOnClickListener(v -> toggleSaintsListExpansion());
+    }
+
+    private void setInitialSaintsListState() {
+        isSaintsListExpanded = false;
+        if (binding.recyclerViewSaints != null) {
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+        if (ricorrenzaAdapter != null) {
+            ricorrenzaAdapter.setCollapsedView(true);
+        }
+        updateSaintsListIcon();
+    }
+
+    private void navigateToEditFragment(int ricorrenzaId) {
+        if (ricorrenzaId > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("ricorrenzaId", ricorrenzaId);
+            Navigation.findNavController(requireView()).navigate(R.id.action_homeFragment_to_editRicorrenzaFragment, bundle);
+        } else {
+            Toast.makeText(requireContext(), "ID ricorrenza non valido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void toggleSaintsListExpansion() {
+        isSaintsListExpanded = !isSaintsListExpanded;
+        if (ricorrenzaAdapter != null) {
+            ricorrenzaAdapter.setCollapsedView(!isSaintsListExpanded);
+        }
+        if (binding.recyclerViewSaints != null) {
+            if (isSaintsListExpanded) {
+                binding.recyclerViewSaints.setVisibility(View.VISIBLE);
+                ObjectAnimator.ofFloat(binding.recyclerViewSaints, "alpha", 0f, 1f).start();
+            } else {
+                ObjectAnimator.ofFloat(binding.recyclerViewSaints, "alpha", 1f, 0f).setDuration(200).start();
+                binding.recyclerViewSaints.postDelayed(() -> {
+                    binding.recyclerViewSaints.setVisibility(View.GONE);
+                    updateBottomMenuVisibility();
+                }, 200);
+            }
+        }
+        updateSaintsListIcon();
+        updateComponentsState();
+    }
+
+    private void updateSaintsListIcon() {
+        if (binding.expandCollapseIcon != null) {
+            binding.expandCollapseIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        }
+    }
+
+    private void setupDateDisplay() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ITALIAN);
+
+        binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
+        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        binding.tvMonth.setText(DateUtils.getCurrentMonthNameFull());
+    }
+
+    private void setupSaintOfDay() {
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
+            if (ricorrenze != null && !ricorrenze.isEmpty()) {
+                binding.tvSaintOfDay.setText(ricorrenze.get(0).getRicorrenza().getPrefix() + " " + ricorrenze.get(0).getTipoRicorrenza().getNome());
+            }
+        });
+    }
+
+    private void showDeleteConfirmationDialog(RicorrenzaConTipo ricorrenza) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Conferma cancellazione")
+                .setMessage("Sei sicuro di voler cancellare questa ricorrenza?")
+                .setPositiveButton("Sì", (dialog, which) -> deleteRicorrenza(ricorrenza))
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void deleteRicorrenza(RicorrenzaConTipo ricorrenza) {
+        ricorrenzaViewModel.deleteRicorrenza(ricorrenza);
+    }
+
+    private void observeDeleteResult() {
+        ricorrenzaViewModel.getDeleteResult().observe(getViewLifecycleOwner(), isSuccess -> {
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "Ricorrenza cancellata con successo", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Errore durante la cancellazione", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setupPersonalInfo() {
+        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
+
+        String todoList = """
+                - paga bolletta luce
+                - cambia filtro aria della cappa
+                - compra regalo per Denise - compleanno fra 5 gg
+                - finisci rapporto AZS - consegna fra 3 gg""";
+        binding.tvTodoList.setText(todoList);
+
+        String todayEvents = """
+                oggi:
+                * gym
+                * ape con Chicca alle h 18
+                + la ricotta è in frigo da 4 giorni""";
+        binding.tvTodayEvents.setText(todayEvents);
+    }
+
+    private void setupPersonalInfoCard() {
+        View header = binding.cardPersonalInfo.findViewById(R.id.tv_personal_info_header);
+        if (header != null) {
+            header.setOnClickListener(v -> togglePersonalInfoExpansion());
+        }
+        expandPersonalInfoIcon = binding.cardPersonalInfo.findViewById(R.id.expand_collapse_icon);
+    }
+
+    private void togglePersonalInfoExpansion() {
+        isPersonalInfoExpanded = !isPersonalInfoExpanded;
+        View contentView = binding.cardPersonalInfo.findViewById(R.id.personal_info_content);
+        if (contentView != null) {
+            if (isPersonalInfoExpanded) {
+                contentView.setVisibility(View.VISIBLE);
+                ObjectAnimator.ofFloat(contentView, "alpha", 0f, 1f).start();
+            } else {
+                ObjectAnimator.ofFloat(contentView, "alpha", 1f, 0f).setDuration(200).start();
+                contentView.postDelayed(() -> {
+                    contentView.setVisibility(View.GONE);
+                    updateBottomMenuVisibility();
+                }, 200);
+            }
+        }
+        updatePersonalInfoIcon();
+        updateComponentsState();
+    }
+
+    private void updatePersonalInfoIcon() {
+        if (expandPersonalInfoIcon != null) {
+            expandPersonalInfoIcon.setRotation(isPersonalInfoExpanded ? 180f : 0f);
+        }
+    }
+
+    private void setupScrollListener() {
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).handleScroll();
+                }
+            }
+        });
+    }
+
+    private void updateComponentsState() {
+        boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
+        homeViewModel.setAllComponentsCollapsed(allCollapsed);
+    }
+
+    private boolean isScrolledToTop() {
+        return nestedScrollView.getScrollY() == 0;
+    }
+
+    private void updateBottomMenuVisibility() {
+        boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded;
+        if (allCollapsed && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateComponentsVisibility(true);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showBottomNav();
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
 

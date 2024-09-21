@@ -1,0 +1,39 @@
+classDiagram
+    class RicorrenzaViewModel {
+        -RicorrenzaRepository ricorrenzaRepository
+        -GenericRepository<Ricorrenza> genericRepository
+        +insert(Ricorrenza, OnOperationCompleteListener)
+        +update(Ricorrenza, OnOperationCompleteListener)
+        +delete(Ricorrenza, OnOperationCompleteListener)
+        +getRicorrenzeDelGiorno(): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzeReligiose(): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzeLaiche(): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzaById(int): LiveData<Ricorrenza>
+    }
+    class RicorrenzaRepository {
+        -RicorrenzaDao ricorrenzaDao
+        +insert(Ricorrenza): long
+        +update(Ricorrenza)
+        +delete(Ricorrenza)
+        +getRicorrenzeDelGiorno(int, int): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzeReligiose(int, int): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzeLaiche(int, int): LiveData<List<RicorrenzaConTipo>>
+        +getRicorrenzaById(int): LiveData<Ricorrenza>
+    }
+    class GenericRepository~T~ {
+        -BaseDao<T> dao
+        +insert(T, OnOperationCompleteListener)
+        +update(T, OnOperationCompleteListener)
+        +delete(T, OnOperationCompleteListener)
+    }
+    class OnOperationCompleteListener {
+        <<interface>>
+        +onSuccess(int)
+        +onError(String)
+    }
+
+    RicorrenzaViewModel --> RicorrenzaRepository
+    RicorrenzaViewModel --> GenericRepository
+    RicorrenzaRepository --> RicorrenzaDao
+    GenericRepository --> BaseDao
+    RicorrenzaViewModel ..> OnOperationCompleteListener

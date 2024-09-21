@@ -1,0 +1,54 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>98</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment void updateInitialVisibility()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;binding.recyclerViewSaints != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>binding.recyclerViewSaints != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>12</offset>
+  <length>34</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>147</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment void setInitialSaintsListState()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;binding.recyclerViewSaints != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>binding.recyclerViewSaints != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>12</offset>
+  <length>34</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>171</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment void toggleSaintsListExpansion()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;binding.recyclerViewSaints != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>binding.recyclerViewSaints != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>12</offset>
+  <length>34</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>188</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment void updateSaintsListIcon()" />
+  <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+  <description>Condition &lt;code&gt;binding.expandCollapseIcon != null&lt;/code&gt; is always &lt;code&gt;true&lt;/code&gt;</description>
+  <highlighted_element>binding.expandCollapseIcon != null</highlighted_element>
+  <language>JAVA</language>
+  <offset>12</offset>
+  <length>34</length>
+</problem>
+</problems>

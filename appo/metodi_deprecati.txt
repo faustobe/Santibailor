@@ -1,0 +1,27 @@
+Inspection Results 'Deprecated API usage' profile  18 warnings
+
+AddItemFragment  4 warnings
+- 'setHasOptionsMenu(boolean)' is deprecated
+- 'startActivityForResult(android.content.Intent, int)' is deprecated
+- Overrides deprecated method in 'androidx.fragment.app.Fragment'
+- 'onActivityResult(int, int, android.content.Intent)' is deprecated
+
+EditRicorrenzaFragment  4 warnings
+- 'setHasOptionsMenu(boolean)' is deprecated
+- 'startActivityForResult(android.content.Intent, int)' is deprecated
+- Overrides deprecated method in 'androidx.fragment.app.Fragment'
+- 'onActivityResult(int, int, android.content.Intent)' is deprecated
+
+MainActivity  4 warnings
+- 'androidx.core.view.GestureDetectorCompat' is deprecated
+- 'androidx.core.view.GestureDetectorCompat' is deprecated
+- Overrides deprecated method in 'androidx.activity.ComponentActivity'
+- 'onBackPressed()' is deprecated
+
+SettingsFragment  6 warnings
+- 'setHasOptionsMenu(boolean)' is deprecated
+- Overrides deprecated method in 'androidx.fragment.app.Fragment'
+- 'onCreateOptionsMenu(android.view.Menu, android.view.MenuInflater)' is deprecated
+- Overrides deprecated method in 'androidx.fragment.app.Fragment'
+- 'onBackPressed()' is deprecated
+- 'onOptionsItemSelected(android.view.MenuItem)' is deprecated

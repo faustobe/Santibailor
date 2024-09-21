@@ -1,0 +1,1242 @@
+// File creato il: 2024-09-02 12:57:52
+
+###############################
+// Contenuto di search/SearchFragment.java
+
+package it.faustobe.santibailor.ui.search;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+import it.faustobe.santibailor.databinding.FragmentSearchBinding;
+import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
+import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.ui.dialogs.MonthYearPickerDialog;
+
+public class SearchFragment extends Fragment {
+    private static final String TAG = "SearchFragment";
+    private FragmentSearchBinding binding;
+    private RicorrenzaViewModel viewModel;
+    private RicorrenzaAdapter adapter;
+    private RicorrenzaRepository repository;
+
+    private static final long SEARCH_DELAY_MS = 300;
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    private Runnable searchRunnable;
+
+    private static final String PREFS_NAME = "SearchPreferences";
+    private static final String PREF_NOME = "nome";
+    private static final String PREF_TIPO = "tipo";
+    private static final String PREF_DATA_INIZIO = "dataInizio";
+    private static final String PREF_DATA_FINE = "dataFine";
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: Inizializzazione SearchFragment");
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        SavedStateHandle handle = new SavedStateHandle();
+        if (savedInstanceState != null) {
+            for (String key : savedInstanceState.keySet()) {
+                handle.set(key, savedInstanceState.get(key));
+            }
+        }
+
+        viewModel = new ViewModelProvider(this, new RicorrenzaViewModel.Factory(
+                requireActivity().getApplication(),
+                handle
+        )).get(RicorrenzaViewModel.class);
+
+        repository = new RicorrenzaRepository(requireActivity().getApplication());
+
+        setupViews();
+        observeViewModel();
+        setupPagination();
+        viewModel.getTotalPages().observe(getViewLifecycleOwner(), pages -> updatePaginationControls());
+        viewModel.loadTotalItemCount();
+        viewModel.debugRicorrenzeOggi();
+        repository.testRicorrenzeDelGiorno(Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+                Calendar.getInstance().get(Calendar.MONTH) + 1);
+    }
+
+    private void setupViews() {
+        Log.d(TAG, "setupViews: Configurazione delle viste");
+        setupTipoSpinner();
+        setupDatePickers();
+        setupRecyclerView();
+        setupSearchButton();
+        setupSearchInput();
+        binding.buttonDebug.setOnClickListener(v -> showDebugInfo());
+    }
+
+    private void setupTipoSpinner() {
+        String[] tipiRicorrenza = {"Tutti", "Religiosa", "Laica"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, tipiRicorrenza);
+        binding.spinnerTipo.setAdapter(adapter);
+        binding.spinnerTipo.setText(tipiRicorrenza[0], false);
+    }
+
+    private void setupDatePickers() {
+        binding.editTextDataInizio.setOnClickListener(v -> showDatePickerDialog(true));
+        binding.editTextDataFine.setOnClickListener(v -> showDatePickerDialog(false));
+    }
+
+    private void setupRecyclerView() {
+        adapter = new RicorrenzaAdapter(this::onRicorrenzaClick, this::onRicorrenzaDeleteClick);
+        binding.recyclerViewRisultati.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewRisultati.setAdapter(adapter);
+    }
+
+    private void setupSearchButton() {
+        binding.buttonCerca.setOnClickListener(v -> {
+            performSearch();
+            salvaDatiRicerca();
+        });
+    }
+
+    private void setupSearchInput() {
+        binding.editTextNome.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                searchHandler.removeCallbacks(searchRunnable);
+                searchRunnable = () -> {
+                    if (s.length() >= 3) {
+                        performSearch();
+                    } else if (s.length() == 0) {
+                        clearResults();
+                    }
+                };
+                searchHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
+            }
+        });
+    }
+
+    private void setupPagination() {
+        binding.buttonPrevPage.setOnClickListener(v -> loadPreviousPage());
+        binding.buttonNextPage.setOnClickListener(v -> loadNextPage());
+    }
+
+    private void loadPreviousPage() {
+        if (viewModel.getCurrentPage() > 0) {
+            performSearch(viewModel.getCurrentPage() - 1);
+        }
+    }
+
+    private void loadNextPage() {
+        if (viewModel.getCurrentPage() < viewModel.getTotalPages().getValue() - 1) {
+            performSearch(viewModel.getCurrentPage() + 1);
+        }
+    }
+
+    private void performSearch(int page) {
+        String nome = binding.editTextNome.getText().toString().trim();
+        String tipoString = binding.spinnerTipo.getText().toString();
+        Integer tipo = getTipoFromString(tipoString);
+        String dataInizio = binding.editTextDataInizio.getText().toString();
+        String dataFine = binding.editTextDataFine.getText().toString();
+
+        viewModel.eseguiRicercaAvanzataPaginata(nome, tipo, dataInizio, dataFine, page);
+    }
+
+    private void performSearch() {
+        long startTime = System.currentTimeMillis();
+        Log.d(TAG, "performSearch started");
+
+        String nome = binding.editTextNome.getText().toString().trim();
+        String tipoString = binding.spinnerTipo.getText().toString();
+        Integer tipo = getTipoFromString(tipoString);
+        String dataInizio = binding.editTextDataInizio.getText().toString();
+        String dataFine = binding.editTextDataFine.getText().toString();
+
+        Log.d(TAG, "Search params: nome=" + nome + ", tipo=" + tipo +
+                ", dataInizio=" + dataInizio + ", dataFine=" + dataFine);
+
+        repository.debugQueryRicercaAvanzata(nome, tipo, dataInizio, dataFine);
+        viewModel.eseguiRicercaAvanzata(nome, tipo, dataInizio, dataFine);
+
+        long endTime = System.currentTimeMillis();
+        Log.d(TAG, "performSearch completed in " + (endTime - startTime) + "ms");
+    }
+
+    private void updateUIWithResults(List<RicorrenzaConTipo> risultati) {
+        adapter.setRicorrenze(risultati);
+        binding.textViewRisultati.setText("Risultati trovati: " + risultati.size());
+        binding.recyclerViewRisultati.setVisibility(risultati.isEmpty() ? View.GONE : View.VISIBLE);
+        binding.textViewNoResults.setVisibility(risultati.isEmpty() ? View.VISIBLE : View.GONE);
+
+        updatePaginationControls();
+    }
+
+    private void updatePaginationControls() {
+        int currentPage = viewModel.getCurrentPage();
+        int totalPages = viewModel.getTotalPages().getValue();
+
+        binding.textViewPageInfo.setText("Pagina " + (currentPage + 1) + " di " + totalPages);
+        binding.buttonPrevPage.setEnabled(currentPage > 0);
+        binding.buttonNextPage.setEnabled(currentPage < totalPages - 1);
+        binding.layoutPagination.setVisibility(totalPages > 1 ? View.VISIBLE : View.GONE);
+    }
+
+    private void clearResults() {
+        viewModel.clearRisultatiRicercaAvanzata();
+        updateUIWithResults(new ArrayList<>());
+    }
+
+    private void observeViewModel() {
+        viewModel.getRisultatiRicercaAvanzata().observe(getViewLifecycleOwner(), this::updateUIWithResults);
+        viewModel.getTotalItemCount().observe(getViewLifecycleOwner(), count -> {
+            binding.textViewTotalItems.setText("Totale item nel database: " + count);
+        });
+    }
+
+    private void showDebugInfo() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Debug Info")
+                .setMessage("Parametri di ricerca:\n" +
+                        "Nome: " + binding.editTextNome.getText() + "\n" +
+                        "Tipo: " + binding.spinnerTipo.getText() + "\n" +
+                        "Data Inizio: " + binding.editTextDataInizio.getText() + "\n" +
+                        "Data Fine: " + binding.editTextDataFine.getText() + "\n\n" +
+                        "Risultati: " + (adapter.getItemCount() > 0 ?
+                        adapter.getItemCount() : "Nessun risultato"))
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    private void showDatePickerDialog(boolean isStartDate) {
+        MonthYearPickerDialog pickerDialog = new MonthYearPickerDialog();
+        pickerDialog.setListener((month, day) -> {
+            String date = String.format(Locale.getDefault(), "%02d/%02d", day, month);
+            if (isStartDate) {
+                binding.editTextDataInizio.setText(date);
+            } else {
+                binding.editTextDataFine.setText(date);
+            }
+        });
+        pickerDialog.show(getChildFragmentManager(), "MonthYearPickerDialog");
+    }
+
+    private void salvaDatiRicerca() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PREF_NOME, binding.editTextNome.getText().toString());
+        editor.putString(PREF_TIPO, binding.spinnerTipo.getText().toString());
+        editor.putString(PREF_DATA_INIZIO, binding.editTextDataInizio.getText().toString());
+        editor.putString(PREF_DATA_FINE, binding.editTextDataFine.getText().toString());
+        editor.apply();
+    }
+
+    private void ripristinaDatiRicerca() {
+        SharedPreferences prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        binding.editTextNome.setText(prefs.getString(PREF_NOME, ""));
+        binding.spinnerTipo.setText(prefs.getString(PREF_TIPO, "Tutti"));
+        binding.editTextDataInizio.setText(prefs.getString(PREF_DATA_INIZIO, ""));
+        binding.editTextDataFine.setText(prefs.getString(PREF_DATA_FINE, ""));
+    }
+
+    private Integer getTipoFromString(String tipo) {
+        switch (tipo) {
+            case "Religiosa": return 1;
+            case "Laica": return 2;
+            default: return null;
+        }
+    }
+
+    private String getTipoString(Integer tipo) {
+        if (tipo == null) return "Tutti";
+        return tipo == 1 ? "Religiosa" : (tipo == 2 ? "Laica" : "Tutti");
+    }
+
+    private void onRicorrenzaClick(int ricorrenzaId) {
+        // Implementa la navigazione ai dettagli della ricorrenzaEntity
+        Toast.makeText(getContext(), "Clicked on ricorrenzaEntity with id: " + ricorrenzaId, Toast.LENGTH_SHORT).show();
+    }
+
+    private void onRicorrenzaDeleteClick(RicorrenzaConTipo ricorrenzaEntity) {
+        // Implementa la logica per eliminare una ricorrenzaEntity
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Conferma eliminazione")
+                .setMessage("Sei sicuro di voler eliminare questa ricorrenzaEntity?")
+                .setPositiveButton("Sì", (dialog, which) -> {
+                    viewModel.deleteRicorrenza(ricorrenzaEntity.ricorrenzaEntity);
+                    Toast.makeText(getContext(), "Ricorrenza eliminata", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("nome", binding.editTextNome.getText().toString());
+        outState.putString("tipo", binding.spinnerTipo.getText().toString());
+        outState.putString("dataInizio", binding.editTextDataInizio.getText().toString());
+        outState.putString("dataFine", binding.editTextDataFine.getText().toString());
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            binding.editTextNome.setText(savedInstanceState.getString("nome", ""));
+            binding.spinnerTipo.setText(savedInstanceState.getString("tipo", "Tutti"));
+            binding.editTextDataInizio.setText(savedInstanceState.getString("dataInizio", ""));
+            binding.editTextDataFine.setText(savedInstanceState.getString("dataFine", ""));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ripristinaDatiRicerca();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        salvaDatiRicerca();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        searchHandler.removeCallbacksAndMessages(null);
+        binding = null;
+    }
+}
+
+###############################
+// Contenuto di viewmodel/RicorrenzaViewModel.java
+
+package it.faustobe.santibailor.viewmodel;
+
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import android.util.Log;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.data.repository.GenericRepository;
+import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+
+public class RicorrenzaViewModel extends AndroidViewModel {
+    private RicorrenzaRepository ricorrenzaRepository;
+    private SavedStateHandle savedStateHandle;
+    private static final String KEY_SEARCH_CRITERIA = "search_criteria";
+    private static final String KEY_SEARCH_RESULTS = "search_results";
+    private GenericRepository<Ricorrenza> genericRepository;
+    private final MutableLiveData<Date> selectedDate = new MutableLiveData<>();
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeDelGiorno;
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeReligiose;
+    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeLaiche;
+    private final MutableLiveData<Boolean> deleteResult = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+    private final LiveData<List<RicorrenzaConTipo>> risultatiRicerca;
+    private static final String TAG = "RicorrenzaViewModel";
+    private final MutableLiveData<SearchCriteria> searchCriteria = new MutableLiveData<>();
+    private final MutableLiveData<List<RicorrenzaConTipo>> risultatiRicercaAvanzata = new MutableLiveData<>();
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
+    private static final int ITEMS_PER_PAGE = 15;
+    private int currentPage = 0;
+    private MutableLiveData<Integer> totalPages = new MutableLiveData<>(0);
+
+    public RicorrenzaViewModel(Application application) {
+        this(application, null);
+    }
+
+    public RicorrenzaViewModel(Application application, SavedStateHandle savedStateHandle) {
+        super(application);
+        this.savedStateHandle = savedStateHandle;
+        this.ricorrenzaRepository = new RicorrenzaRepository(application);
+        this.executorService = Executors.newSingleThreadExecutor();
+        this.mainHandler = new Handler(Looper.getMainLooper());
+
+        AppDatabase db = AppDatabase.getDatabase(application);
+        ricorrenzaRepository = new RicorrenzaRepository(application);
+        genericRepository = new GenericRepository<>(db.ricorrenzaDao());
+        selectedDate.setValue(new Date());
+
+        ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+            Log.d(TAG, "Debug - Richiesta ricorrenze per: giorno=" + giorno + ", mese=" + mese);
+            return ricorrenzaRepository.getRicorrenzeDelGiorno(giorno, mese);
+        });
+
+        ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+            return ricorrenzaRepository.getRicorrenzeReligiose(giorno, mese);
+        });
+
+        ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+            return ricorrenzaRepository.getRicorrenzeLaiche(giorno, mese);
+        });
+
+        risultatiRicerca = Transformations.switchMap(searchQuery, query -> {
+            Log.d(TAG, "Esecuzione ricerca per: " + query);
+            return Transformations.map(ricorrenzaRepository.cercaRicorrenzePerNome(query),
+                    ricorrenze -> {
+                        List<RicorrenzaConTipo> risultati = new ArrayList<>();
+                        for (Ricorrenza r : ricorrenze) {
+                            RicorrenzaConTipo ricorrenzaConTipo = new RicorrenzaConTipo();
+                            ricorrenzaConTipo.ricorrenzaEntity = r;
+                            ricorrenzaConTipo.tipoRicorrenzaEntity = null;
+                            risultati.add(ricorrenzaConTipo);
+                        }
+                        Log.d(TAG, "Risultati trovati: " + risultati.size());
+                        return risultati;
+                    }
+            );
+        });
+
+        savedStateHandle.getLiveData(KEY_SEARCH_CRITERIA, new SearchCriteria(null, null, null, null))
+                .observeForever(criteria -> {
+                    if (criteria != null) {
+                        ricorrenzaRepository.ricercaAvanzata(
+                                criteria.nome,
+                                criteria.tipo,
+                                criteria.dataInizio,
+                                criteria.dataFine
+                        ).observeForever(results -> savedStateHandle.set(KEY_SEARCH_RESULTS, results));
+                    }
+                });
+    }
+
+    public static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final SavedStateHandle savedStateHandle;
+
+        public Factory(Application application, SavedStateHandle savedStateHandle) {
+            this.application = application;
+            this.savedStateHandle = savedStateHandle;
+        }
+
+        @Override
+        public <T extends ViewModel> T create(Class<T> modelClass) {
+            return (T) new RicorrenzaViewModel(application, savedStateHandle);
+        }
+    }
+
+    public void insert(Ricorrenza ricorrenzaEntity, GenericRepository.OnOperationCompleteListener listener) {
+        genericRepository.insert(ricorrenzaEntity, listener);
+    }
+
+
+    public interface OnInsertCompleteListener {
+        void onInsertSuccess(int newId);
+        void onInsertFailure(String error);
+    }
+
+    public long insert(Ricorrenza ricorrenzaEntity) {
+        return ricorrenzaRepository.insert(ricorrenzaEntity);
+    }
+
+    public void setDate(Date date) {
+        selectedDate.setValue(date);
+    }
+
+    public LiveData<Date> getSelectedDate() {
+        return selectedDate;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno() {
+        return ricorrenzeDelGiorno;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose() {
+        return ricorrenzeReligiose;
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche() {
+        return ricorrenzeLaiche;
+    }
+
+    public void moveToNextDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.setValue(calendar.getTime());
+    }
+
+    public void moveToPreviousDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        selectedDate.setValue(calendar.getTime());
+    }
+
+    public void cercaRicorrenze(String query) {
+        Log.d("SearchDebug", "cercaRicorrenze chiamato con query: " + query);
+        searchQuery.setValue(query);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRisultatiRicerca() {
+        return risultatiRicerca;
+    }
+
+    public void update(Ricorrenza ricorrenzaEntity, GenericRepository.OnOperationCompleteListener listener) {
+        genericRepository.update(ricorrenzaEntity, listener);
+    }
+
+    public void delete(Ricorrenza ricorrenzaEntity, GenericRepository.OnOperationCompleteListener listener) {
+        genericRepository.delete(ricorrenzaEntity, listener);
+    }
+
+    public LiveData<Boolean> getDeleteResult() {
+        return deleteResult;
+    }
+
+    public void deleteRicorrenza(Ricorrenza ricorrenzaEntity) {
+        genericRepository.delete(ricorrenzaEntity, new GenericRepository.OnOperationCompleteListener() {
+            @Override
+            public void onSuccess(int id) {
+                deleteResult.postValue(true);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                deleteResult.postValue(false);
+            }
+        });
+    }
+
+    private MutableLiveData<Integer> totalItemCount = new MutableLiveData<>();
+
+    public void loadTotalItemCount() {
+        executorService.execute(() -> {
+            int count = ricorrenzaRepository.getTotalItemCount();
+            totalItemCount.postValue(count);
+        });
+    }
+
+    public LiveData<Integer> getTotalItemCount() {
+        return totalItemCount;
+    }
+
+    public void eseguiRicercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        long startTime = System.currentTimeMillis();
+        Log.d(TAG, "eseguiRicercaAvanzata started: nome=" + nome + ", tipo=" + tipo +
+                ", dataInizio=" + dataInizio + ", dataFine=" + dataFine);
+
+        executorService.execute(() -> {
+            List<RicorrenzaConTipo> result = ricorrenzaRepository.ricercaAvanzataSync(nome, tipo, dataInizio, dataFine);
+            long endTime = System.currentTimeMillis();
+            Log.d(TAG, "Ricerca completata in " + (endTime - startTime) + "ms. Risultati: " + (result != null ? result.size() : "null"));
+            mainHandler.post(() -> {
+                risultatiRicercaAvanzata.setValue(result != null ? result : new ArrayList<>());
+            });
+        });
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRisultatiRicercaAvanzata() {
+        return risultatiRicercaAvanzata;
+    }
+
+    public void clearRisultatiRicercaAvanzata() {
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+    }
+
+    private void saveSearchCriteria(SearchCriteria criteria) {
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_nome", criteria.nome);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_tipo", criteria.tipo);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataInizio", criteria.dataInizio);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataFine", criteria.dataFine);
+    }
+
+    public LiveData<SearchCriteria> getLastSearchCriteria() {
+        return savedStateHandle.getLiveData(KEY_SEARCH_CRITERIA);
+    }
+
+    public static class SearchCriteria implements Parcelable {
+        public String nome;
+        public Integer tipo;
+        public String dataInizio;
+        public String dataFine;
+
+        public SearchCriteria(String nome, Integer tipo, String dataInizio, String dataFine) {
+            this.nome = nome;
+            this.tipo = tipo;
+            this.dataInizio = dataInizio;
+            this.dataFine = dataFine;
+        }
+
+        protected SearchCriteria(Parcel in) {
+            nome = in.readString();
+            if (in.readByte() == 0) {
+                tipo = null;
+            } else {
+                tipo = in.readInt();
+            }
+            dataInizio = in.readString();
+            dataFine = in.readString();
+        }
+
+        public static final Creator<SearchCriteria> CREATOR = new Creator<SearchCriteria>() {
+            @Override
+            public SearchCriteria createFromParcel(Parcel in) {
+                return new SearchCriteria(in);
+            }
+
+            @Override
+            public SearchCriteria[] newArray(int size) {
+                return new SearchCriteria[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(nome);
+            if (tipo == null) {
+                dest.writeByte((byte) 0);
+            } else {
+                dest.writeByte((byte) 1);
+                dest.writeInt(tipo);
+            }
+            dest.writeString(dataInizio);
+            dest.writeString(dataFine);
+        }
+    }
+
+    public void setLastSearchCriteria(SearchCriteria criteria) {
+        //lastSearchCriteria.setValue(criteria);
+    }
+
+    // per ottenere una ricorrenzaEntity specifica per ID
+    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
+        return ricorrenzaRepository.getRicorrenzaById(id);
+    }
+
+    public void eseguiRicercaAvanzataPaginata(String nome, Integer tipo, String dataInizio, String dataFine, int page) {
+        currentPage = page;
+        int offset = page * ITEMS_PER_PAGE;
+
+        executorService.execute(() -> {
+            List<RicorrenzaConTipo> result = ricorrenzaRepository.ricercaAvanzataPaginata(nome, tipo, dataInizio, dataFine, ITEMS_PER_PAGE, offset);
+            int total = ricorrenzaRepository.contaTotaleRisultati(nome, tipo, dataInizio, dataFine);
+            int pages = (int) Math.ceil((double) total / ITEMS_PER_PAGE);
+
+            mainHandler.post(() -> {
+                risultatiRicercaAvanzata.setValue(result);
+                totalPages.setValue(pages);
+            });
+        });
+    }
+
+    public LiveData<Integer> getTotalPages() {
+        return totalPages;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void debugRicorrenzeOggi() {
+        Date oggi = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(oggi);
+        int giorno = cal.get(Calendar.DAY_OF_MONTH);
+        int mese = cal.get(Calendar.MONTH) + 1;
+
+        executorService.execute(() -> {
+            int count = ricorrenzaRepository.contaRicorrenzePerGiornoMese(giorno, mese);
+            List<Ricorrenza> ricorrenze = ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese);
+
+            Log.d(TAG, "Ricorrenze per oggi (" + giorno + "/" + mese + "): " + count);
+            for (Ricorrenza r : ricorrenze) {
+                Log.d(TAG, "Ricorrenza: " + r.toString());
+            }
+        });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executorService.shutdown();
+    }
+}
+
+###############################
+// Contenuto di repository/RicorrenzaRepository.java
+
+package it.faustobe.santibailor.data.repository;
+
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+import it.faustobe.santibailor.data.entities.TipoRicorrenza;
+
+public class RicorrenzaRepository {
+    private RicorrenzaDao ricorrenzaDao;
+    private ExecutorService executorService;
+    private static final String TAG = "RicorrenzaRepository";
+
+    public RicorrenzaRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        ricorrenzaDao = db.ricorrenzaDao();
+        executorService = Executors.newSingleThreadExecutor();
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenza.RELIGIOSA);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenza.LAICA);
+    }
+
+    public void update(Ricorrenza ricorrenzaEntity) {
+        executorService.execute(() -> ricorrenzaDao.update(ricorrenzaEntity));
+    }
+
+    public void delete(Ricorrenza ricorrenzaEntity) {
+        executorService.execute(() -> ricorrenzaDao.delete(ricorrenzaEntity));
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public int contaRicorrenzePerGiornoMese(int giorno, int mese) {
+        return ricorrenzaDao.contaRicorrenzePerGiornoMese(giorno, mese);
+    }
+
+    public List<Ricorrenza> getRicorrenzePerGiornoMese(int giorno, int mese) {
+        return ricorrenzaDao.getRicorrenzePerGiornoMese(giorno, mese);
+    }
+
+    public long insert(Ricorrenza ricorrenzaEntity) {
+        // Assicuriamoci che l'ID non sia impostato prima dell'inserimento
+        ricorrenzaEntity.setId(0);  // O qualsiasi altro valore che il tuo database usa per indicare un nuovo record
+        return ricorrenzaDao.insert(ricorrenzaEntity);
+    }
+
+    public LiveData<List<Ricorrenza>> getRicorrenzePerTipo(String tipo) {
+        return ricorrenzaDao.getRicorrenzePerTipo(tipo);
+    }
+
+    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
+        return ricorrenzaDao.getRicorrenzaById(id);
+    }
+
+    public LiveData<List<Ricorrenza>> cercaRicorrenzePerNome(String nome) {
+        Log.d("SearchDebug", "cercaRicorrenzePerNome chiamato con nome: " + nome);
+        return ricorrenzaDao.cercaRicorrenzePerNome("%" + nome + "%");
+    }
+
+    public void ricercaAvanzataAsync(String nome, Integer tipo, String dataInizio, String dataFine,
+                                     int limit, int offset, OnSearchResultCallback callback) {
+        executorService.execute(() -> {
+            Integer meseInizio = getMonthFromDate(dataInizio);
+            Integer meseFine = getMonthFromDate(dataFine);
+            Integer giornoInizio = getDayFromDate(dataInizio);
+            Integer giornoFine = getDayFromDate(dataFine);
+
+            List<RicorrenzaConTipo> results = ricorrenzaDao.ricercaAvanzataPaginata(nome, tipo,
+                    meseInizio, meseFine, giornoInizio, giornoFine, limit, offset);
+
+            new Handler(Looper.getMainLooper()).post(() -> callback.onResult(results));
+        });
+    }
+
+    public interface OnSearchResultCallback {
+        void onResult(List<RicorrenzaConTipo> results);
+    }
+
+    public LiveData<List<RicorrenzaConTipo>> ricercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        Log.d(TAG, "ricercaAvanzata: nome=" + nome + ", tipo=" + tipo +
+                ", dataInizio=" + dataInizio + ", dataFine=" + dataFine);
+
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        Log.d(TAG, "Parametri query: meseInizio=" + meseInizio + ", meseFine=" + meseFine +
+                ", giornoInizio=" + giornoInizio + ", giornoFine=" + giornoFine);
+
+        return Transformations.map(
+                ricorrenzaDao.ricercaAvanzata(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine),
+                result -> {
+                    Log.d(TAG, "Risultati ricerca avanzata: " + (result != null ? result.size() : 0));
+                    return result != null ? result : new ArrayList<>();
+                }
+        );
+    }
+
+    public List<RicorrenzaConTipo> ricercaAvanzataSync(String nome, Integer tipo, String dataInizio, String dataFine) {
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        return ricorrenzaDao.ricercaAvanzataSync(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine);
+    }
+
+    public List<RicorrenzaConTipo> ricercaAvanzataPaginata(String nome, Integer tipo, String dataInizio, String dataFine, int limit, int offset) {
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        return ricorrenzaDao.ricercaAvanzataPaginata(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine, limit, offset);
+    }
+
+    public int contaTotaleRisultati(String nome, Integer tipo, String dataInizio, String dataFine) {
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        return ricorrenzaDao.contaRisultatiRicercaAvanzata(nome, tipo, meseInizio, meseFine, giornoInizio, giornoFine);
+    }
+
+
+    private Integer getMonthFromDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return null;
+        }
+        String[] parts = date.split("/");
+        if (parts.length == 2) {
+            return Integer.parseInt(parts[1]);
+        }
+        return null;
+    }
+
+    private Integer getDayFromDate(String date) {
+        if (date == null || date.isEmpty()) {
+            return null;
+        }
+        String[] parts = date.split("/");
+        if (parts.length == 2) {
+            return Integer.parseInt(parts[0]);
+        }
+        return null;
+    }
+
+    public int getTotalItemCount() {
+        return ricorrenzaDao.getTotalItemCount();
+    }
+
+    //inizio metodi per debug
+    public void debugRicorrenzeOggi() {
+        executorService.execute(() -> {
+            Calendar cal = Calendar.getInstance();
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH) + 1;
+
+            List<Ricorrenza> ricorrenze = ricorrenzaDao.getRicorrenzePerGiornoMese(giorno, mese);
+            Log.d(TAG, "Debug - Ricorrenze per oggi (" + giorno + "/" + mese + "): " + ricorrenze.size());
+            for (Ricorrenza r : ricorrenze) {
+                Log.d(TAG, "Debug - Ricorrenza: " + r.toString());
+            }
+        });
+    }
+
+    public void testRicorrenzeDelGiorno(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<Ricorrenza> risultati = ricorrenzaDao.debugRicorrenzeDelGiorno(giorno, mese);
+            Log.d(TAG, "Test - Ricorrenze per " + giorno + "/" + mese + ": " + risultati.size());
+            for (Ricorrenza r : risultati) {
+                Log.d(TAG, "Test - Ricorrenza: " + r.toString());
+            }
+        });
+    }
+
+    public void debugQueryRicercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        Integer meseInizio = getMonthFromDate(dataInizio);
+        Integer meseFine = getMonthFromDate(dataFine);
+        Integer giornoInizio = getDayFromDate(dataInizio);
+        Integer giornoFine = getDayFromDate(dataFine);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT * FROM santi WHERE 1=1");
+
+        if (nome != null && !nome.isEmpty()) {
+            queryBuilder.append(" AND santo LIKE '%").append(nome).append("%'");
+        }
+        if (tipo != null) {
+            queryBuilder.append(" AND tipo_ricorrenza_id = ").append(tipo);
+        }
+        if (meseInizio != null && giornoInizio != null) {
+            queryBuilder.append(" AND (id_mesi > ").append(meseInizio)
+                    .append(" OR (id_mesi = ").append(meseInizio)
+                    .append(" AND giorno >= ").append(giornoInizio).append("))");
+        }
+        if (meseFine != null && giornoFine != null) {
+            queryBuilder.append(" AND (id_mesi < ").append(meseFine)
+                    .append(" OR (id_mesi = ").append(meseFine)
+                    .append(" AND giorno <= ").append(giornoFine).append("))");
+        }
+
+        String query = queryBuilder.toString();
+        Log.d(TAG, "Debug - Query SQL simulata: " + query);
+    }
+    //fine metodi per debug
+
+    public LiveData<List<Ricorrenza>> getAllRicorrenze() {
+        return ricorrenzaDao.getAllRicorrenze();
+    }
+}
+
+
+###############################
+// Contenuto di dao/RicorrenzaDao.java
+
+package it.faustobe.santibailor.data.dao;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Transaction;
+import androidx.room.Update;
+
+import java.util.List;
+
+import it.faustobe.santibailor.data.entities.Ricorrenza;
+import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
+
+@Dao
+public interface RicorrenzaDao extends BaseDao<Ricorrenza>{
+
+    @Transaction
+    @Query("SELECT * FROM santi")
+    List<RicorrenzaConTipo> getRicorrenzeConTipo();
+
+
+    @Transaction
+    @Query("SELECT santi.* FROM santi WHERE giorno = :giorno AND id_mesi = :mese ORDER BY RANDOM()")
+    LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno(int giorno, int mese);
+
+    @Transaction
+    @Query("SELECT santi.* FROM santi WHERE giorno = :giorno AND id_mesi = :mese AND tipo_ricorrenza_id = :tipoId")
+    LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiornoPerTipo(int giorno, int mese, int tipoId);
+
+    @Transaction
+    @Query("SELECT * FROM santi WHERE tipo_ricorrenza_id = :tipo")
+    LiveData<List<Ricorrenza>> getRicorrenzePerTipo(String tipo);
+
+    @Transaction
+    @Query("SELECT * FROM santi WHERE id = :id")
+    LiveData<Ricorrenza> getRicorrenzaById(int id);
+
+    @Transaction
+    @Query("SELECT * FROM santi WHERE santo LIKE :nome")
+    LiveData<List<Ricorrenza>> cercaRicorrenzePerNome(String nome);
+
+    @Query("SELECT COUNT(*) FROM santi")
+    int getTotalItemCount();
+
+    @Transaction
+    @Query("SELECT * FROM santi WHERE " +
+            "(:nome IS NULL OR santo LIKE '%' || :nome || '%') " +
+            "AND (:tipo IS NULL OR tipo_ricorrenza_id = :tipo) " +
+            "AND (:meseInizio IS NULL OR id_mesi >= :meseInizio) " +
+            "AND (:meseFine IS NULL OR id_mesi <= :meseFine) " +
+            "AND (:giornoInizio IS NULL OR giorno >= :giornoInizio) " +
+            "AND (:giornoFine IS NULL OR giorno <= :giornoFine)")
+    LiveData<List<RicorrenzaConTipo>> ricercaAvanzata(String nome, Integer tipo,
+                                                      Integer meseInizio, Integer meseFine,
+                                                      Integer giornoInizio, Integer giornoFine);
+
+    @Query("SELECT * FROM santi WHERE " +
+            "(:nome IS NULL OR santo LIKE '%' || :nome || '%') " +
+            "AND (:tipo IS NULL OR tipo_ricorrenza_id = :tipo) " +
+            "AND (:meseInizio IS NULL OR id_mesi > :meseInizio OR (id_mesi = :meseInizio AND giorno >= :giornoInizio)) " +
+            "AND (:meseFine IS NULL OR id_mesi < :meseFine OR (id_mesi = :meseFine AND giorno <= :giornoFine))")
+    List<RicorrenzaConTipo> ricercaAvanzataSync(String nome, Integer tipo,
+                                                Integer meseInizio, Integer meseFine,
+                                                Integer giornoInizio, Integer giornoFine);
+
+    @Query("SELECT * FROM santi WHERE " +
+            "(:nome IS NULL OR santo LIKE '%' || :nome || '%') " +
+            "AND (:tipo IS NULL OR tipo_ricorrenza_id = :tipo) " +
+            "AND (:meseInizio IS NULL OR id_mesi > :meseInizio OR (id_mesi = :meseInizio AND giorno >= :giornoInizio)) " +
+            "AND (:meseFine IS NULL OR id_mesi < :meseFine OR (id_mesi = :meseFine AND giorno <= :giornoFine)) " +
+            "LIMIT :limit OFFSET :offset")
+    List<RicorrenzaConTipo> ricercaAvanzataPaginata(String nome, Integer tipo,
+                                                    Integer meseInizio, Integer meseFine,
+                                                    Integer giornoInizio, Integer giornoFine,
+                                                    int limit, int offset);
+
+    @Query("SELECT COUNT(*) FROM santi WHERE " +
+            "(:nome IS NULL OR santo LIKE '%' || :nome || '%') " +
+            "AND (:tipo IS NULL OR tipo_ricorrenza_id = :tipo) " +
+            "AND (:meseInizio IS NULL OR id_mesi > :meseInizio OR (id_mesi = :meseInizio AND giorno >= :giornoInizio)) " +
+            "AND (:meseFine IS NULL OR id_mesi < :meseFine OR (id_mesi = :meseFine AND giorno <= :giornoFine))")
+    int contaRisultatiRicercaAvanzata(String nome, Integer tipo,
+                                      Integer meseInizio, Integer meseFine,
+                                      Integer giornoInizio, Integer giornoFine);
+    @Transaction
+    @Query("SELECT * FROM santi ORDER BY id_mesi, giorno")
+    LiveData<List<Ricorrenza>> getAllRicorrenze();
+
+    //inizio metodi per debug
+    @Query("SELECT COUNT(*) FROM santi WHERE giorno = :giorno AND id_mesi = :mese")
+    int contaRicorrenzePerGiornoMese(int giorno, int mese);
+
+    @Query("SELECT * FROM santi WHERE giorno = :giorno AND id_mesi = :mese")
+    List<Ricorrenza> getRicorrenzePerGiornoMese(int giorno, int mese);
+
+    @Query("SELECT * FROM santi WHERE giorno = :giorno AND id_mesi = :mese")
+    List<Ricorrenza> debugRicorrenzeDelGiorno(int giorno, int mese);
+    //fine metodi per debug
+
+
+}
+
+###############################
+// Contenuto di layout/fragment_search.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome del santo"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tipo di ricorrenzaEntity"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_marginBottom="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/spinner_tipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Data inizio"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginEnd="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_data_inizio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Data fine"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginStart="8dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edit_text_data_fine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/button_cerca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cerca"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/text_view_total_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/button_debug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Debug Info"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/text_view_risultati"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/text_view_no_results"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nessun risultato trovato"
+            android:textAlignment="center"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_risultati"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false" />
+
+        <LinearLayout
+            android:id="@+id/layout_pagination"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/button_prev_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precedente"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+            <TextView
+                android:id="@+id/text_view_page_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="Pagina 1 di 1" />
+
+            <Button
+                android:id="@+id/button_next_page"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Successiva"
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
+

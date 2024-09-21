@@ -1,0 +1,69 @@
+# Roadmap per il Progetto SantiBailor
+
+## Fase 1: Ottimizzazione e Completamento del Calendario (4 settimane)
+
+### Settimana 1-2: Risoluzione dei problemi noti
+- Correggere la persistenza dei risultati di ricerca
+- Ottimizzare la logica di esecuzione della ricerca
+- Migliorare la sincronizzazione UI-ViewModel
+
+### Settimana 3: Completamento funzionalità del calendario
+- Perfezionare la visualizzazione delle ricorrenze del giorno
+- Ottimizzare l'aggiunta e modifica di ricorrenze esistenti
+
+### Settimana 4: Testing e rifinitura
+- Implementare unit test per le funzionalità del calendario
+- Effettuare test di integrazione
+- Correggere eventuali bug emersi
+
+## Fase 2: Sviluppo della Gestione Impegni Personali (4 settimane)
+
+### Settimana 5: Analisi e design
+- Progettare l'interfaccia utente per la matrice di Eisenhower
+- Definire la struttura dati per gli impegni personali
+
+### Settimana 6-7: Implementazione
+- Sviluppare la UI per la gestione degli impegni
+- Implementare la logica di prioritizzazione
+- Integrare con il database Room
+
+### Settimana 8: Testing e ottimizzazione
+- Eseguire test funzionali sulla gestione degli impegni
+- Ottimizzare le performance
+- Integrare con la sezione del calendario
+
+## Fase 3: Sviluppo delle Liste della Spesa (3 settimane)
+
+### Settimana 9: Design e pianificazione
+- Progettare l'interfaccia per la creazione e gestione delle liste della spesa
+- Definire la struttura dati per le liste della spesa
+
+### Settimana 10-11: Implementazione e integrazione
+- Sviluppare la UI per le liste della spesa
+- Implementare la logica di gestione delle liste
+- Integrare con il database Room
+- Testare e ottimizzare le funzionalità
+
+## Fase 4: Integrazione, Testing Globale e Preparazione al Lancio (2 settimane)
+
+### Settimana 12: Integrazione finale e testing
+- Integrare tutte le componenti dell'app
+- Eseguire test di sistema completi
+- Ottimizzare le performance generali dell'app
+
+### Settimana 13: Preparazione al lancio
+- Finalizzare l'interfaccia utente e l'esperienza utente
+- Preparare i materiali per il Google Play Store
+- Implementare analytics e crash reporting
+
+## Milestone Chiave:
+1. Fine Settimana 4: MVP del Calendario completato
+2. Fine Settimana 8: Gestione Impegni Personali integrata
+3. Fine Settimana 11: Funzionalità Liste della Spesa completata
+4. Fine Settimana 13: App pronta per il lancio
+
+## Attività Parallele (da distribuire durante lo sviluppo):
+- Definire e implementare una strategia di testing completa
+- Pianificare la strategia di distribuzione e marketing
+- Sviluppare documentazione utente e materiali di supporto
+- Preparare un piano per la manutenzione e gli aggiornamenti post-lancio

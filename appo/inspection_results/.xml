@@ -1,0 +1,835 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/it/faustobe/santibailor/ExampleInstrumentedTest.java</file>
+  <line>19</line>
+  <module>SantiBailor.app.androidTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ExampleInstrumentedTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>23</length>
+  <highlighted_element>ExampleInstrumentedTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/it/faustobe/santibailor/ExampleInstrumentedTest.java</file>
+  <line>21</line>
+  <module>SantiBailor.app.androidTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.ExampleInstrumentedTest void useAppContext()" />
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>13</length>
+  <highlighted_element>useAppContext</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/MainActivity.java</file>
+  <line>35</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.main.MainActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>MainActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/dao/RicorrenzaDao.java</file>
+  <line>20</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.dao</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.local.dao.RicorrenzaDao" />
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>13</length>
+  <highlighted_element>RicorrenzaDao</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>&amp;nbsp;Interface is not implemented.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/dao/TipoRicorrenzaDao.java</file>
+  <line>13</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.dao</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao" />
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>17</length>
+  <highlighted_element>TipoRicorrenzaDao</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>&amp;nbsp;Interface is not implemented.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/DatabaseEntity.java</file>
+  <line>4</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.DatabaseEntity int getId()" />
+  <language>JAVA</language>
+  <offset>8</offset>
+  <length>5</length>
+  <highlighted_element>getId</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used as a member of this interface, but only as a member of the implementation class(es). The project will stay compilable if the method is removed from the interface.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/DatabaseEntity.java</file>
+  <line>5</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.DatabaseEntity void setId(int id)" />
+  <language>JAVA</language>
+  <offset>9</offset>
+  <length>5</length>
+  <highlighted_element>setId</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used as a member of this interface, but only as a member of the implementation class(es). The project will stay compilable if the method is removed from the interface.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>11</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>10</length>
+  <highlighted_element>Ricorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has 7 instantiations, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>33</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza Ricorrenza()" />
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>10</length>
+  <highlighted_element>Ricorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has 4 usages, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>36</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza Ricorrenza(android.os.Parcel in)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>10</length>
+  <highlighted_element>Ricorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has 3 usages, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>66</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza CREATOR" />
+  <language>JAVA</language>
+  <offset>44</offset>
+  <length>7</length>
+  <highlighted_element>CREATOR</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field has no usages.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>98</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza java.lang.String getImg()" />
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>6</length>
+  <highlighted_element>getImg</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>99</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza void setImg(java.lang.String img)" />
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>6</length>
+  <highlighted_element>setImg</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>9</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>RicorrenzaConTipo</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has one instantiation, but it is not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>21</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo RicorrenzaConTipo()" />
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>17</length>
+  <highlighted_element>RicorrenzaConTipo</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>25</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo RicorrenzaConTipo(it.faustobe.santibailor.data.entities.Ricorrenza ricorrenzaEntity, it.faustobe.santibailor.data.entities.TipoRicorrenza tipoRicorrenzaEntity)" />
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>17</length>
+  <highlighted_element>RicorrenzaConTipo</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>32</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo RicorrenzaConTipo(android.os.Parcel in)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>17</length>
+  <highlighted_element>RicorrenzaConTipo</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has one usage, but it is not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>48</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo CREATOR" />
+  <language>JAVA</language>
+  <offset>51</offset>
+  <length>7</length>
+  <highlighted_element>CREATOR</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field has no usages.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/TipoRicorrenza.java</file>
+  <line>11</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.TipoRicorrenza" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>14</length>
+  <highlighted_element>TipoRicorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has 6 instantiations, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/TipoRicorrenza.java</file>
+  <line>24</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.TipoRicorrenza TipoRicorrenza(int id, java.lang.String nome)" />
+  <language>JAVA</language>
+  <offset>11</offset>
+  <length>14</length>
+  <highlighted_element>TipoRicorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has 3 usages, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/TipoRicorrenza.java</file>
+  <line>44</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.data.entities.TipoRicorrenza TipoRicorrenza(android.os.Parcel in)" />
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>14</length>
+  <highlighted_element>TipoRicorrenza</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has 3 usages, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/TipoRicorrenza.java</file>
+  <line>60</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.data.entities.TipoRicorrenza CREATOR" />
+  <language>JAVA</language>
+  <offset>48</offset>
+  <length>7</length>
+  <highlighted_element>CREATOR</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field has no usages.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>58</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>15</length>
+  <highlighted_element>AddItemFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/dashboard/DashboardFragment.java</file>
+  <line>15</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.dashboard</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.dashboard.DashboardFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>DashboardFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/dialogs/MonthYearPickerDialog.java</file>
+  <line>19</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.dialogs</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ui.dialogs.MonthYearPickerDialog" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>MonthYearPickerDialog</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/EditRicorrenzaFragment.java</file>
+  <line>25</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>22</length>
+  <highlighted_element>EditRicorrenzaFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>36</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>HomeFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/notifications/NotificationsFragment.java</file>
+  <line>15</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.notifications</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.notifications.NotificationsFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>NotificationsFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/search/SearchFragment.java</file>
+  <line>44</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.search</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.search.SearchFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>14</length>
+  <highlighted_element>SearchFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/settings/SettingsFragment.java</file>
+  <line>25</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.settings</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.settings.SettingsFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>16</length>
+  <highlighted_element>SettingsFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/util/MyAppGlideModule.java</file>
+  <line>10</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.util</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.util.MyAppGlideModule" />
+  <language>JAVA</language>
+  <offset>19</offset>
+  <length>16</length>
+  <highlighted_element>MyAppGlideModule</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>475</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria" />
+  <language>JAVA</language>
+  <offset>24</offset>
+  <length>14</length>
+  <highlighted_element>SearchCriteria</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class has 2 instantiations, but they are not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>481</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria SearchCriteria(java.lang.String nome, java.lang.Integer tipo, java.lang.String dataInizio, java.lang.String dataFine)" />
+  <language>JAVA</language>
+  <offset>15</offset>
+  <length>14</length>
+  <highlighted_element>SearchCriteria</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has one usage, but it is not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>488</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria SearchCriteria(android.os.Parcel in)" />
+  <language>JAVA</language>
+  <offset>18</offset>
+  <length>14</length>
+  <highlighted_element>SearchCriteria</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Constructor has one usage, but it is not reachable from entry points.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>499</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria CREATOR" />
+  <language>JAVA</language>
+  <offset>52</offset>
+  <length>7</length>
+  <highlighted_element>CREATOR</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Field has no usages.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/it/faustobe/santibailor/ExampleUnitTest.java</file>
+  <line>12</line>
+  <module>SantiBailor.app.unitTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ExampleUnitTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>15</length>
+  <highlighted_element>ExampleUnitTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/it/faustobe/santibailor/ExampleUnitTest.java</file>
+  <line>14</line>
+  <module>SantiBailor.app.unitTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.ExampleUnitTest void addition_isCorrect()" />
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>18</length>
+  <highlighted_element>addition_isCorrect</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Method is never used.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/androidTest/java/it/faustobe/santibailor/ExampleInstrumentedTest.java</file>
+  <line>19</line>
+  <module>SantiBailor.app.androidTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ExampleInstrumentedTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>23</length>
+  <highlighted_element>ExampleInstrumentedTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/MainActivity.java</file>
+  <line>35</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.main.MainActivity" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>MainActivity</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>58</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>15</length>
+  <highlighted_element>AddItemFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/dashboard/DashboardFragment.java</file>
+  <line>15</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.dashboard</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.dashboard.DashboardFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>17</length>
+  <highlighted_element>DashboardFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/dialogs/MonthYearPickerDialog.java</file>
+  <line>19</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.dialogs</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ui.dialogs.MonthYearPickerDialog" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>MonthYearPickerDialog</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/EditRicorrenzaFragment.java</file>
+  <line>25</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>22</length>
+  <highlighted_element>EditRicorrenzaFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/HomeFragment.java</file>
+  <line>36</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.home.HomeFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>12</length>
+  <highlighted_element>HomeFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/notifications/NotificationsFragment.java</file>
+  <line>15</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.notifications</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.notifications.NotificationsFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>21</length>
+  <highlighted_element>NotificationsFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/search/SearchFragment.java</file>
+  <line>44</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.search</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.search.SearchFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>14</length>
+  <highlighted_element>SearchFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/settings/SettingsFragment.java</file>
+  <line>25</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.settings</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.features.settings.SettingsFragment" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>16</length>
+  <highlighted_element>SettingsFragment</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/util/MyAppGlideModule.java</file>
+  <line>10</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.util</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.util.MyAppGlideModule" />
+  <language>JAVA</language>
+  <offset>19</offset>
+  <length>16</length>
+  <highlighted_element>MyAppGlideModule</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/test/java/it/faustobe/santibailor/ExampleUnitTest.java</file>
+  <line>12</line>
+  <module>SantiBailor.app.unitTest</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.ExampleUnitTest" />
+  <language>JAVA</language>
+  <offset>13</offset>
+  <length>15</length>
+  <highlighted_element>ExampleUnitTest</highlighted_element>
+  <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+  <hints>
+    <hint value="comment" />
+    <hint value="delete" />
+  </hints>
+  <description>Class is not instantiated.</description>
+</problem>
+</problems>

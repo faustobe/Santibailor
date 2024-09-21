@@ -1,0 +1,42 @@
+   3034   <problem_class id="SpellCheckingInspection" severity="TYPO" attribute_key="TYPO">Typo</problem_class>
+     79   <problem_class id="unused" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+     49   <problem_class id="" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">unused declaration</problem_class>
+     37   <problem_class id="AndroidLintHardcodedText" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Hardcoded text</problem_class>
+     28   <problem_class id="DataFlowIssue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Nullability and data flow problems</problem_class>
+     25   <problem_class id="AndroidLintUnusedResources" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused resources</problem_class>
+     20   <problem_class id="UNUSED_IMPORT" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused import</problem_class>
+     20   <problem_class id="CheckTagEmptyBody" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Empty element content</problem_class>
+     16   <problem_class id="AndroidLintGradleDependency" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Obsolete Gradle Dependency</problem_class>
+     13   <problem_class id="AndroidLintUseTomlInstead" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Use TOML Version Catalog Instead</problem_class>
+     12   <problem_class id="AndroidLintSetTextI18n" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">TextView Internationalization</problem_class>
+     10   <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+      9   <problem_class id="NullableProblems" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull/@Nullable problems</problem_class>
+      7   <problem_class id="unused" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unused declaration</problem_class>
+      7   <problem_class id="CodeBlock2Expr" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Statement lambda can be replaced with expression lambda</problem_class>
+      6   <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+      5   <problem_class id="XmlUnusedNamespaceDeclaration" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused schema declaration</problem_class>
+      4   <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+      4   <problem_class id="ConstantValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Constant values</problem_class>
+      3   <problem_class id="FieldCanBeLocal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Field can be local</problem_class>
+      3   <problem_class id="AndroidLintNotifyDataSetChanged" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Invalidating All RecyclerView Data</problem_class>
+      3   <problem_class id="AndroidLintLabelFor" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing accessibility label</problem_class>
+      2   <problem_class id="UnnecessaryModuleDependencyInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary module dependency</problem_class>
+      2   <problem_class id="ThrowablePrintStackTrace" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Call to 'printStackTrace()'</problem_class>
+      2   <problem_class id="FieldMayBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Field may be 'final'</problem_class>
+      2   <problem_class id="Deprecation" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated API usage</problem_class>
+      1   <problem_class id="UnusedVersionCatalogEntry" severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused version catalog entry</problem_class>
+      1   <problem_class id="UNCHECKED_WARNING" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unchecked warning</problem_class>
+      1   <problem_class id="SameReturnValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method always returns the same value</problem_class>
+      1   <problem_class id="SameParameterValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method parameter always has the same value</problem_class>
+      1   <problem_class id="NotNullFieldNotInitialized" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">@NotNull field is not initialized</problem_class>
+      1   <problem_class id="InnerClassMayBeStatic" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Inner class may be 'static'</problem_class>
+      1   <problem_class id="Convert2Lambda" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Anonymous type can be replaced with lambda</problem_class>
+      1   <problem_class id="ClassCanBeRecord" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Class can be record class</problem_class>
+      1   <problem_class id="AndroidLintVectorPath" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Long vector paths</problem_class>
+      1   <problem_class id="AndroidLintUselessParent" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary parent layout</problem_class>
+      1   <problem_class id="AndroidLintUseCompoundDrawables" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Node can be replaced by a TextView with compound drawables</problem_class>
+      1   <problem_class id="AndroidLintOverdraw" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Overdraw: Painting regions more than once</problem_class>
+      1   <problem_class id="AndroidLintInefficientWeight" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Inefficient layout weight</problem_class>
+      1   <problem_class id="AndroidLintIconLocation" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image defined in density-independent drawable folder</problem_class>
+      1   <problem_class id="AndroidLintDisableBaselineAlignment" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Missing baselineAligned attribute</problem_class>
+      1   <problem_class id="AndroidLintDefaultLocale" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Implied default locale in case conversion</problem_class>

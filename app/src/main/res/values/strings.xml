@@ -3,5 +3,13 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="title_edit_ricorrenza">Edit Ricorrenza</string>
     <string name="background_description">background description</string>
+    <string name="navigation_drawer_open">Apri menu di navigazione</string>
+    <string name="navigation_drawer_close">Chiudi menu di navigazione</string>
+    <string name="create">Crea</string>
+    <string name="update">Aggiorna</string>
+    <string name="saint_of_day">Santo del giorno: %s</string>
+    <string name="immagine_ricorrenza">Immagine ricorrenza</string>
 </resources>

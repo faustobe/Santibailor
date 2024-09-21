@@ -1,0 +1,56 @@
+Inventario delle funzionalità esistenti:
+
+1. Calendario e Ricorrenze:
+   - Visualizzazione delle ricorrenze del giorno
+   - Navigazione tra i giorni (avanti/indietro) (non attiva)
+   - Visualizzazione separata di ricorrenze religiose e laiche
+   - Aggiunta di nuove ricorrenze
+   - Modifica di ricorrenze esistenti
+   - Eliminazione di ricorrenze
+
+2. Ricerca:
+   - Ricerca avanzata per nome, tipo, data di inizio e data di fine
+   - Visualizzazione dei risultati di ricerca in una lista
+
+3. Interfaccia utente:
+   - Menu di navigazione inferiore (bottom navigation)
+   - Visualizzazione dettagliata delle ricorrenze
+
+Anomalie note:
+
+1. Problemi di ricerca:
+   - Risultati della ricerca non corrispondenti agli item effettivamente presenti nel database
+   - Possibili problemi di performance durante la ricerca con grandi set di dati
+
+2. Interfaccia utente:
+   - Malfunzionamento del menu di navigazione inferiore (recentemente emerso)
+   - Day picker per la ricerca considerato scomodo dagli utenti
+
+3. Gestione della memoria:
+   - Potenziali problemi di memoria durante le operazioni di ricerca (risolti parzialmente)
+
+4. Persistenza dei dati:
+   - Problemi precedenti con la persistenza dei risultati di ricerca (potenzialmente risolti)
+
+5. Sincronizzazione UI-ViewModel:
+   - Possibili problemi di sincronizzazione tra l'interfaccia utente e il ViewModel
+
+
+Basandoci su questa analisi, possiamo procedere con i seguenti passi:
+
+1. Prioritizzare i problemi:
+   - La ricerca sembra essere il problema più critico, seguito dal malfunzionamento del menu di navigazione inferiore.
+   - I problemi di performance e gestione della memoria dovrebbero essere affrontati successivamente.
+
+2. Creare test automatizzati:
+   - Iniziare con test unitari per RicorrenzaViewModel e RicorrenzaRepository, concentrandosi sulla logica di ricerca.
+   - Creare test di integrazione per verificare l'interazione tra ViewModel, Repository e Dao.
+   - Implementare test UI per il menu di navigazione inferiore e la funzionalità di ricerca.
+
+3. Implementare logging dettagliato:
+   - Aggiungere log dettagliati in punti critici, specialmente nella logica di ricerca e nella gestione del menu di navigazione.
+
+4. Refactoring graduale:
+   - Considerare il refactoring della logica di ricerca per migliorare le prestazioni e la precisione.
+   - Valutare l'implementazione di un sistema di paginazione per gestire grandi set di dati.
+

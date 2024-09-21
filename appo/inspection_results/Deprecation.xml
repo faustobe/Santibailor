@@ -1,0 +1,28 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>270</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment void onActivityResult(int requestCode, int resultCode, android.content.Intent data)" />
+  <problem_class id="Deprecation" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated API usage</problem_class>
+  <description>Overrides deprecated method in 'androidx.fragment.app.Fragment'</description>
+  <highlighted_element>onActivityResult</highlighted_element>
+  <language>JAVA</language>
+  <offset>16</offset>
+  <length>16</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/add/AddItemFragment.java</file>
+  <line>271</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.add</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.add.AddItemFragment void onActivityResult(int requestCode, int resultCode, android.content.Intent data)" />
+  <problem_class id="Deprecation" severity="WARNING" attribute_key="DEPRECATED_ATTRIBUTES">Deprecated API usage</problem_class>
+  <description>'onActivityResult(int, int, android.content.Intent)' is deprecated</description>
+  <highlighted_element>onActivityResult</highlighted_element>
+  <language>JAVA</language>
+  <offset>14</offset>
+  <length>16</length>
+</problem>
+</problems>

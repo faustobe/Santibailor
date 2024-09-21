@@ -1,0 +1,54 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/Ricorrenza.java</file>
+  <line>66</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.Ricorrenza$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument Ricorrenza can be replaced with &lt;&gt;</description>
+  <highlighted_element>Ricorrenza</highlighted_element>
+  <language>JAVA</language>
+  <offset>66</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/RicorrenzaConTipo.java</file>
+  <line>48</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.RicorrenzaConTipo$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument RicorrenzaConTipo can be replaced with &lt;&gt;</description>
+  <highlighted_element>RicorrenzaConTipo</highlighted_element>
+  <language>JAVA</language>
+  <offset>73</offset>
+  <length>17</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/data/entities/TipoRicorrenza.java</file>
+  <line>60</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.data.entities</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.data.entities.TipoRicorrenza$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument TipoRicorrenza can be replaced with &lt;&gt;</description>
+  <highlighted_element>TipoRicorrenza</highlighted_element>
+  <language>JAVA</language>
+  <offset>70</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>499</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="class" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria$1" />
+  <problem_class id="Convert2Diamond" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit type can be replaced with '&lt;&gt;'</problem_class>
+  <description>Explicit type argument SearchCriteria can be replaced with &lt;&gt;</description>
+  <highlighted_element>SearchCriteria</highlighted_element>
+  <language>JAVA</language>
+  <offset>74</offset>
+  <length>14</length>
+</problem>
+</problems>

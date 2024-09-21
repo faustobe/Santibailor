@@ -1,0 +1,29 @@
+CREATE TABLE "santi" (
+	"id"	INTEGER NOT NULL,
+	"id_mesi"	INTEGER NOT NULL,
+	"giorno"	INTEGER NOT NULL,
+	"santo"	TEXT NOT NULL,
+	"bio"	TEXT,
+	"image_url"	TEXT,
+	"prefix"	TEXT,
+	"suffix"	TEXT, tipo_ricorrenza_id INTEGER NOT NULL DEFAULT 1,
+	PRIMARY KEY("id")
+)
+
+CREATE TABLE "giorno_d_settimana" (
+	"id"	INTEGER NOT NULL,
+	"giorno"	TEXT NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+)
+
+CREATE TABLE "mese" (
+	"id"	INTEGER NOT NULL,
+	"nome"	TEXT NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT)
+)
+
+CREATE TABLE "tipo_ricorrenza" (
+	"id"	INTEGER NOT NULL,
+	"nome"	TEXT NOT NULL,
+	PRIMARY KEY("id")
+)

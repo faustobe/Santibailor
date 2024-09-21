@@ -1,0 +1,67 @@
+graph TB
+    subgraph UI Layer
+        A[Fragment/Activity]
+    end
+
+    subgraph ViewModel Layer
+        B[RicorrenzaViewModel]
+        B1[getRicorrenzeDelGiorno]
+        B2[getRicorrenzeReligiose]
+        B3[getRicorrenzeLaiche]
+        B4[cercaRicorrenze]
+        B5[eseguiRicercaAvanzata]
+        B6[insert/update/delete]
+    end
+
+    subgraph Repository Layer
+        C[RicorrenzaRepository]
+        C1[getRicorrenzeDelGiorno]
+        C2[getRicorrenzeReligiose]
+        C3[getRicorrenzeLaiche]
+        C4[cercaRicorrenzePerNome]
+        C5[ricercaAvanzata]
+        C6[ricercaAvanzataAsync]
+        C7[insert/update/delete]
+        C8[Date Parsing]
+        C9[Result Mapping]
+        C10[ExecutorService]
+    end
+
+    subgraph DAO Layer
+        D[RicorrenzaDao]
+        D1[getRicorrenzeConTipo]
+        D2[getRicorrenzeDelGiorno]
+        D3[getRicorrenzeDelGiornoPerTipo]
+        D4[getRicorrenzePerTipo]
+        D5[getRicorrenzaById]
+        D6[cercaRicorrenzePerNome]
+        D7[ricercaAvanzata]
+        D8[ricercaAvanzataPaginata]
+        D9[getAllRicorrenze]
+        D10[getTotalItemCount]
+        D11[insert]
+        D12[update]
+        D13[delete]
+    end
+
+    subgraph Database Layer
+        E[SQLite Database]
+    end
+
+    A --> B
+    B --> B1 & B2 & B3 & B4 & B5 & B6
+    B1 & B2 & B3 & B4 & B5 & B6 --> C
+    C --> C1 & C2 & C3 & C4 & C5 & C6 & C7
+    C --> C8 & C9 & C10
+    C1 & C2 & C3 & C4 & C5 & C6 & C7 --> D
+    D --> D1 & D2 & D3 & D4 & D5 & D6 & D7 & D8 & D9 & D10 & D11 & D12 & D13
+    D1 & D2 & D3 & D4 & D5 & D6 & D7 & D8 & D9 & D10 & D11 & D12 & D13 --> E
+
+    %% LiveData Flow
+    E -.-> D
+    D -.-> C
+    C -.-> B
+    B -.-> A
+
+    %% Async Operations
+    C10 -.- C6
