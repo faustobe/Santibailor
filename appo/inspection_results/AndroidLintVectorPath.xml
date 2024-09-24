@@ -1,0 +1,15 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/drawable/ic_settings.xml</file>
+  <line>3</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/drawable/ic_settings.xml" />
+  <problem_class id="AndroidLintVectorPath" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Long vector paths</problem_class>
+  <hints />
+  <description>&lt;html&gt;Very long vector path (904 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector.&lt;/html&gt;</description>
+  <highlighted_element>M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0...</highlighted_element>
+  <language>XML</language>
+  <offset>69</offset>
+  <length>904</length>
+</problem>
+</problems>

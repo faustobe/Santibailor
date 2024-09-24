@@ -3,5 +3,19 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="title_edit_ricorrenza">Edit Ricorrenza</string>
     <string name="background_description">background description</string>
+    <string name="navigation_drawer_open">Apri menu di navigazione</string>
+    <string name="navigation_drawer_close">Chiudi menu di navigazione</string>
+    <string name="create">Crea</string>
+    <string name="update">Aggiorna</string>
+    <string name="saint_of_day">Santo del giorno: %s</string>
+    <string name="immagine_ricorrenza">Immagine ricorrenza</string>
+    <string name="add_ricorrenza">Aggiungi Ricorrenza</string>
+    <string name="add_item">Aggiungi Elemento</string>
+    <string name="fill_required_fields">Per favore, compila tutti i campi obbligatori</string>
+    <string name="ricorrenza_added_success">Ricorrenza inserita con successo</string>
+    <string name="insert_error">Errore nell\'inserimento: %1$s</string>
+    <string name="required_field">Campo obbligatorio</string>
 </resources>

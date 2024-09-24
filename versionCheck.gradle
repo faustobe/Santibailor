@@ -1,0 +1,15 @@
+task checkVersions {
+    doLast {
+        println "Controllo versioni:"
+
+        // Trova la versione del plugin Safe Args
+        def safeArgsPlugin = project.plugins.findPlugin("androidx.navigation.safeargs")
+        def safeArgsVersion = safeArgsPlugin?.version ?: 'Not found'
+        println "Navigation Safe Args version: $safeArgsVersion"
+
+        // Trova la versione del plugin Android
+        def androidPlugin = project.plugins.findPlugin("com.android.application")
+        def gradlePluginVersion = androidPlugin?.version ?: 'Not found'
+        println "Gradle Plugin version: $gradlePluginVersion"
+    }
+}

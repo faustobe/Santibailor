@@ -1,0 +1,61 @@
+Funzionalità suddivise per categorie, da inserire nell'interfaccia delle impostazioni:
+
+### 1. **Generali**
+   - **Tema**: selezione del tema dell'app (chiaro, scuro, automatico in base al sistema operativo).
+   - **Lingua**: scelta della lingua dell’app.
+   - **Notifiche**: gestione delle notifiche push (abilita/disabilita, orari di silenzio).
+   - **Font e dimensione del testo**: personalizzazione del carattere e della dimensione del testo.
+   - **Sincronizzazione**: opzioni per sincronizzare i dati con account cloud (Google, Apple, Dropbox).
+   - **Backup e ripristino**: opzioni di backup automatico e manuale dei dati e ripristino da un backup.
+
+### 2. **Account**
+   - **Profilo utente**: modifica delle informazioni personali (nome, email, avatar).
+   - **Gestione account**: collegamento o disconnessione dagli account Google, Apple, o altri servizi di terze parti.
+   - **Cambio password**: opzione per cambiare password o configurare metodi di autenticazione come l'autenticazione a due fattori.
+   - **Esporta dati**: possibilità di esportare le informazioni personali in formati comuni (CSV, PDF).
+   - **Elimina account**: possibilità di eliminare definitivamente l'account e i dati associati.
+
+### 3. **Impostazioni per Ricorrenze**
+   - **Frequenza di ripetizione**: configurazione della ripetizione delle ricorrenze (giornaliera, settimanale, mensile, annuale, personalizzata).
+   - **Avvisi per ricorrenze**: impostazione degli avvisi per le ricorrenze (ad esempio, quanti giorni prima ricevere un promemoria).
+   - **Priorità e colori**: opzione per assegnare priorità o colori alle ricorrenze.
+   - **Sincronizzazione calendario**: sincronizzare le ricorrenze con calendari esterni (Google Calendar, Apple Calendar).
+
+### 4. **Impostazioni per Impegni**
+   - **Visualizzazione impegni**: scegliere il formato della visualizzazione (giornaliera, settimanale, mensile).
+   - **Promemoria per impegni**: gestione dei promemoria per gli impegni (impostare notifiche specifiche, promemoria multipli).
+   - **Categorie impegni**: possibilità di creare e gestire categorie personalizzate per gli impegni.
+   - **Condivisione**: opzione per condividere gli impegni con altre persone o attraverso servizi esterni.
+   - **Durata predefinita**: impostare una durata standard per ogni nuovo impegno (es. 30 min, 1 ora).
+
+### 5. **Impostazioni per Liste della Spesa**
+   - **Ordine della lista**: possibilità di scegliere l’ordinamento della lista della spesa (per categoria, alfabetico, manuale).
+   - **Suggerimenti intelligenti**: attivare o disattivare suggerimenti basati su articoli precedentemente inseriti.
+   - **Condivisione liste**: opzioni per condividere la lista della spesa con altre persone o tramite app di messaggistica.
+   - **Salvataggio liste preferite**: possibilità di creare e salvare liste ricorrenti (ad esempio “Lista settimanale”).
+   - **Notifiche di promemoria**: avvisi per completare una lista o per articoli scaduti (es. prodotti freschi da acquistare).
+
+### 6. **Impostazioni di Notifiche**
+   - **Notifiche per Ricorrenze**: impostare quando ricevere notifiche per eventi ricorrenti (giorni o ore prima).
+   - **Notifiche per Impegni**: gestione del numero di promemoria per ogni impegno (un solo avviso o avvisi ripetuti).
+   - **Notifiche silenziose**: modalità "non disturbare" con fasce orarie in cui le notifiche non vengono mostrate.
+   - **Snooze delle notifiche**: opzione per posticipare le notifiche di un determinato periodo.
+
+### 7. **Integrazioni**
+   - **Integrazione con Calendari**: possibilità di collegare il calendario di Google, Apple o altri per sincronizzare gli eventi.
+   - **Integrazione con Assistenti Vocali**: integrazione con Alexa, Google Assistant o Siri per gestire impegni e liste tramite voce.
+   - **Integrazione con App di Terze Parti**: opzioni per collegare app per la gestione delle attività come Todoist, Trello o Evernote.
+
+### 8. **Privacy e Sicurezza**
+   - **Blocco dell'app**: possibilità di attivare un blocco con PIN, impronta digitale o riconoscimento facciale.
+   - **Permessi**: gestione dei permessi dell’app (accesso al calendario, notifiche, ecc.).
+   - **Cronologia dati**: opzione per vedere e gestire la cronologia delle attività e delle modifiche.
+   - **Crittografia dati**: abilitazione della crittografia per i dati sensibili (es. ricorrenze private).
+
+### 9. **Supporto e Informazioni**
+   - **Contatti e Supporto**: link o sezioni per contattare l'assistenza o accedere alla documentazione.
+   - **Domande frequenti (FAQ)**: integrazione di una sezione con le domande più comuni.
+   - **Versione dell'app**: informazioni sulla versione attuale dell'app e aggiornamenti disponibili.
+   - **Feedback**: possibilità di inviare feedback o suggerimenti agli sviluppatori.
+  
+Queste categorie coprono sia le funzionalità essenziali, sia alcune avanzate per personalizzare l'esperienza utente. Puoi partire da qui e adattare o eliminare funzionalità in base alle esigenze specifiche dell'app e del pubblico di riferimento.

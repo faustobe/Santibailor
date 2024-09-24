@@ -1,0 +1,142 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/MainActivity.java</file>
+  <line>44</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.features.main.MainActivity handler" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>handler</highlighted_element>
+  <language>JAVA</language>
+  <offset>20</offset>
+  <length>7</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/RicorrenzaAdapter.java</file>
+  <line>88</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter.SaintViewHolder nomeTextView" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>nomeTextView</highlighted_element>
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/RicorrenzaAdapter.java</file>
+  <line>89</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter.SaintViewHolder tipoTextView" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>tipoTextView</highlighted_element>
+  <language>JAVA</language>
+  <offset>17</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/RicorrenzaAdapter.java</file>
+  <line>90</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter.SaintViewHolder deleteButton" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>deleteButton</highlighted_element>
+  <language>JAVA</language>
+  <offset>20</offset>
+  <length>12</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/RicorrenzaAdapter.java</file>
+  <line>91</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter.SaintViewHolder listener" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>listener</highlighted_element>
+  <language>JAVA</language>
+  <offset>28</offset>
+  <length>8</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/home/RicorrenzaAdapter.java</file>
+  <line>92</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.home</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter.SaintViewHolder deleteListener" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>deleteListener</highlighted_element>
+  <language>JAVA</language>
+  <offset>30</offset>
+  <length>14</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>476</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria nome" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>nome</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>477</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria tipo" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>tipo</highlighted_element>
+  <language>JAVA</language>
+  <offset>23</offset>
+  <length>4</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>478</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria dataInizio" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>dataInizio</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>10</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/viewmodel/RicorrenzaViewModel.java</file>
+  <line>479</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.viewmodel</package>
+  <entry_point TYPE="field" FQNAME="it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel.SearchCriteria dataFine" />
+  <problem_class id="CanBeFinal" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Declaration can have 'final' modifier</problem_class>
+  <hints />
+  <description>Declaration can have final modifier</description>
+  <highlighted_element>dataFine</highlighted_element>
+  <language>JAVA</language>
+  <offset>22</offset>
+  <length>8</length>
+</problem>
+</problems>

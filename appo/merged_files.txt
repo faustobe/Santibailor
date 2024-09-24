@@ -1,290 +1,543 @@
-// File creato il: 2024-08-10 17:54:10
+// File creato il: 2024-09-24 08:32:58
 
-// Contenuto di home/HomeFragment.java
+// Contenuto di app/build.gradle
 
-package it.faustobe.santibailor.ui.home;
+plugins {
+    id 'com.android.application'
+    id 'androidx.navigation.safeargs'
+    id 'dagger.hilt.android.plugin'
+}
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+android {
+    namespace 'it.faustobe.santibailor'
+    compileSdk 34
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModel;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
-import it.faustobe.santibailor.R;
-import it.faustobe.santibailor.databinding.FragmentHomeBinding;
-import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
-
-public class HomeFragment extends Fragment {
-
-    private FragmentHomeBinding binding;
-    private RicorrenzaViewModel ricorrenzaViewModel;
-    private RicorrenzaAdapter ricorrenzaAdapter;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
+    defaultConfig {
+        applicationId "it.faustobe.santibailor"
+        minSdk 24
+        targetSdk 34
+        versionCode 2
+        versionName "1.0.1"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        ricorrenzaViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(RicorrenzaViewModel.class);
-
-        setupDateDisplay();
-        setupSaintOfDay();
-        setupPersonalInfo();
-        setupBottomNavigation();
-        setupRecyclerView();
-        setupFab();
-
-        return root;
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+        }
     }
-
-    private void loadBackgroundImage() {
-        Glide.with(this)
-                .load(R.drawable.background_saint)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .centerCrop()
-                .into(binding.backgroundImage);
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-
-    private void setupDateDisplay() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ITALIAN);
-
-        binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
-        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
-        binding.tvMonth.setText(monthFormat.format(calendar.getTime()));
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
     }
-
-    private void setupSaintOfDay() {
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            if (ricorrenze != null && !ricorrenze.isEmpty()) {
-                binding.tvSaintOfDay.setText(ricorrenze.get(0).ricorrenza.getNome());
-            }
-        });
-    }
-
-    private void setupPersonalInfo() {
-        // Qui dovresti recuperare le informazioni personali dal tuo database o dalle preferenze
-        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
-
-        StringBuilder todoList = new StringBuilder("- paga bolletta luce\n");
-        todoList.append("- cambia filtro aria della cappa\n");
-        todoList.append("- compra regalo per Denise - compleanno fra 5 gg\n");
-        todoList.append("- finisci rapporto AZS - consegna fra 3 gg");
-        binding.tvTodoList.setText(todoList.toString());
-
-        StringBuilder todayEvents = new StringBuilder("oggi:\n");
-        todayEvents.append("* gym\n");
-        todayEvents.append("* ape con Chicca alle h 18\n");
-        todayEvents.append("+ la ricotta è in frigo da 4 giorni");
-        binding.tvTodayEvents.setText(todayEvents.toString());
-    }
-
-    private void setupBottomNavigation() {
-        BottomNavigationView bottomNav = binding.bottomNavigation;
-        bottomNav.setOnItemSelectedListener(item -> {
-            // Gestisci la navigazione qui
-            int itemId = item.getItemId();
-            if (itemId == R.id.navigation_home) {
-                // Già nella home, non fare nulla
-                return true;
-            } else if (itemId == R.id.navigation_dashboard) {
-                // Naviga alla dashboard
-                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_dashboard);
-                return true;
-            } else if (itemId == R.id.navigation_notifications) {
-                // Naviga alle notifiche
-                // Esempio: Navigation.findNavController(requireView()).navigate(R.id.action_home_to_notifications);
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private void setupRecyclerView() {
-        ricorrenzaAdapter = new RicorrenzaAdapter();
-        binding.recyclerViewRicorrenze.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewRicorrenze.setAdapter(ricorrenzaAdapter);
-
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            ricorrenzaAdapter.setRicorrenze(ricorrenze);
-        });
-    }
-
-    private void setupFab() {
-        binding.fabAddRicorrenza.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.action_homeFragment_to_editRicorrenzaFragment);
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    buildFeatures {
+        viewBinding true
     }
 }
 
-// Contenuto di home/EditRicorrenzaFragment.java
+dependencies {
+    def room_version = "2.6.0"
+    implementation libs.androidx.room.runtime
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation libs.androidx.room.ktx
 
-package it.faustobe.santibailor.ui.home;
+    def lifecycle_version = "2.6.2"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
+    implementation libs.androidx.lifecycle.livedata
+    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
+    implementation libs.androidx.lifecycle.viewmodel.savedstate
+    implementation libs.androidx.lifecycle.common.java8
+    implementation libs.androidx.appcompat.v161
+    implementation libs.material.v150
+    implementation libs.androidx.drawerlayout
+    implementation libs.androidx.fragment
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
+    def glide_version = "4.15.1"
+    implementation libs.glide
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.constraintlayout
+    implementation libs.lifecycle.livedata.ktx
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+    //implementation(libs.material.calendarview)
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
+    // JUnit 4 framework
+    testImplementation libs.junit
+    // Mockito per il mocking degli oggetti
+    testImplementation libs.mockito.core
+    // AndroidX Test Core library
+    testImplementation libs.androidx.core
+    // AndroidX Test - JVM testing utilities
+    testImplementation libs.androidx.core.testing
+    // mockito-inline
+    testImplementation libs.mockito.inline
+    // simula ambiente android
+    testImplementation libs.robolectric
+
+    implementation libs.gson
+
+    //def nav_version = "2.7.7"
+    implementation libs.androidx.fragment.v155
+
+    //def hil_version = "2.44"
+    implementation libs.hilt.android
+    annotationProcessor libs.hilt.compiler
+
+    // Per i test con Hilt (opzionale, ma consigliato)
+    testImplementation libs.hilt.android.testing
+    testAnnotationProcessor libs.hilt.compiler
+
+    def nav_version = "2.8.0"
+
+    // Jetpack Compose Integration
+    implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    // Views/Fragments Integration
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
+
+    // Feature module support for Fragments
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    // Testing Navigation
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+
+}
+
+// Contenuto di test/TestFragment.java
+
+package it.faustobe.santibailor.presentation.features.test;
+
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModel;
-import androidx.navigation.Navigation;
-
-import com.bumptech.glide.Glide;
 
 import it.faustobe.santibailor.R;
-import it.faustobe.santibailor.data.entities.Ricorrenza;
-import it.faustobe.santibailor.databinding.FragmentEditRicorrenzaBinding;
-import it.faustobe.santibailor.viewmodel.RicorrenzaViewModel;
 
-public class EditRicorrenzaFragment extends Fragment {
-
-    private FragmentEditRicorrenzaBinding binding;
-    private RicorrenzaViewModel ricorrenzaViewModel;
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private Ricorrenza ricorrenzaToEdit;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ricorrenzaViewModel = new ViewModelProvider(this).get(RicorrenzaViewModel.class);
-    }
+public class TestFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentEditRicorrenzaBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_test, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ricorrenzaViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(requireActivity().getApplication())).get(RicorrenzaViewModel.class);
+        // Recupera l'argomento usando Safe Args
+        int testArg = TestFragmentArgs.fromBundle(getArguments()).getTestArg();
 
-        // Controlla se stiamo modificando una ricorrenza esistente
-        if (getArguments() != null && getArguments().containsKey("ricorrenzaId")) {
-            int ricorrenzaId = getArguments().getInt("ricorrenzaId");
-            ricorrenzaViewModel.getRicorrenzaById(ricorrenzaId).observe(getViewLifecycleOwner(), ricorrenza -> {
-                if (ricorrenza != null) {
-                    ricorrenzaToEdit = ricorrenza;
-                    populateFields(ricorrenza);
-                }
-            });
-        }
+        // Visualizza l'argomento in un TextView
+        TextView textView = view.findViewById(R.id.testTextView);
+        textView.setText(String.valueOf(testArg));
+    }
+}
 
-        setupListeners();
+// Contenuto di test/TestFragmentArgs.java
+
+package it.faustobe.santibailor.presentation.features.test;
+
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.navigation.NavArgs;
+import java.lang.Object;
+import java.lang.Override;
+import java.lang.String;
+import java.lang.SuppressWarnings;
+import java.util.HashMap;
+
+public class TestFragmentArgs implements NavArgs {
+  private final HashMap arguments = new HashMap();
+
+  private TestFragmentArgs() {
+  }
+
+  @SuppressWarnings("unchecked")
+  private TestFragmentArgs(HashMap argumentsMap) {
+    this.arguments.putAll(argumentsMap);
+  }
+
+  @NonNull
+  @SuppressWarnings("unchecked")
+  public static TestFragmentArgs fromBundle(@NonNull Bundle bundle) {
+    TestFragmentArgs __result = new TestFragmentArgs();
+    bundle.setClassLoader(TestFragmentArgs.class.getClassLoader());
+    if (bundle.containsKey("testArg")) {
+      int testArg;
+      testArg = bundle.getInt("testArg");
+      __result.arguments.put("testArg", testArg);
+    } else {
+      __result.arguments.put("testArg", 0);
+    }
+    return __result;
+  }
+
+  @NonNull
+  @SuppressWarnings("unchecked")
+  public static TestFragmentArgs fromSavedStateHandle(@NonNull SavedStateHandle savedStateHandle) {
+    TestFragmentArgs __result = new TestFragmentArgs();
+    if (savedStateHandle.contains("testArg")) {
+      int testArg;
+      testArg = savedStateHandle.get("testArg");
+      __result.arguments.put("testArg", testArg);
+    } else {
+      __result.arguments.put("testArg", 0);
+    }
+    return __result;
+  }
+
+  @SuppressWarnings("unchecked")
+  public int getTestArg() {
+    return (int) arguments.get("testArg");
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public Bundle toBundle() {
+    Bundle __result = new Bundle();
+    if (arguments.containsKey("testArg")) {
+      int testArg = (int) arguments.get("testArg");
+      __result.putInt("testArg", testArg);
+    } else {
+      __result.putInt("testArg", 0);
+    }
+    return __result;
+  }
+
+  @SuppressWarnings("unchecked")
+  @NonNull
+  public SavedStateHandle toSavedStateHandle() {
+    SavedStateHandle __result = new SavedStateHandle();
+    if (arguments.containsKey("testArg")) {
+      int testArg = (int) arguments.get("testArg");
+      __result.set("testArg", testArg);
+    } else {
+      __result.set("testArg", 0);
+    }
+    return __result;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) {
+        return true;
+    }
+    if (object == null || getClass() != object.getClass()) {
+        return false;
+    }
+    TestFragmentArgs that = (TestFragmentArgs) object;
+    if (arguments.containsKey("testArg") != that.arguments.containsKey("testArg")) {
+      return false;
+    }
+    if (getTestArg() != that.getTestArg()) {
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = 1;
+    result = 31 * result + getTestArg();
+    return result;
+  }
+
+  @Override
+  public String toString() {
+    return "TestFragmentArgs{"
+        + "testArg=" + getTestArg()
+        + "}";
+  }
+
+  public static final class Builder {
+    private final HashMap arguments = new HashMap();
+
+    @SuppressWarnings("unchecked")
+    public Builder(@NonNull TestFragmentArgs original) {
+      this.arguments.putAll(original.arguments);
     }
 
-    private void setupListeners() {
-        binding.btnCaricaImmagine.setOnClickListener(v -> openImageChooser());
-
-        binding.btnSalva.setOnClickListener(v -> saveRicorrenza());
+    public Builder() {
     }
 
-    private void openImageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Seleziona un'immagine"), PICK_IMAGE_REQUEST);
+    @NonNull
+    public TestFragmentArgs build() {
+      TestFragmentArgs result = new TestFragmentArgs(arguments);
+      return result;
+    }
+
+    @NonNull
+    @SuppressWarnings("unchecked")
+    public Builder setTestArg(int testArg) {
+      this.arguments.put("testArg", testArg);
+      return this;
+    }
+
+    @SuppressWarnings({"unchecked","GetterOnBuilder"})
+    public int getTestArg() {
+      return (int) arguments.get("testArg");
+    }
+  }
+}
+
+
+// Contenuto di settings/SettingsFragment.java
+
+package it.faustobe.santibailor.presentation.features.settings;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuProvider;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.databinding.FragmentSettingsBinding;
+
+public class SettingsFragment extends Fragment {
+    private FragmentSettingsBinding binding;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                navigateBack();
+            }
+        });
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            Glide.with(this).load(imageUri).into(binding.ivImmagine);
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        setupToolbar();
+        setupListeners();
+        setupMenu();
+    }
+
+    private void setupToolbar() {
+        if (getActivity() instanceof AppCompatActivity) {
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.title_settings);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
-    private void populateFields(Ricorrenza ricorrenza) {
-        binding.etNome.setText(ricorrenza.getNome());
-        binding.etGiorno.setText(String.valueOf(ricorrenza.getGiorno()));
-        binding.etMese.setText(String.valueOf(ricorrenza.getIdMese()));
-        binding.etTipo.setText(String.valueOf(ricorrenza.getTipoRicorrenzaId()));
-        binding.etDescrizione.setText(ricorrenza.getBio());
+    private void setupMenu() {
+        requireActivity().addMenuProvider(new MenuProvider() {
+            @Override
+            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
+                // Se hai un menu specifico per le impostazioni, inflalo qui
+            }
 
-        if (ricorrenza.getImageUrl() != null && !ricorrenza.getImageUrl().isEmpty()) {
-            Glide.with(this).load(ricorrenza.getImageUrl()).into(binding.ivImmagine);
+            @Override
+            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == android.R.id.home) {
+                    navigateBack();
+                    return true;
+                }
+                return false;
+            }
+        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+    }
+
+    private void navigateBack() {
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigateUp();
+    }
+
+    private void setupListeners() {
+        binding.btnRicorrenze.setOnClickListener(v -> navigateToRicorrenzeSettings());
+        binding.btnGenerali.setOnClickListener(v -> navigateToGeneralSettings());
+        binding.btnAccount.setOnClickListener(v -> navigateToAccountSettings());
+        binding.btnImpegni.setOnClickListener(v -> navigateToImpegniSettings());
+        binding.btnListeSpesa.setOnClickListener(v -> navigateToListeSpesaSettings());
+        binding.btnNotifiche.setOnClickListener(v -> navigateToNotificheSettings());
+        binding.btnIntegrazioni.setOnClickListener(v -> navigateToIntegrazioniSettings());
+        binding.btnPrivacySicurezza.setOnClickListener(v -> navigateToPrivacySicurezzaSettings());
+        binding.btnSupportoInfo.setOnClickListener(v -> navigateToSupportoInfoSettings());
+    }
+
+    private void navigateToRicorrenzeSettings() {
+        List<SettingItem> ricorrenzeSettings = new ArrayList<>();
+        ricorrenzeSettings.add(new SettingItem("Gestione Ricorrenze", "Aggiungi, modifica o elimina ricorrenze", R.id.action_categorySettingsFragment_to_manageRicorrenzeFragment));
+        ricorrenzeSettings.add(new SettingItem("Visualizzazione", "Imposta le preferenze di visualizzazione", R.id.action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment));
+        ricorrenzeSettings.add(new SettingItem("Notifiche Ricorrenze", "Attiva o disattiva le notifiche", true ));
+        ricorrenzeSettings.add(new SettingItem("Sincronizzazione calendario", "Sincronizza con calendari esterni"));
+
+        SettingItem[] settingItemsArray = ricorrenzeSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Ricorrenze", settingItemsArray);
+    }
+
+    private void navigateToGeneralSettings() {
+        List<SettingItem> generalSettings = new ArrayList<>();
+        generalSettings.add(new SettingItem("Tema", "Seleziona il tema dell'app"));
+        generalSettings.add(new SettingItem("Lingua", "Scegli la lingua dell'app"));
+        generalSettings.add(new SettingItem("Notifiche", "Gestisci le notifiche push"));
+        generalSettings.add(new SettingItem("Font e dimensione del testo", "Personalizza il carattere e la dimensione"));
+        generalSettings.add(new SettingItem("Sincronizzazione", "Opzioni per sincronizzare i dati" ));
+        generalSettings.add(new SettingItem("Backup e ripristino", "Gestisci backup e ripristino dei dati"));
+
+        SettingItem[] settingItemsArray = generalSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Generali", settingItemsArray);
+    }
+
+    private void navigateToAccountSettings() {
+        List<SettingItem> accountSettings = new ArrayList<>();
+        accountSettings.add(new SettingItem("Profilo utente", "Modifica le informazioni personali" ));
+        accountSettings.add(new SettingItem("Gestione account", "Collega o disconnetti account" ));
+        accountSettings.add(new SettingItem("Cambio password", "Modifica la password o configura l'autenticazione" ));
+        accountSettings.add(new SettingItem("Esporta dati", "Esporta le informazioni personali" ));
+        accountSettings.add(new SettingItem("Elimina account", "Elimina definitivamente l'account" ));
+
+        SettingItem[] settingItemsArray = accountSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Account", settingItemsArray);
+    }
+
+    private void navigateToImpegniSettings() {
+        List<SettingItem> impegniSettings = new ArrayList<>();
+        impegniSettings.add(new SettingItem("Visualizzazione impegni", "Scegli il formato di visualizzazione" ));
+        impegniSettings.add(new SettingItem("Promemoria per impegni", "Gestisci i promemoria" ));
+        impegniSettings.add(new SettingItem("Categorie impegni", "Crea e gestisci categorie personalizzate" ));
+        impegniSettings.add(new SettingItem("Condivisione", "Opzioni per condividere gli impegni" ));
+        impegniSettings.add(new SettingItem("Durata predefinita", "Imposta una durata standard" ));
+
+        SettingItem[] settingItemsArray = impegniSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Impegni", settingItemsArray);
+    }
+
+    private void navigateToListeSpesaSettings() {
+        List<SettingItem> listeSpesaSettings = new ArrayList<>();
+        listeSpesaSettings.add(new SettingItem("Ordine della lista", "Scegli l'ordinamento della lista" ));
+        listeSpesaSettings.add(new SettingItem("Suggerimenti intelligenti", "Attiva/disattiva i suggerimenti", true ));
+        listeSpesaSettings.add(new SettingItem("Condivisione liste", "Opzioni per condividere le liste" ));
+        listeSpesaSettings.add(new SettingItem("Salvataggio liste preferite", "Crea e salva liste ricorrenti" ));
+        listeSpesaSettings.add(new SettingItem("Notifiche di promemoria", "Gestisci gli avvisi per le liste", true ));
+
+        SettingItem[] settingItemsArray = listeSpesaSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Liste Spesa", settingItemsArray);
+    }
+
+    private void navigateToNotificheSettings() {
+        List<SettingItem> notificheSettings = new ArrayList<>();
+        notificheSettings.add(new SettingItem("Notifiche per Ricorrenze", "Imposta le notifiche per eventi ricorrenti" ));
+        notificheSettings.add(new SettingItem("Notifiche per Impegni", "Gestisci i promemoria per gli impegni" ));
+        notificheSettings.add(new SettingItem("Notifiche silenziose", "Configura la modalità non disturbare" ));
+        notificheSettings.add(new SettingItem("Snooze delle notifiche", "Opzioni per posticipare le notifiche" ));
+
+        SettingItem[] settingItemsArray = notificheSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Notifiche", settingItemsArray);
+    }
+
+    private void navigateToIntegrazioniSettings() {
+        List<SettingItem> integrazioniSettings = new ArrayList<>();
+        integrazioniSettings.add(new SettingItem("Integrazione con Calendari", "Collega calendari esterni" ));
+        integrazioniSettings.add(new SettingItem("Integrazione con Assistenti Vocali", "Collega assistenti vocali" ));
+        integrazioniSettings.add(new SettingItem("Integrazione con App di Terze Parti", "Collega app per la gestione delle attività" ));
+
+        SettingItem[] settingItemsArray = integrazioniSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Integrazioni", settingItemsArray);
+    }
+
+    private void navigateToPrivacySicurezzaSettings() {
+        List<SettingItem> privacySicurezzaSettings = new ArrayList<>();
+        privacySicurezzaSettings.add(new SettingItem("Blocco dell'app", "Attiva blocco con PIN o biometrico" ));
+        privacySicurezzaSettings.add(new SettingItem("Permessi", "Gestisci i permessi dell'app" ));
+        privacySicurezzaSettings.add(new SettingItem("Cronologia dati", "Visualizza e gestisci la cronologia" ));
+        privacySicurezzaSettings.add(new SettingItem("Crittografia dati", "Abilita la crittografia per dati sensibili" ));
+
+        SettingItem[] settingItemsArray = privacySicurezzaSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("Impostazioni Privacy & Sicurezza", settingItemsArray);
+    }
+
+    private void navigateToSupportoInfoSettings() {
+        List<SettingItem> supportoInfoSettings = new ArrayList<>();
+        supportoInfoSettings.add(new SettingItem("Contatti e Supporto", "Accedi all'assistenza" ));
+        supportoInfoSettings.add(new SettingItem("Domande frequenti (FAQ)", "Visualizza le domande comuni" ));
+        supportoInfoSettings.add(new SettingItem("Versione dell'app", "Informazioni sulla versione" ));
+        supportoInfoSettings.add(new SettingItem("Feedback", "Invia feedback o suggerimenti" ));
+
+        SettingItem[] settingItemsArray = supportoInfoSettings.toArray(new SettingItem[0]);
+
+        navigateToCategorySettings("info & SUpporto", settingItemsArray);
+    }
+
+    private void navigateToCategorySettings(String categoryTitle, SettingItem[] settingItems) {
+        try {
+            SettingsFragmentDirections.ActionSettingsFragmentToCategorySettingsFragment action =
+                    SettingsFragmentDirections.actionSettingsFragmentToCategorySettingsFragment(
+                            categoryTitle,
+                            settingItems
+                    );
+            Navigation.findNavController(requireView()).navigate(action);
+        } catch (Exception e) {
+            Log.e("SettingsFragment", "Errore nella navigazione con Safe Args: " + e.getMessage());
+            navigateToCategorySettingsFallback(categoryTitle, settingItems);
         }
     }
 
-    private void saveRicorrenza() {
-        String nome = binding.etNome.getText().toString().trim();
-        String giornoStr = binding.etGiorno.getText().toString().trim();
-        String meseStr = binding.etMese.getText().toString().trim();
-        String tipoStr = binding.etTipo.getText().toString().trim();
-        String descrizione = binding.etDescrizione.getText().toString().trim();
+    private void navigateToCategorySettingsFallback(String categoryTitle, SettingItem[] settingItems) {
+        Bundle args = new Bundle();
+        args.putString("categoryTitle", categoryTitle);
+        args.putParcelableArray("settingItems", settingItems);
 
-        if (nome.isEmpty() || giornoStr.isEmpty() || meseStr.isEmpty() || tipoStr.isEmpty()) {
-            Toast.makeText(getContext(), "Per favore, compila tutti i campi obbligatori", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        int giorno = Integer.parseInt(giornoStr);
-        int mese = Integer.parseInt(meseStr);
-        int tipo = Integer.parseInt(tipoStr);
-
-        Ricorrenza ricorrenza = (ricorrenzaToEdit != null) ? ricorrenzaToEdit : new Ricorrenza();
-        ricorrenza.setNome(nome);
-        ricorrenza.setGiorno(giorno);
-        ricorrenza.setIdMese(mese);
-        ricorrenza.setTipoRicorrenzaId(tipo);
-        ricorrenza.setBio(descrizione);
-
-        if (imageUri != null) {
-            // Qui dovresti implementare la logica per salvare l'immagine e ottenere l'URL
-            // Per ora, impostiamo semplicemente l'URI come stringa
-            ricorrenza.setImageUrl(imageUri.toString());
-        }
-
-        if (ricorrenzaToEdit != null) {
-            ricorrenzaViewModel.update(ricorrenza);
-        } else {
-            ricorrenzaViewModel.insert(ricorrenza);
-        }
-
-        // Torna alla schermata precedente
-        Navigation.findNavController(requireView()).navigateUp();
+        NavController navController = Navigation.findNavController(requireView());
+        navController.navigate(R.id.action_settingsFragment_to_categorySettingsFragment, args);
     }
 
     @Override
@@ -294,126 +547,178 @@ public class EditRicorrenzaFragment extends Fragment {
     }
 }
 
+// Contenuto di navigation/nav_graph.xml
 
-// Contenuto di viewmodel/RicorrenzaViewModel.java
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
 
-package it.faustobe.santibailor.viewmodel;
+    <!-- Frammenti esistenti -->
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="it.faustobe.santibailor.presentation.features.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home">
+        <argument
+            android:name="ricorrenzaId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_homeFragment_to_ricorrenzaDetailFragment"
+            app:destination="@id/ricorrenzaDetailFragment" />
+    </fragment>
 
-import android.app.Application;
-import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
+    <fragment
+        android:id="@+id/navigation_dashboard"
+        android:name="it.faustobe.santibailor.presentation.features.dashboard.DashboardFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_dashboard" />
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+    <fragment
+        android:id="@+id/navigation_notifications"
+        android:name="it.faustobe.santibailor.presentation.features.notifications.NotificationsFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_notifications" />
 
-import it.faustobe.santibailor.data.entities.Ricorrenza;
-import it.faustobe.santibailor.data.entities.RicorrenzaConTipo;
-import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+    <!-- Fragment Impostazioni modificato -->
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="it.faustobe.santibailor.presentation.features.settings.SettingsFragment"
+        android:label="Impostazioni"
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settingsFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_categorySettingsFragment"
+            app:destination="@id/categorySettingsFragment" />
+    </fragment>
 
-public class RicorrenzaViewModel extends AndroidViewModel {
-    private RicorrenzaRepository repository;
-    private final MutableLiveData<Date> selectedDate = new MutableLiveData<>();
-    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeDelGiorno;
-    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeReligiose;
-    private final LiveData<List<RicorrenzaConTipo>> ricorrenzeLaiche;
+    <fragment
+        android:id="@+id/ricorrenzaDetailFragment"
+        android:name="it.faustobe.santibailor.presentation.features.ricorrenza.RicorrenzaDetailFragment"
+        android:label="Dettaglio Ricorrenza"
+        tools:layout="@layout/fragment_ricorrenza_detail">
+        <argument
+            android:name="ricorrenzaId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_ricorrenzaDetailFragment_to_editRicorrenzaFragment"
+            app:destination="@id/editRicorrenzaFragment" />
+    </fragment>
 
-    public RicorrenzaViewModel(Application application) {
-        super(application);
-        repository = new RicorrenzaRepository(application);
-        selectedDate.setValue(new Date());
+    <fragment
+        android:id="@+id/editRicorrenzaFragment"
+        android:name="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment"
+        android:label="Modifica Ricorrenza"
+        tools:layout="@layout/fragment_edit_ricorrenza">
+        <argument
+            android:name="ricorrenzaId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_editRicorrenzaFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="true" />
+    </fragment>
 
-        ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int giorno = cal.get(Calendar.DAY_OF_MONTH);
-            int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeDelGiorno(giorno, mese);
-        });
+    <fragment
+        android:id="@+id/categorySettingsFragment"
+        android:name="it.faustobe.santibailor.presentation.features.settings.CategorySettingsFragment"
+        android:label="Impostazioni Categoria"
+        tools:layout="@layout/fragment_category_settings">
+        <argument
+            android:name="categoryTitle"
+            app:argType="string" />
 
-        ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int giorno = cal.get(Calendar.DAY_OF_MONTH);
-            int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeReligiose(giorno, mese);
-        });
+        <argument
+            android:name="settingItems"
+            app:argType="it.faustobe.santibailor.presentation.features.settings.SettingItem[]"
+            app:nullable="true"/>
+        <action
+            android:id="@+id/action_categorySettingsFragment_to_manageRicorrenzeFragment"
+            app:destination="@id/manageRicorrenzeFragment" />
+        <action
+            android:id="@+id/action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment"
+            app:destination="@id/ricorrenzeVisualizationSettingsFragment" />
+        <action
+            android:id="@+id/action_categorySettingsFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings"
+            app:popUpTo="@id/navigation_settings"
+            app:popUpToInclusive="true" />
+    </fragment>
 
-        ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            int giorno = cal.get(Calendar.DAY_OF_MONTH);
-            int mese = cal.get(Calendar.MONTH) + 1;
-            return repository.getRicorrenzeLaiche(giorno, mese);
-        });
-    }
+    <fragment
+        android:id="@+id/testFragment"
+        android:name="it.faustobe.santibailor.presentation.features.test.TestFragment"
+        android:label="Test Fragment"
+        tools:layout="@layout/fragment_test">
+        <argument
+            android:name="testArg"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
 
-    public void setDate(Date date) {
-        selectedDate.setValue(date);
-    }
+    <fragment
+        android:id="@+id/manageRicorrenzeFragment"
+        android:name="it.faustobe.santibailor.presentation.features.settings.ricorrenze.ManageRicorrenzeFragment"
+        android:label="Gestione Ricorrenze"
+        tools:layout="@layout/fragment_manage_ricorrenze">
+        <action
+            android:id="@+id/action_manageRicorrenzeFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_manageRicorrenzeFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+    </fragment>
 
-    public LiveData<Date> getSelectedDate() {
-        return selectedDate;
-    }
+    <fragment
+        android:id="@+id/ricorrenzeVisualizationSettingsFragment"
+        android:name="it.faustobe.santibailor.presentation.features.settings.ricorrenze.RicorrenzeVisualizationSettingsFragment"
+        android:label="Visualizzazione Ricorrenze"
+        tools:layout="@layout/fragment_ricorrenze_visualization_settings" />
 
-    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeDelGiorno() {
-        return ricorrenzeDelGiorno;
-    }
+    <!-- Altri frammenti esistenti -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="it.faustobe.santibailor.presentation.features.search.SearchFragment"
+        android:label="Ricerca Avanzata"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_editRicorrenzaFragment"
+            app:destination="@id/editRicorrenzaFragment" />
+    </fragment>
 
-    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeReligiose() {
-        return ricorrenzeReligiose;
-    }
+    <fragment
+        android:id="@+id/addItemFragment"
+        android:name="it.faustobe.santibailor.presentation.features.add.AddItemFragment"
+        android:label="Aggiungi elemento"
+        tools:layout="@layout/fragment_add_item">
+        <argument
+            android:name="itemType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_addItemFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_addItemFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings"
+            app:popUpTo="@id/navigation_settings"
+            app:popUpToInclusive="true" />
+    </fragment>
 
-    public LiveData<List<RicorrenzaConTipo>> getRicorrenzeLaiche() {
-        return ricorrenzeLaiche;
-    }
+    <action
+        android:id="@+id/action_global_navigation_home"
+        app:destination="@id/navigation_home"
+        app:popUpTo="@id/navigation_home"
+        app:popUpToInclusive="true" />
 
-    public void moveToNextDay() {
-        Date currentDate = selectedDate.getValue();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_MONTH, 1);
-        selectedDate.setValue(calendar.getTime());
-    }
-
-    public void moveToPreviousDay() {
-        Date currentDate = selectedDate.getValue();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        selectedDate.setValue(calendar.getTime());
-    }
-
-    // Nuovo metodo per inserire una ricorrenza
-    public void insert(Ricorrenza ricorrenza) {
-        repository.insert(ricorrenza);
-    }
-
-    // Nuovo metodo per aggiornare una ricorrenza
-    public void update(Ricorrenza ricorrenza) {
-        repository.update(ricorrenza);
-    }
-
-    // Nuovo metodo per ottenere una ricorrenza specifica per ID
-    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
-        return repository.getRicorrenzaById(id);
-    }
-
-    public static class Factory implements ViewModelProvider.Factory {
-        private Application mApplication;
-
-        public Factory(Application application) {
-            mApplication = application;
-        }
-
-        @Override
-        public <T extends ViewModel> T create(Class<T> modelClass) {
-            return (T) new RicorrenzaViewModel(mApplication);
-        }
-    }
-}
+</navigation>
 

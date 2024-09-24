@@ -1,0 +1,26 @@
+<problems>
+<problem>
+  <file>SantiBailor.app.unitTest</file>
+  <module>SantiBailor.app.unitTest</module>
+  <entry_point TYPE="module" FQNAME="SantiBailor.app.unitTest" />
+  <problem_class id="UnnecessaryModuleDependencyInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary module dependency</problem_class>
+  <hints>
+    <hint value="SantiBailor.app.main" />
+  </hints>
+  <description>Module 'SantiBailor.app.unitTest' sources do not depend on module 'SantiBailor.app.main' sources</description>
+  <highlighted_element />
+  <language />
+</problem>
+<problem>
+  <file>SantiBailor.app.androidTest</file>
+  <module>SantiBailor.app.androidTest</module>
+  <entry_point TYPE="module" FQNAME="SantiBailor.app.androidTest" />
+  <problem_class id="UnnecessaryModuleDependencyInspection" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Unnecessary module dependency</problem_class>
+  <hints>
+    <hint value="SantiBailor.app.main" />
+  </hints>
+  <description>Module 'SantiBailor.app.androidTest' sources do not depend on module 'SantiBailor.app.main' sources</description>
+  <highlighted_element />
+  <language />
+</problem>
+</problems>

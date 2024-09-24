@@ -1,0 +1,43 @@
+classDiagram
+    class MainActivity {
+        -NavController navController
+        -BottomNavigationView bottomNav
+        +updateBottomNavVisibility(NavDestination)
+        +updateBottomNavSelection(int)
+    }
+    class HomeFragment {
+        -RicorrenzaViewModel viewModel
+        -RicorrenzaAdapter adapter
+        +setupSaintsList()
+        +navigateToEditFragment(int)
+    }
+    class SearchFragment {
+        -RicorrenzaViewModel viewModel
+        -RicorrenzaAdapter adapter
+        +performSearch()
+    }
+    class SettingsFragment {
+        +navigateToAddItem(String)
+        +navigateToAdvancedSearch()
+    }
+    class AddItemFragment {
+        -RicorrenzaViewModel viewModel
+        +saveRicorrenza()
+    }
+    class EditRicorrenzaFragment {
+        -RicorrenzaViewModel viewModel
+        +loadRicorrenza(int)
+        +saveRicorrenza()
+    }
+    class RicorrenzaAdapter {
+        +setRicorrenze(List<RicorrenzaConTipo>)
+        +onBindViewHolder(ViewHolder, int)
+    }
+
+    MainActivity --> HomeFragment
+    MainActivity --> SearchFragment
+    MainActivity --> SettingsFragment
+    MainActivity --> AddItemFragment
+    MainActivity --> EditRicorrenzaFragment
+    HomeFragment --> RicorrenzaAdapter
+    SearchFragment --> RicorrenzaAdapter

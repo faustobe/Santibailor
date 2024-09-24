@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Impostazioni di Visualizzazione"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo di Ricorrenze da Mostrare"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <Switch
+            android:id="@+id/switchShowReligiose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mostra Ricorrenze Religiose"
+            android:layout_marginBottom="8dp"/>
+
+        <Switch
+            android:id="@+id/switchShowLaiche"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Mostra Ricorrenze Laiche"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo di Visualizzazione"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/radioGroupViewType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/radioButtonDaily"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visualizzazione Giornaliera"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonWeekly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visualizzazione Settimanale"/>
+
+            <RadioButton
+                android:id="@+id/radioButtonMonthly"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Visualizzazione Mensile"/>
+        </RadioGroup>
+
+    </LinearLayout>
+</ScrollView>

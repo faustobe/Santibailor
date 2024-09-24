@@ -1,0 +1,18 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/java/it/faustobe/santibailor/ui/settings/SettingsFragment.java</file>
+  <line>108</line>
+  <module>SantiBailor.app.main</module>
+  <package>it.faustobe.santibailor.ui.settings</package>
+  <entry_point TYPE="method" FQNAME="it.faustobe.santibailor.presentation.features.settings.SettingsFragment void navigateToAddItem(java.lang.String itemType)" />
+  <problem_class id="SameParameterValue" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Method parameter always has the same value</problem_class>
+  <hints>
+    <hint value="itemType &quot;ricorrenzaEntity&quot;" />
+  </hints>
+  <description>Actual value of parameter &lt;code&gt;itemType&lt;/code&gt; is always 'ricorrenzaEntity'</description>
+  <highlighted_element>itemType</highlighted_element>
+  <language>JAVA</language>
+  <offset>42</offset>
+  <length>8</length>
+</problem>
+</problems>

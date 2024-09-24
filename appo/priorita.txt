@@ -1,0 +1,11 @@
+per ultimare la sezione santi\ricorrenze:
+ - ripristinare AddRicorrenza, la cancellazione e verificare la modifica degli item  
+ - in EditRicorrenza: 
+        - gestire la scelta del tipo ricorrenza che non carica i tipi da db
+        - verificare il salvataggio delle modifiche e il caricamento immagini
+        - aggiungere uno o più pulsanti di navigazione, attualmente non esiste modo di uscire da modifica se non salvando l'item
+        - modificare il layout nel seguente ordine dall'alto in basso: prefisso, nome, suffisso, tipo, data, descrizione, bottoni aggiungi immagine, salva etc.
+        - il button 'oggi' che dovrebbe riportare lo spinner alla data odierna non funziona più
+        - il button 'back' del dispositivo non funziona
+        
+va implementata una funzione di notifica delle ricorrenze ma può essere fatto successivamente implementando un sistema di notifiche valido per tutte le sezioni

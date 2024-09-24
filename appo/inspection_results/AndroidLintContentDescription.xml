@@ -1,0 +1,80 @@
+<problems>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_item.xml</file>
+  <line>107</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_add_item.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageView</highlighted_element>
+  <language>XML</language>
+  <offset>9</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_edit_ricorrenza.xml</file>
+  <line>107</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_edit_ricorrenza.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageView</highlighted_element>
+  <language>XML</language>
+  <offset>13</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml</file>
+  <line>7</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageView</highlighted_element>
+  <language>XML</language>
+  <offset>5</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml</file>
+  <line>185</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageView</highlighted_element>
+  <language>XML</language>
+  <offset>21</offset>
+  <length>9</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home_bk.xml</file>
+  <line>8</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home_bk.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageButton</highlighted_element>
+  <language>XML</language>
+  <offset>5</offset>
+  <length>11</length>
+</problem>
+<problem>
+  <file>file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home_bk.xml</file>
+  <line>28</line>
+  <module>SantiBailor.app.main</module>
+  <entry_point TYPE="file" FQNAME="file://$PROJECT_DIR$/app/src/main/res/layout/fragment_home_bk.xml" />
+  <problem_class id="AndroidLintContentDescription" severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Image without contentDescription</problem_class>
+  <hints />
+  <description>&lt;html&gt;Missing &lt;code&gt;contentDescription&lt;/code&gt; attribute on image&lt;/html&gt;</description>
+  <highlighted_element>ImageButton</highlighted_element>
+  <language>XML</language>
+  <offset>5</offset>
+  <length>11</length>
+</problem>
+</problems>

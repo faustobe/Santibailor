@@ -1,0 +1,3 @@
+it.faustobe.santibailor.test
+style WhiteBackgroundDialogTheme
+style WhiteBackgroundTheme
