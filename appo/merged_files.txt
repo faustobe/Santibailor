@@ -1,543 +1,395 @@
-// File creato il: 2024-09-24 08:32:58
+// File creato il: 2024-10-04 08:02:01
 
-// Contenuto di app/build.gradle
+// Contenuto di home/HomeFragment.java
 
-plugins {
-    id 'com.android.application'
-    id 'androidx.navigation.safeargs'
-    id 'dagger.hilt.android.plugin'
-}
+package it.faustobe.santibailor.presentation.features.home;
 
-android {
-    namespace 'it.faustobe.santibailor'
-    compileSdk 34
-
-    defaultConfig {
-        applicationId "it.faustobe.santibailor"
-        minSdk 24
-        targetSdk 34
-        versionCode 2
-        versionName "1.0.1"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        debug {
-            debuggable true
-        }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:deprecation"
-    }
-    buildFeatures {
-        viewBinding true
-    }
-}
-
-dependencies {
-    def room_version = "2.6.0"
-    implementation libs.androidx.room.runtime
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    implementation libs.androidx.room.ktx
-
-    def lifecycle_version = "2.6.2"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    implementation libs.androidx.lifecycle.livedata
-    implementation "androidx.lifecycle:lifecycle-runtime:$lifecycle_version"
-    implementation libs.androidx.lifecycle.viewmodel.savedstate
-    implementation libs.androidx.lifecycle.common.java8
-    implementation libs.androidx.appcompat.v161
-    implementation libs.material.v150
-    implementation libs.androidx.drawerlayout
-    implementation libs.androidx.fragment
-
-    def glide_version = "4.15.1"
-    implementation libs.glide
-    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
-
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.constraintlayout
-    implementation libs.lifecycle.livedata.ktx
-    implementation libs.lifecycle.viewmodel.ktx
-    implementation libs.navigation.fragment
-    implementation libs.navigation.ui
-    //implementation(libs.material.calendarview)
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
-    // JUnit 4 framework
-    testImplementation libs.junit
-    // Mockito per il mocking degli oggetti
-    testImplementation libs.mockito.core
-    // AndroidX Test Core library
-    testImplementation libs.androidx.core
-    // AndroidX Test - JVM testing utilities
-    testImplementation libs.androidx.core.testing
-    // mockito-inline
-    testImplementation libs.mockito.inline
-    // simula ambiente android
-    testImplementation libs.robolectric
-
-    implementation libs.gson
-
-    //def nav_version = "2.7.7"
-    implementation libs.androidx.fragment.v155
-
-    //def hil_version = "2.44"
-    implementation libs.hilt.android
-    annotationProcessor libs.hilt.compiler
-
-    // Per i test con Hilt (opzionale, ma consigliato)
-    testImplementation libs.hilt.android.testing
-    testAnnotationProcessor libs.hilt.compiler
-
-    def nav_version = "2.8.0"
-
-    // Jetpack Compose Integration
-    implementation "androidx.navigation:navigation-compose:$nav_version"
-
-    // Views/Fragments Integration
-    implementation "androidx.navigation:navigation-fragment:$nav_version"
-    implementation "androidx.navigation:navigation-ui:$nav_version"
-
-    // Feature module support for Fragments
-    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
-
-    // Testing Navigation
-    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
-
-}
-
-// Contenuto di test/TestFragment.java
-
-package it.faustobe.santibailor.presentation.features.test;
-
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.animation.ObjectAnimator;
+import android.widget.Toast;
 
+import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
+import it.faustobe.santibailor.presentation.features.main.MainActivity;
 import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.databinding.FragmentHomeBinding;
+import it.faustobe.santibailor.util.DateUtils;
+import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 
-public class TestFragment extends Fragment {
+@AndroidEntryPoint
+public class HomeFragment extends Fragment {
 
-    @Nullable
+    private FragmentHomeBinding binding;
+    private RicorrenzaViewModel ricorrenzaViewModel;
+    private RicorrenzaAdapter ricorrenzaAdapter;
+    private boolean isPersonalInfoExpanded = false;
+    private boolean isSaintsListExpanded = false;
+    private boolean isCalendarExpanded = false;
+    private HomeViewModel homeViewModel;
+    private View expandPersonalInfoIcon;
+    private static final String TAG = "HomeFragment";
+    private NestedScrollView nestedScrollView;
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_test, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // Recupera l'argomento usando Safe Args
-        int testArg = TestFragmentArgs.fromBundle(getArguments()).getTestArg();
-
-        // Visualizza l'argomento in un TextView
-        TextView textView = view.findViewById(R.id.testTextView);
-        textView.setText(String.valueOf(testArg));
-    }
-}
-
-// Contenuto di test/TestFragmentArgs.java
-
-package it.faustobe.santibailor.presentation.features.test;
-
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.lifecycle.SavedStateHandle;
-import androidx.navigation.NavArgs;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.lang.SuppressWarnings;
-import java.util.HashMap;
-
-public class TestFragmentArgs implements NavArgs {
-  private final HashMap arguments = new HashMap();
-
-  private TestFragmentArgs() {
-  }
-
-  @SuppressWarnings("unchecked")
-  private TestFragmentArgs(HashMap argumentsMap) {
-    this.arguments.putAll(argumentsMap);
-  }
-
-  @NonNull
-  @SuppressWarnings("unchecked")
-  public static TestFragmentArgs fromBundle(@NonNull Bundle bundle) {
-    TestFragmentArgs __result = new TestFragmentArgs();
-    bundle.setClassLoader(TestFragmentArgs.class.getClassLoader());
-    if (bundle.containsKey("testArg")) {
-      int testArg;
-      testArg = bundle.getInt("testArg");
-      __result.arguments.put("testArg", testArg);
-    } else {
-      __result.arguments.put("testArg", 0);
-    }
-    return __result;
-  }
-
-  @NonNull
-  @SuppressWarnings("unchecked")
-  public static TestFragmentArgs fromSavedStateHandle(@NonNull SavedStateHandle savedStateHandle) {
-    TestFragmentArgs __result = new TestFragmentArgs();
-    if (savedStateHandle.contains("testArg")) {
-      int testArg;
-      testArg = savedStateHandle.get("testArg");
-      __result.arguments.put("testArg", testArg);
-    } else {
-      __result.arguments.put("testArg", 0);
-    }
-    return __result;
-  }
-
-  @SuppressWarnings("unchecked")
-  public int getTestArg() {
-    return (int) arguments.get("testArg");
-  }
-
-  @SuppressWarnings("unchecked")
-  @NonNull
-  public Bundle toBundle() {
-    Bundle __result = new Bundle();
-    if (arguments.containsKey("testArg")) {
-      int testArg = (int) arguments.get("testArg");
-      __result.putInt("testArg", testArg);
-    } else {
-      __result.putInt("testArg", 0);
-    }
-    return __result;
-  }
-
-  @SuppressWarnings("unchecked")
-  @NonNull
-  public SavedStateHandle toSavedStateHandle() {
-    SavedStateHandle __result = new SavedStateHandle();
-    if (arguments.containsKey("testArg")) {
-      int testArg = (int) arguments.get("testArg");
-      __result.set("testArg", testArg);
-    } else {
-      __result.set("testArg", 0);
-    }
-    return __result;
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (this == object) {
-        return true;
-    }
-    if (object == null || getClass() != object.getClass()) {
-        return false;
-    }
-    TestFragmentArgs that = (TestFragmentArgs) object;
-    if (arguments.containsKey("testArg") != that.arguments.containsKey("testArg")) {
-      return false;
-    }
-    if (getTestArg() != that.getTestArg()) {
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public int hashCode() {
-    int result = 1;
-    result = 31 * result + getTestArg();
-    return result;
-  }
-
-  @Override
-  public String toString() {
-    return "TestFragmentArgs{"
-        + "testArg=" + getTestArg()
-        + "}";
-  }
-
-  public static final class Builder {
-    private final HashMap arguments = new HashMap();
-
-    @SuppressWarnings("unchecked")
-    public Builder(@NonNull TestFragmentArgs original) {
-      this.arguments.putAll(original.arguments);
-    }
-
-    public Builder() {
-    }
-
-    @NonNull
-    public TestFragmentArgs build() {
-      TestFragmentArgs result = new TestFragmentArgs(arguments);
-      return result;
-    }
-
-    @NonNull
-    @SuppressWarnings("unchecked")
-    public Builder setTestArg(int testArg) {
-      this.arguments.put("testArg", testArg);
-      return this;
-    }
-
-    @SuppressWarnings({"unchecked","GetterOnBuilder"})
-    public int getTestArg() {
-      return (int) arguments.get("testArg");
-    }
-  }
-}
-
-
-// Contenuto di settings/SettingsFragment.java
-
-package it.faustobe.santibailor.presentation.features.settings;
-
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuProvider;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
-import androidx.navigation.NavController;
-import androidx.navigation.NavDirections;
-import androidx.navigation.Navigation;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import it.faustobe.santibailor.R;
-import it.faustobe.santibailor.databinding.FragmentSettingsBinding;
-
-public class SettingsFragment extends Fragment {
-    private FragmentSettingsBinding binding;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+        Log.d("HomeFragment", "onViewCreated called");
+        ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+        nestedScrollView = binding.nestedScrollView;
+        setupScrollListener();
+        view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void handleOnBackPressed() {
-                navigateBack();
+            public void onGlobalLayout() {
+                updateComponentsState();
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
+        setupDateDisplay();
+        loadBackgroundImage();
+        setupSaintOfDay();
+        loadSaintsOfDay();
+        Log.d("HomeFragment", "loadSaintsOfDay called");
+        setupPersonalInfo();
+        setupSaintsList();
+        updateComponentsState();
+        setupPersonalInfoCard();
+        updateInitialVisibility();
+        observeDeleteResult();
+        setInitialSaintsListState();
+        observeRicorrenze();
+        setupCalendar();
+        setupBottomNavigation();
+    }
+
+    private void observeRicorrenze() {
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+        ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
+        ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+    }
+
+    private void updateRicorrenzeReligiose(List<Ricorrenza> ricorrenzeReligiose) {
+        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze religiose
+        // Per ora, possiamo loggare il numero di ricorrenze religiose per debug
+        Log.d(TAG, "Ricorrenze religiose: " + (ricorrenzeReligiose != null ? ricorrenzeReligiose.size() : 0));
+    }
+
+    private void updateRicorrenzeLaiche(List<Ricorrenza> ricorrenzeLaiche) {
+        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze laiche
+        // Per ora, possiamo loggare il numero di ricorrenze laiche per debug
+        Log.d(TAG, "Ricorrenze laiche: " + (ricorrenzeLaiche != null ? ricorrenzeLaiche.size() : 0));
+    }
+
+    private void updateInitialVisibility() {
+        View personalInfoContent = binding.cardPersonalInfo.findViewById(R.id.personal_info_content);
+        if (personalInfoContent != null) {
+            personalInfoContent.setVisibility(View.GONE);
+        }
+
+        if (binding.recyclerViewSaints != null) {
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+
+        updatePersonalInfoIcon();
+        updateSaintsListIcon();
+    }
+
+    private void loadBackgroundImage() {
+        Glide.with(this)
+                .load(R.drawable.background_saint)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .centerCrop()
+                .into(binding.backgroundImage);
+    }
+
+    private void navigateToRicorrenzaDetail(int ricorrenzaId) {
+        if (ricorrenzaId > 0) {
+            NavDirections action = HomeFragmentDirections.actionHomeFragmentToRicorrenzaDetailFragment(ricorrenzaId);
+            Navigation.findNavController(requireView()).navigate(action);
+        } else {
+            Toast.makeText(requireContext(), "ID ricorrenza non valido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupSaintsList() {
+        ricorrenzaAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, this::showDeleteConfirmationDialog, ricorrenzaViewModel);
+        binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
+
+        binding.expandCollapseSaintsIcon.setOnClickListener(v -> toggleSaintsListExpansion());
+
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+    }
+
+    private void setupCalendar() {
+        binding.reloadSaintButton.setOnClickListener(v -> reloadSaintOfDay());
+
+        // Imposta la data nel calendario
+        Calendar calendar = Calendar.getInstance();
+        binding.tvWeekday.setText(new SimpleDateFormat("EEEE", Locale.ITALIAN).format(calendar.getTime()));
+        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        binding.tvMonth.setText(DateUtils.getCurrentMonthNameFull());
+
+        // Imposta il calendario come espanso di default
+        binding.calendarContent.setVisibility(View.VISIBLE);
+        isCalendarExpanded = true;
+    }
+
+    private void setupSaintOfDay() {
+        binding.reloadSaintButton.setOnClickListener(v -> {
+            Log.d("HomeFragment", "Refresh button clicked");
+            ricorrenzaViewModel.refreshRandomSaint();
+        });
+
+        ricorrenzaViewModel.getCurrentSaint().observe(getViewLifecycleOwner(), this::updateSaintOfDay);
+    }
+
+    private void updateSaintOfDay(Ricorrenza saint) {
+        if (saint != null) {
+            String saintText = saint.getPrefix() + " " + saint.getNome();
+            binding.tvSaintOfDay.setText(saintText);
+            binding.tvSaintOfDay.setOnClickListener(v -> navigateToRicorrenzaDetail(saint.getId()));
+            Log.d("HomeFragment", "Updated saint of day: " + saintText);
+        } else {
+            binding.tvSaintOfDay.setText(R.string.no_saint_today);
+            Log.d("HomeFragment", "No saint to display");
+        }
+    }
+
+    private void loadSaintsOfDay() {
+        Log.d("HomeFragment", " SONO dentro loadSaintsOfDay method");
+        Calendar calendar = Calendar.getInstance();
+        int giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        int mese = calendar.get(Calendar.MONTH); // +1 perché Calendar.MONTH parte da 0
+        ricorrenzaViewModel.loadRicorrenzeDelGiorno(giorno, mese);
+        Log.d("HomeFragment", "Loading saints for day: " + giorno + "/" + mese);
+    }
+
+    private void updateRicorrenzeList(List<Ricorrenza> ricorrenze) {
+        Log.d("HomeFragment", "updateRicorrenzeList chiamato con " + (ricorrenze != null ? ricorrenze.size() : 0) + " ricorrenze");
+        if (ricorrenze != null && !ricorrenze.isEmpty()) {
+            if (ricorrenze.size() > 1) {
+                binding.expandCollapseSaintsIcon.setVisibility(View.VISIBLE);
+                ricorrenzaAdapter.setRicorrenze(ricorrenze.subList(1, ricorrenze.size()));
+            } else {
+                binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
+                binding.recyclerViewSaints.setVisibility(View.GONE);
+            }
+        } else {
+            binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+        updateComponentsState();
+    }
+
+    private void toggleSaintsListExpansion() {
+        isSaintsListExpanded = !isSaintsListExpanded;
+        binding.recyclerViewSaints.setVisibility(isSaintsListExpanded ? View.VISIBLE : View.GONE);
+        binding.expandCollapseSaintsIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        updateComponentsState();
+    }
+
+    private void updateSaintsListIcon() {
+        if (binding.expandCollapseSaintsIcon != null) {
+            binding.expandCollapseSaintsIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        }
+    }
+
+    private void setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_overview || itemId == R.id.navigation_help || itemId == R.id.navigation_add) {
+                navigateToAddItemFragment();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void navigateToAddItemFragment() {
+        NavDirections action = HomeFragmentDirections.actionHomeFragmentToAddItemFragment("default");
+        Navigation.findNavController(requireView()).navigate(action);
+    }
+
+    private void setInitialSaintsListState() {
+        isSaintsListExpanded = false;
+        if (binding.recyclerViewSaints != null) {
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+        if (ricorrenzaAdapter != null) {
+            ricorrenzaAdapter.setCollapsedView(true);
+        }
+        updateSaintsListIcon();
+    }
+
+    private void navigateToEditFragment(int ricorrenzaId) {
+        if (ricorrenzaId > 0) {
+            NavDirections action = HomeFragmentDirections.actionHomeFragmentToRicorrenzaDetailFragment(ricorrenzaId);
+            Navigation.findNavController(requireView()).navigate(action);
+        } else {
+            Toast.makeText(requireContext(), "ID ricorrenza non valido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setupDateDisplay() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ITALIAN);
+
+        binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
+        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        binding.tvMonth.setText(DateUtils.getCurrentMonthNameFull());
+    }
+
+    private void reloadSaintOfDay() {
+        Log.d("HomeFragment", "reloadSaintOfDay chiamata ");
+        ricorrenzaViewModel.reloadSaintOfDay();
+    }
+
+    private void showDeleteConfirmationDialog(Ricorrenza ricorrenza) {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Conferma cancellazione")
+                .setMessage("Sei sicuro di voler cancellare questa ricorrenza?")
+                .setPositiveButton("Sì", (dialog, which) -> deleteRicorrenza(ricorrenza))
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void deleteRicorrenza(Ricorrenza ricorrenza) {
+        ricorrenzaViewModel.deleteRicorrenza(ricorrenza);
+    }
+
+    private void observeDeleteResult() {
+        ricorrenzaViewModel.getDeleteResult().observe(getViewLifecycleOwner(), isSuccess -> {
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "Ricorrenza cancellata con successo", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(), "Errore durante la cancellazione", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+    private void setupPersonalInfo() {
+        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
+
+        String todoList = """
+                - paga bolletta luce
+                - cambia filtro aria della cappa
+                - compra regalo per Denise - compleanno fra 5 gg
+                - finisci rapporto AZS - consegna fra 3 gg""";
+        binding.tvTodoList.setText(todoList);
+
+        String todayEvents = """
+                oggi:
+                * gym
+                * ape con Chicca alle h 18
+                + la ricotta è in frigo da 4 giorni""";
+        binding.tvTodayEvents.setText(todayEvents);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setupToolbar();
-        setupListeners();
-        setupMenu();
+    private void setupPersonalInfoCard() {
+        View header = binding.cardPersonalInfo.findViewById(R.id.tv_personal_info_header);
+        if (header != null) {
+            header.setOnClickListener(v -> togglePersonalInfoExpansion());
+        }
+        expandPersonalInfoIcon = binding.cardPersonalInfo.findViewById(R.id.expand_collapse_saints_icon);
     }
 
-    private void setupToolbar() {
-        if (getActivity() instanceof AppCompatActivity) {
-            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setTitle(R.string.title_settings);
-                actionBar.setDisplayHomeAsUpEnabled(true);
+    private void togglePersonalInfoExpansion() {
+        isPersonalInfoExpanded = !isPersonalInfoExpanded;
+        View contentView = binding.cardPersonalInfo.findViewById(R.id.personal_info_content);
+        if (contentView != null) {
+            if (isPersonalInfoExpanded) {
+                contentView.setVisibility(View.VISIBLE);
+                ObjectAnimator.ofFloat(contentView, "alpha", 0f, 1f).start();
+            } else {
+                ObjectAnimator.ofFloat(contentView, "alpha", 1f, 0f).setDuration(200).start();
+                contentView.postDelayed(() -> {
+                    contentView.setVisibility(View.GONE);
+                    updateBottomMenuVisibility();
+                }, 200);
             }
+        }
+        updatePersonalInfoIcon();
+        updateComponentsState();
+    }
+
+    private void updatePersonalInfoIcon() {
+        if (expandPersonalInfoIcon != null) {
+            expandPersonalInfoIcon.setRotation(isPersonalInfoExpanded ? 180f : 0f);
         }
     }
 
-    private void setupMenu() {
-        requireActivity().addMenuProvider(new MenuProvider() {
+    private void setupScrollListener() {
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
-            public void onCreateMenu(@NonNull Menu menu, @NonNull MenuInflater menuInflater) {
-                // Se hai un menu specifico per le impostazioni, inflalo qui
-            }
-
-            @Override
-            public boolean onMenuItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == android.R.id.home) {
-                    navigateBack();
-                    return true;
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).handleScroll();
                 }
-                return false;
             }
-        }, getViewLifecycleOwner(), Lifecycle.State.RESUMED);
+        });
     }
 
-    private void navigateBack() {
-        NavController navController = Navigation.findNavController(requireView());
-        navController.navigateUp();
+    private boolean isScrolledToTop() {
+        return nestedScrollView.getScrollY() == 0;
     }
 
-    private void setupListeners() {
-        binding.btnRicorrenze.setOnClickListener(v -> navigateToRicorrenzeSettings());
-        binding.btnGenerali.setOnClickListener(v -> navigateToGeneralSettings());
-        binding.btnAccount.setOnClickListener(v -> navigateToAccountSettings());
-        binding.btnImpegni.setOnClickListener(v -> navigateToImpegniSettings());
-        binding.btnListeSpesa.setOnClickListener(v -> navigateToListeSpesaSettings());
-        binding.btnNotifiche.setOnClickListener(v -> navigateToNotificheSettings());
-        binding.btnIntegrazioni.setOnClickListener(v -> navigateToIntegrazioniSettings());
-        binding.btnPrivacySicurezza.setOnClickListener(v -> navigateToPrivacySicurezzaSettings());
-        binding.btnSupportoInfo.setOnClickListener(v -> navigateToSupportoInfoSettings());
-    }
-
-    private void navigateToRicorrenzeSettings() {
-        List<SettingItem> ricorrenzeSettings = new ArrayList<>();
-        ricorrenzeSettings.add(new SettingItem("Gestione Ricorrenze", "Aggiungi, modifica o elimina ricorrenze", R.id.action_categorySettingsFragment_to_manageRicorrenzeFragment));
-        ricorrenzeSettings.add(new SettingItem("Visualizzazione", "Imposta le preferenze di visualizzazione", R.id.action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment));
-        ricorrenzeSettings.add(new SettingItem("Notifiche Ricorrenze", "Attiva o disattiva le notifiche", true ));
-        ricorrenzeSettings.add(new SettingItem("Sincronizzazione calendario", "Sincronizza con calendari esterni"));
-
-        SettingItem[] settingItemsArray = ricorrenzeSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Ricorrenze", settingItemsArray);
-    }
-
-    private void navigateToGeneralSettings() {
-        List<SettingItem> generalSettings = new ArrayList<>();
-        generalSettings.add(new SettingItem("Tema", "Seleziona il tema dell'app"));
-        generalSettings.add(new SettingItem("Lingua", "Scegli la lingua dell'app"));
-        generalSettings.add(new SettingItem("Notifiche", "Gestisci le notifiche push"));
-        generalSettings.add(new SettingItem("Font e dimensione del testo", "Personalizza il carattere e la dimensione"));
-        generalSettings.add(new SettingItem("Sincronizzazione", "Opzioni per sincronizzare i dati" ));
-        generalSettings.add(new SettingItem("Backup e ripristino", "Gestisci backup e ripristino dei dati"));
-
-        SettingItem[] settingItemsArray = generalSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Generali", settingItemsArray);
-    }
-
-    private void navigateToAccountSettings() {
-        List<SettingItem> accountSettings = new ArrayList<>();
-        accountSettings.add(new SettingItem("Profilo utente", "Modifica le informazioni personali" ));
-        accountSettings.add(new SettingItem("Gestione account", "Collega o disconnetti account" ));
-        accountSettings.add(new SettingItem("Cambio password", "Modifica la password o configura l'autenticazione" ));
-        accountSettings.add(new SettingItem("Esporta dati", "Esporta le informazioni personali" ));
-        accountSettings.add(new SettingItem("Elimina account", "Elimina definitivamente l'account" ));
-
-        SettingItem[] settingItemsArray = accountSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Account", settingItemsArray);
-    }
-
-    private void navigateToImpegniSettings() {
-        List<SettingItem> impegniSettings = new ArrayList<>();
-        impegniSettings.add(new SettingItem("Visualizzazione impegni", "Scegli il formato di visualizzazione" ));
-        impegniSettings.add(new SettingItem("Promemoria per impegni", "Gestisci i promemoria" ));
-        impegniSettings.add(new SettingItem("Categorie impegni", "Crea e gestisci categorie personalizzate" ));
-        impegniSettings.add(new SettingItem("Condivisione", "Opzioni per condividere gli impegni" ));
-        impegniSettings.add(new SettingItem("Durata predefinita", "Imposta una durata standard" ));
-
-        SettingItem[] settingItemsArray = impegniSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Impegni", settingItemsArray);
-    }
-
-    private void navigateToListeSpesaSettings() {
-        List<SettingItem> listeSpesaSettings = new ArrayList<>();
-        listeSpesaSettings.add(new SettingItem("Ordine della lista", "Scegli l'ordinamento della lista" ));
-        listeSpesaSettings.add(new SettingItem("Suggerimenti intelligenti", "Attiva/disattiva i suggerimenti", true ));
-        listeSpesaSettings.add(new SettingItem("Condivisione liste", "Opzioni per condividere le liste" ));
-        listeSpesaSettings.add(new SettingItem("Salvataggio liste preferite", "Crea e salva liste ricorrenti" ));
-        listeSpesaSettings.add(new SettingItem("Notifiche di promemoria", "Gestisci gli avvisi per le liste", true ));
-
-        SettingItem[] settingItemsArray = listeSpesaSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Liste Spesa", settingItemsArray);
-    }
-
-    private void navigateToNotificheSettings() {
-        List<SettingItem> notificheSettings = new ArrayList<>();
-        notificheSettings.add(new SettingItem("Notifiche per Ricorrenze", "Imposta le notifiche per eventi ricorrenti" ));
-        notificheSettings.add(new SettingItem("Notifiche per Impegni", "Gestisci i promemoria per gli impegni" ));
-        notificheSettings.add(new SettingItem("Notifiche silenziose", "Configura la modalità non disturbare" ));
-        notificheSettings.add(new SettingItem("Snooze delle notifiche", "Opzioni per posticipare le notifiche" ));
-
-        SettingItem[] settingItemsArray = notificheSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Notifiche", settingItemsArray);
-    }
-
-    private void navigateToIntegrazioniSettings() {
-        List<SettingItem> integrazioniSettings = new ArrayList<>();
-        integrazioniSettings.add(new SettingItem("Integrazione con Calendari", "Collega calendari esterni" ));
-        integrazioniSettings.add(new SettingItem("Integrazione con Assistenti Vocali", "Collega assistenti vocali" ));
-        integrazioniSettings.add(new SettingItem("Integrazione con App di Terze Parti", "Collega app per la gestione delle attività" ));
-
-        SettingItem[] settingItemsArray = integrazioniSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Integrazioni", settingItemsArray);
-    }
-
-    private void navigateToPrivacySicurezzaSettings() {
-        List<SettingItem> privacySicurezzaSettings = new ArrayList<>();
-        privacySicurezzaSettings.add(new SettingItem("Blocco dell'app", "Attiva blocco con PIN o biometrico" ));
-        privacySicurezzaSettings.add(new SettingItem("Permessi", "Gestisci i permessi dell'app" ));
-        privacySicurezzaSettings.add(new SettingItem("Cronologia dati", "Visualizza e gestisci la cronologia" ));
-        privacySicurezzaSettings.add(new SettingItem("Crittografia dati", "Abilita la crittografia per dati sensibili" ));
-
-        SettingItem[] settingItemsArray = privacySicurezzaSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("Impostazioni Privacy & Sicurezza", settingItemsArray);
-    }
-
-    private void navigateToSupportoInfoSettings() {
-        List<SettingItem> supportoInfoSettings = new ArrayList<>();
-        supportoInfoSettings.add(new SettingItem("Contatti e Supporto", "Accedi all'assistenza" ));
-        supportoInfoSettings.add(new SettingItem("Domande frequenti (FAQ)", "Visualizza le domande comuni" ));
-        supportoInfoSettings.add(new SettingItem("Versione dell'app", "Informazioni sulla versione" ));
-        supportoInfoSettings.add(new SettingItem("Feedback", "Invia feedback o suggerimenti" ));
-
-        SettingItem[] settingItemsArray = supportoInfoSettings.toArray(new SettingItem[0]);
-
-        navigateToCategorySettings("info & SUpporto", settingItemsArray);
-    }
-
-    private void navigateToCategorySettings(String categoryTitle, SettingItem[] settingItems) {
-        try {
-            SettingsFragmentDirections.ActionSettingsFragmentToCategorySettingsFragment action =
-                    SettingsFragmentDirections.actionSettingsFragmentToCategorySettingsFragment(
-                            categoryTitle,
-                            settingItems
-                    );
-            Navigation.findNavController(requireView()).navigate(action);
-        } catch (Exception e) {
-            Log.e("SettingsFragment", "Errore nella navigazione con Safe Args: " + e.getMessage());
-            navigateToCategorySettingsFallback(categoryTitle, settingItems);
+    private void updateBottomMenuVisibility() {
+        boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded;
+        if (allCollapsed && getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).updateComponentsVisibility(true);
         }
     }
 
-    private void navigateToCategorySettingsFallback(String categoryTitle, SettingItem[] settingItems) {
-        Bundle args = new Bundle();
-        args.putString("categoryTitle", categoryTitle);
-        args.putParcelableArray("settingItems", settingItems);
+    private void updateComponentsState() {
+        boolean allCollapsed = !isCalendarExpanded && !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
+        homeViewModel.setAllComponentsCollapsed(allCollapsed);
+    }
 
-        NavController navController = Navigation.findNavController(requireView());
-        navController.navigate(R.id.action_settingsFragment_to_categorySettingsFragment, args);
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getActivity() instanceof MainActivity) {
+            ((MainActivity) getActivity()).showBottomNav();
+        }
     }
 
     @Override
@@ -547,178 +399,717 @@ public class SettingsFragment extends Fragment {
     }
 }
 
-// Contenuto di navigation/nav_graph.xml
+// Contenuto di viewmodels/RicorrenzaViewModel.java
 
-<?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/navigation_home">
+package it.faustobe.santibailor.presentation.common.viewmodels;
 
-    <!-- Frammenti esistenti -->
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="it.faustobe.santibailor.presentation.features.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home">
-        <argument
-            android:name="ricorrenzaId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_homeFragment_to_ricorrenzaDetailFragment"
-            app:destination="@id/ricorrenzaDetailFragment" />
-    </fragment>
+import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="it.faustobe.santibailor.presentation.features.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.Transformations;
 
-    <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="it.faustobe.santibailor.presentation.features.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+import android.content.SharedPreferences;
+import android.content.Context;
+import com.google.gson.Gson;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import javax.inject.Inject;
 
-    <!-- Fragment Impostazioni modificato -->
-    <fragment
-        android:id="@+id/navigation_settings"
-        android:name="it.faustobe.santibailor.presentation.features.settings.SettingsFragment"
-        android:label="Impostazioni"
-        tools:layout="@layout/fragment_settings">
-        <action
-            android:id="@+id/action_settingsFragment_to_addItemFragment"
-            app:destination="@id/addItemFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_categorySettingsFragment"
-            app:destination="@id/categorySettingsFragment" />
-    </fragment>
+import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-    <fragment
-        android:id="@+id/ricorrenzaDetailFragment"
-        android:name="it.faustobe.santibailor.presentation.features.ricorrenza.RicorrenzaDetailFragment"
-        android:label="Dettaglio Ricorrenza"
-        tools:layout="@layout/fragment_ricorrenza_detail">
-        <argument
-            android:name="ricorrenzaId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_ricorrenzaDetailFragment_to_editRicorrenzaFragment"
-            app:destination="@id/editRicorrenzaFragment" />
-    </fragment>
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+import android.widget.ImageView;
 
-    <fragment
-        android:id="@+id/editRicorrenzaFragment"
-        android:name="it.faustobe.santibailor.presentation.common.ricorrenze.EditRicorrenzaFragment"
-        android:label="Modifica Ricorrenza"
-        tools:layout="@layout/fragment_edit_ricorrenza">
-        <argument
-            android:name="ricorrenzaId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_editRicorrenzaFragment_to_navigation_home"
-            app:destination="@id/navigation_home"
-            app:popUpTo="@id/navigation_home"
-            app:popUpToInclusive="true" />
-    </fragment>
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import it.faustobe.santibailor.MyApplication;
+import it.faustobe.santibailor.R;
+import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
+import it.faustobe.santibailor.data.repository.GenericRepository;
+import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+import it.faustobe.santibailor.data.repository.SearchRepository;
+import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.SearchResult;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
+import it.faustobe.santibailor.domain.usecase.DeleteRicorrenzaUseCase;
+import it.faustobe.santibailor.domain.usecase.GetRicorrenzaByIdUseCase;
+import it.faustobe.santibailor.domain.usecase.GetRicorrenzeDelGiornoUseCase;
+import it.faustobe.santibailor.domain.usecase.GetTipiRicorrenzaUseCase;
+import it.faustobe.santibailor.domain.usecase.GetTotalItemCountUseCase;
+import it.faustobe.santibailor.domain.usecase.InsertRicorrenzaUseCase;
+import it.faustobe.santibailor.domain.usecase.RicercaAvanzataUseCase;
+import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaImageUseCase;
+import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaUseCase;
+//import it.faustobe.santibailor.util.ImageManager;
+import it.faustobe.santibailor.util.ImageHandler;
+import it.faustobe.santibailor.util.PaginationHelper;
 
-    <fragment
-        android:id="@+id/categorySettingsFragment"
-        android:name="it.faustobe.santibailor.presentation.features.settings.CategorySettingsFragment"
-        android:label="Impostazioni Categoria"
-        tools:layout="@layout/fragment_category_settings">
-        <argument
-            android:name="categoryTitle"
-            app:argType="string" />
+@HiltViewModel
+public class RicorrenzaViewModel extends AndroidViewModel {
+    private static final String TAG = "RicorrenzaViewModel";
+    private static final String PREFS_NAME = "RicorrenzaPrefs";
+    private static final String KEY_TIPO_RICORRENZA = "tipoRicorrenza";
+    private static final String KEY_SEARCH_CRITERIA = "search_criteria";
+    private static final String KEY_SEARCH_RESULTS = "search_results";
+    private static final int PAGE_SIZE = 20;
+    private static final long CACHE_DURATION = 5 * 60 * 1000; // 5 minuti in millisecondi
 
-        <argument
-            android:name="settingItems"
-            app:argType="it.faustobe.santibailor.presentation.features.settings.SettingItem[]"
-            app:nullable="true"/>
-        <action
-            android:id="@+id/action_categorySettingsFragment_to_manageRicorrenzeFragment"
-            app:destination="@id/manageRicorrenzeFragment" />
-        <action
-            android:id="@+id/action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment"
-            app:destination="@id/ricorrenzeVisualizationSettingsFragment" />
-        <action
-            android:id="@+id/action_categorySettingsFragment_to_navigation_settings"
-            app:destination="@id/navigation_settings"
-            app:popUpTo="@id/navigation_settings"
-            app:popUpToInclusive="true" />
-    </fragment>
+    private final SharedPreferences sharedPreferences;
+    private final Gson gson;
+    private final SavedStateHandle savedStateHandle;
+    private final MutableLiveData<Boolean> updateResult = new MutableLiveData<>();
+    private final RicorrenzaRepository ricorrenzaRepository;
+    private final ExecutorService executorService;
+    private final Handler mainHandler;
+    private final ImageHandler imageHandler;
+    private final GenericRepository<Ricorrenza, RicorrenzaEntity, Ricorrenza> genericRepository;
+    private final GetRicorrenzeDelGiornoUseCase getRicorrenzeDelGiornoUseCase;
+    private final RicercaAvanzataUseCase ricercaAvanzataUseCase;
+    private final GetTipiRicorrenzaUseCase getTipiRicorrenzaUseCase;
+    private final UpdateRicorrenzaUseCase updateRicorrenzaUseCase;
+    private final DeleteRicorrenzaUseCase deleteRicorrenzaUseCase;
+    private final GetRicorrenzaByIdUseCase getRicorrenzaByIdUseCase;
+    private final InsertRicorrenzaUseCase insertRicorrenzaUseCase;
+    private final GetTotalItemCountUseCase getTotalItemCountUseCase;
+    private final UpdateRicorrenzaImageUseCase updateRicorrenzaImageUseCase;
 
-    <fragment
-        android:id="@+id/testFragment"
-        android:name="it.faustobe.santibailor.presentation.features.test.TestFragment"
-        android:label="Test Fragment"
-        tools:layout="@layout/fragment_test">
-        <argument
-            android:name="testArg"
-            app:argType="integer"
-            android:defaultValue="0" />
-    </fragment>
+    private final MutableLiveData<Date> selectedDate = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> deleteResult = new MutableLiveData<>();
+    private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+    private final MutableLiveData<SearchCriteria> searchCriteria = new MutableLiveData<>();
+    private final MutableLiveData<List<Ricorrenza>> risultatiRicercaAvanzata = new MutableLiveData<>();
+    private final MutableLiveData<Integer> totalPages = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> totalDatabaseItemCount = new MutableLiveData<>();
+    private final MutableLiveData<String> imageLoadingStatus = new MutableLiveData<>();
+    private final MutableLiveData<SearchParams> searchParams = new MutableLiveData<>();
+    private final MutableLiveData<Integer> currentPage = new MutableLiveData<>(0);
+    private final MutableLiveData<Boolean> isLastPage = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
+    private final MutableLiveData<Integer> totalSearchResults = new MutableLiveData<>(0);
+    private final MutableLiveData<TipoRicorrenza> selectedTipo = new MutableLiveData<>();
+    private final MutableLiveData<List<TipoRicorrenza>> listaTipoLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Ricorrenza> currentSaint = new MutableLiveData<>();
+    private List<Ricorrenza> saintsOfDay = new ArrayList<>();
+    private Random random = new Random();
 
-    <fragment
-        android:id="@+id/manageRicorrenzeFragment"
-        android:name="it.faustobe.santibailor.presentation.features.settings.ricorrenze.ManageRicorrenzeFragment"
-        android:label="Gestione Ricorrenze"
-        tools:layout="@layout/fragment_manage_ricorrenze">
-        <action
-            android:id="@+id/action_manageRicorrenzeFragment_to_addItemFragment"
-            app:destination="@id/addItemFragment" />
-        <action
-            android:id="@+id/action_manageRicorrenzeFragment_to_searchFragment"
-            app:destination="@id/searchFragment" />
-    </fragment>
 
-    <fragment
-        android:id="@+id/ricorrenzeVisualizationSettingsFragment"
-        android:name="it.faustobe.santibailor.presentation.features.settings.ricorrenze.RicorrenzeVisualizationSettingsFragment"
-        android:label="Visualizzazione Ricorrenze"
-        tools:layout="@layout/fragment_ricorrenze_visualization_settings" />
+    private final LiveData<List<Ricorrenza>> ricorrenzeDelGiorno;
+    private final LiveData<List<Ricorrenza>> ricorrenzeReligiose;
+    private final LiveData<List<Ricorrenza>> ricorrenzeLaiche;
+    private final LiveData<List<Ricorrenza>> risultatiRicerca;
 
-    <!-- Altri frammenti esistenti -->
-    <fragment
-        android:id="@+id/searchFragment"
-        android:name="it.faustobe.santibailor.presentation.features.search.SearchFragment"
-        android:label="Ricerca Avanzata"
-        tools:layout="@layout/fragment_search" >
-        <action
-            android:id="@+id/action_searchFragment_to_editRicorrenzaFragment"
-            app:destination="@id/editRicorrenzaFragment" />
-    </fragment>
+    private final MutableLiveData<List<Ricorrenza>> ricorrenzeDelGiornoPaginate = new MutableLiveData<>();
+    private final MutableLiveData<List<Ricorrenza>> ricorrenzeReligiosePaginate = new MutableLiveData<>();
+    private final MutableLiveData<List<Ricorrenza>> ricorrenzeLaichePaginate = new MutableLiveData<>();
 
-    <fragment
-        android:id="@+id/addItemFragment"
-        android:name="it.faustobe.santibailor.presentation.features.add.AddItemFragment"
-        android:label="Aggiungi elemento"
-        tools:layout="@layout/fragment_add_item">
-        <argument
-            android:name="itemType"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_addItemFragment_to_navigation_home"
-            app:destination="@id/navigation_home"
-            app:popUpTo="@id/navigation_home"
-            app:popUpToInclusive="true" />
-        <action
-            android:id="@+id/action_addItemFragment_to_navigation_settings"
-            app:destination="@id/navigation_settings"
-            app:popUpTo="@id/navigation_settings"
-            app:popUpToInclusive="true" />
-    </fragment>
+    private final PaginationHelper<Ricorrenza> paginationHelper;
+    private final PaginationHelper<Ricorrenza> paginationHelperDelGiorno;
+    private final PaginationHelper<Ricorrenza> paginationHelperReligiose;
+    private final PaginationHelper<Ricorrenza> paginationHelperLaiche;
 
-    <action
-        android:id="@+id/action_global_navigation_home"
-        app:destination="@id/navigation_home"
-        app:popUpTo="@id/navigation_home"
-        app:popUpToInclusive="true" />
+    private final SearchRepository searchRepository;
+    private final MutableLiveData<List<SearchResult>> searchResults = new MutableLiveData<>();
+    //private final MutableLiveData<Integer> totalSearchResults = new MutableLiveData<>();
 
-</navigation>
+    private long lastLoadTime = 0;
+    private SearchParams lastSearchParams;
+
+    @Inject
+    public RicorrenzaViewModel(@NonNull Application application,
+                               RicorrenzaRepository repository,
+                               SearchRepository searchRepository,
+                               ImageHandler imageHandler,
+                               SavedStateHandle savedStateHandle,
+                               GetRicorrenzeDelGiornoUseCase getRicorrenzeDelGiornoUseCase,
+                               RicercaAvanzataUseCase ricercaAvanzataUseCase,
+                               GetTipiRicorrenzaUseCase getTipiRicorrenzaUseCase,
+                               UpdateRicorrenzaUseCase updateRicorrenzaUseCase,
+                               DeleteRicorrenzaUseCase deleteRicorrenzaUseCase,
+                               GetRicorrenzaByIdUseCase getRicorrenzaByIdUseCase,
+                               InsertRicorrenzaUseCase insertRicorrenzaUseCase,
+                               GetTotalItemCountUseCase getTotalItemCountUseCase,
+                               UpdateRicorrenzaImageUseCase updateRicorrenzaImageUseCase) {
+        super(application);
+        this.savedStateHandle = savedStateHandle;
+        this.ricorrenzaRepository = new RicorrenzaRepository(application);
+        this.executorService = Executors.newSingleThreadExecutor();
+        this.mainHandler = new Handler(Looper.getMainLooper());
+        this.sharedPreferences = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        this.gson = new Gson();
+        this.imageHandler = imageHandler;
+        this.genericRepository = initializeGenericRepository(application);
+        this.paginationHelper = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperDelGiorno = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperReligiose = new PaginationHelper<>(PAGE_SIZE);
+        this.paginationHelperLaiche = new PaginationHelper<>(PAGE_SIZE);
+        this.getRicorrenzeDelGiornoUseCase = getRicorrenzeDelGiornoUseCase;
+        this.ricercaAvanzataUseCase = ricercaAvanzataUseCase;
+        this.getTipiRicorrenzaUseCase = getTipiRicorrenzaUseCase;
+        this.updateRicorrenzaUseCase = updateRicorrenzaUseCase;
+        this.deleteRicorrenzaUseCase = deleteRicorrenzaUseCase;
+        this.getRicorrenzaByIdUseCase = getRicorrenzaByIdUseCase;
+        this.insertRicorrenzaUseCase = insertRicorrenzaUseCase;
+        this.getTotalItemCountUseCase = getTotalItemCountUseCase;
+        this.updateRicorrenzaImageUseCase = updateRicorrenzaImageUseCase;
+        this.searchRepository = searchRepository;
+
+        selectedDate.setValue(new Date());
+
+        ricorrenzeDelGiorno = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            loadRicorrenzeDelGiorno(giorno, mese);
+            return ricorrenzeDelGiornoPaginate;
+        });
+
+        ricorrenzeReligiose = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            loadRicorrenzeReligiose(giorno, mese);
+            return ricorrenzeReligiosePaginate;
+        });
+
+        ricorrenzeLaiche = Transformations.switchMap(selectedDate, date -> {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            int giorno = cal.get(Calendar.DAY_OF_MONTH);
+            int mese = cal.get(Calendar.MONTH);
+            loadRicorrenzeLaiche(giorno, mese);
+            return ricorrenzeLaichePaginate;
+        });
+
+        risultatiRicerca = Transformations.switchMap(searchParams, params ->
+                ricorrenzaRepository.ricercaAvanzata(params.nome, params.tipo, params.dataInizio, params.dataFine)
+        );
+
+        loadTipiRicorrenza();
+    }
+
+    private GenericRepository<Ricorrenza, RicorrenzaEntity, Ricorrenza> initializeGenericRepository(Application application) {
+        AppDatabase db = AppDatabase.getDatabase(application);
+        return new GenericRepository<>(
+                db.ricorrenzaDao(),
+                this::convertToEntity,
+                this::convertToDomain
+        );
+    }
+
+    private RicorrenzaEntity convertToEntity(Ricorrenza ricorrenza) {
+        RicorrenzaEntity entity = new RicorrenzaEntity();
+        entity.setId(ricorrenza.getId());
+        entity.setIdMese(ricorrenza.getIdMese());
+        entity.setGiornoDelMese(ricorrenza.getGiorno());
+        entity.setNome(ricorrenza.getNome());
+        entity.setBio(ricorrenza.getBio());
+        entity.setImageUrl(ricorrenza.getImageUrl());
+        entity.setPrefix(ricorrenza.getPrefix());
+        entity.setSuffix(ricorrenza.getSuffix());
+        entity.setIdTipo(ricorrenza.getTipoRicorrenzaId());
+        return entity;
+    }
+
+    private Ricorrenza convertToDomain(RicorrenzaEntity entity) {
+        return new Ricorrenza(
+                entity.getId(),
+                entity.getIdMese(),
+                entity.getGiornoDelMese(),
+                entity.getNome(),
+                entity.getBio(),
+                entity.getImageUrl(),
+                entity.getPrefix(),
+                entity.getSuffix(),
+                entity.getIdTipo()
+        );
+    }
+
+    private ImageHandler initializeImageHandler(Application application) {
+        if (application instanceof MyApplication) {
+            return ((MyApplication) application).getImageHandler();
+        } else {
+            return new ImageHandler(application);
+        }
+    }
+
+    public void performSearch(String query, int limit, int offset) {
+        executorService.execute(() -> {
+            List<SearchResult> results = searchRepository.searchEntities(query, limit, offset);
+            int count = searchRepository.getTotalSearchResultsCount(query);
+            mainHandler.post(() -> {
+                searchResults.setValue(results);
+                totalSearchResults.setValue(count);
+            });
+        });
+    }
+
+    public LiveData<List<SearchResult>> getSearchResults() {
+        return searchResults;
+    }
+
+    public LiveData<Integer> getTotalSearchResults() {
+        return totalSearchResults;
+    }
+
+    public void reloadSaintOfDay() {
+        Log.d("RicorrenzaViewModel", "reloadSaintOfDay chiamata");
+        Calendar calendar = Calendar.getInstance();
+        int giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        int mese = calendar.get(Calendar.MONTH); // +1 perché Calendar.MONTH parte da 0
+        ricorrenzeDelGiornoPaginate.setValue(null);
+        loadRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public void loadRicorrenzeDelGiorno(int giorno, int mese) {
+        Log.d("RicorrenzaViewModel", "loadRicorrenzeDelGiorno called with giorno: " + giorno + ", mese: " + mese);
+        executorService.execute(() -> {
+            GetRicorrenzeDelGiornoUseCase.Params params = new GetRicorrenzeDelGiornoUseCase.Params(giorno, mese);
+            List<Ricorrenza> ricorrenze = getRicorrenzeDelGiornoUseCase.executeSync(params);
+            mainHandler.post(() -> {
+                saintsOfDay = new ArrayList<>(ricorrenze);
+                ricorrenzeDelGiornoPaginate.setValue(ricorrenze);
+                if (!ricorrenze.isEmpty()) {
+                    selectRandomSaint();
+                }
+                Log.d("RicorrenzaViewModel", "Loaded " + ricorrenze.size() + " saints");
+            });
+        });
+    }
+
+    public void refreshRandomSaint() {
+        Log.d("RicorrenzaViewModel", "Refreshing random saint. Total saints: " + saintsOfDay.size());
+        if (!saintsOfDay.isEmpty()) {
+            selectRandomSaint();
+        }
+    }
+
+    private void selectRandomSaint() {
+        int randomIndex = random.nextInt(saintsOfDay.size());
+        Ricorrenza newSaint = saintsOfDay.get(randomIndex);
+        currentSaint.setValue(newSaint);
+        Log.d("RicorrenzaViewModel", "New saint selected: " + newSaint.getNome());
+    }
+
+    public LiveData<Ricorrenza> getCurrentSaint() {
+        return currentSaint;
+    }
+
+    public void loadTipiRicorrenza() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastLoadTime > CACHE_DURATION || listaTipoLiveData.getValue() == null) {
+            executorService.execute(() -> {
+                List<TipoRicorrenza> tipos = getTipiRicorrenzaUseCase.execute(null);
+                mainHandler.post(() -> {
+                    listaTipoLiveData.setValue(tipos);
+                    lastLoadTime = currentTime;
+                });
+            });
+        }
+    }
+
+    public void loadImage(String imageUrl, ImageView imageView, int placeholderResId) {
+        imageHandler.loadImage(imageUrl, imageView, R.drawable.placeholder_image);
+    }
+
+    public void loadRicorrenzeReligiose(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<Ricorrenza> ricorrenze = ricorrenzaRepository.getRicorrenzeReligiosePaginate(giorno, mese, 0, PAGE_SIZE);
+            mainHandler.post(() -> ricorrenzeReligiosePaginate.setValue(ricorrenze));
+        });
+    }
+
+    public void loadRicorrenzeLaiche(int giorno, int mese) {
+        executorService.execute(() -> {
+            List<Ricorrenza> ricorrenze = ricorrenzaRepository.getRicorrenzeLaichePaginate(giorno, mese, 0, PAGE_SIZE);
+            mainHandler.post(() -> ricorrenzeLaichePaginate.setValue(ricorrenze));
+        });
+    }
+
+    public void update(Ricorrenza ricorrenza) {
+        executorService.execute(() -> {
+            try {
+                updateRicorrenzaUseCase.execute(ricorrenza);
+                mainHandler.post(() -> updateResult.setValue(true));
+            } catch (Exception e) {
+                mainHandler.post(() -> updateResult.setValue(false));
+            }
+        });
+    }
+
+    public LiveData<Boolean> getUpdateResult() {
+        return updateResult;
+    }
+
+    public LiveData<Ricorrenza> getRicorrenzaById(int id) {
+        return getRicorrenzaByIdUseCase.execute(id);
+    }
+
+    public void insert(Ricorrenza ricorrenza, OnInsertCompleteListener listener) {
+        executorService.execute(() -> {
+            long newId = insertRicorrenzaUseCase.execute(ricorrenza);
+            mainHandler.post(() -> {
+                if (newId > 0) {
+                    listener.onInsertSuccess((int) newId);
+                } else {
+                    listener.onInsertFailure("Inserimento fallito");
+                }
+            });
+        });
+    }
+
+    public void deleteRicorrenza(Ricorrenza ricorrenza) {
+        genericRepository.delete(ricorrenza, new GenericRepository.OnOperationCompleteListener() {
+            @Override
+            public void onSuccess(int id) {
+                deleteResult.postValue(true);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                deleteResult.postValue(false);
+            }
+        });
+    }
+
+    public void loadTotalItemCount() {
+        executorService.execute(() -> {
+            int count = getTotalItemCountUseCase.execute(null);
+            totalDatabaseItemCount.postValue(count);
+        });
+    }
+
+    public void updateRicorrenzaImage(int ricorrenzaId, String imageUrl) {
+        executorService.execute(() -> {
+            updateRicorrenzaImageUseCase.execute(new UpdateRicorrenzaImageUseCase.Params(ricorrenzaId, imageUrl));
+            imageLoadingStatus.postValue("Immagine aggiornata con successo");
+        });
+    }
+
+    public void setSearchParams(String nome, Integer tipo, String dataInizio, String dataFine) {
+        SearchCriteria criteria = new SearchCriteria(nome, tipo, dataInizio, dataFine);
+        searchCriteria.setValue(criteria);
+        eseguiRicercaAvanzata(nome, tipo, dataInizio, dataFine);
+    }
+
+    private void saveSearchCriteria(SearchCriteria criteria) {
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_nome", criteria.nome);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_tipo", criteria.tipo);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataInizio", criteria.dataInizio);
+        savedStateHandle.set(KEY_SEARCH_CRITERIA + "_dataFine", criteria.dataFine);
+    }
+
+    // Definizione della classe SearchCriteria
+    public static class SearchCriteria implements Parcelable {
+        public final String nome;
+        public final Integer tipo;
+        public final String dataInizio;
+        public final String dataFine;
+
+        public SearchCriteria(String nome, Integer tipo, String dataInizio, String dataFine) {
+            this.nome = nome;
+            this.tipo = tipo;
+            this.dataInizio = dataInizio;
+            this.dataFine = dataFine;
+        }
+
+        protected SearchCriteria(Parcel in) {
+            nome = in.readString();
+            tipo = in.readInt();
+            dataInizio = in.readString();
+            dataFine = in.readString();
+        }
+
+        public static final Creator<SearchCriteria> CREATOR = new Creator<SearchCriteria>() {
+            @Override
+            public SearchCriteria createFromParcel(Parcel in) {
+                return new SearchCriteria(in);
+            }
+
+            @Override
+            public SearchCriteria[] newArray(int size) {
+                return new SearchCriteria[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeString(nome);
+            dest.writeInt(tipo);
+            dest.writeString(dataInizio);
+            dest.writeString(dataFine);
+        }
+    }
+
+    public void eseguiRicercaAvanzata(String nome, Integer tipo, String dataInizio, String dataFine) {
+        isLoading.setValue(true);
+        lastSearchParams = new SearchParams(nome, tipo, dataInizio, dataFine);
+        paginationHelper.reset();
+        currentPage.setValue(0);
+        executorService.execute(() -> {
+            try {
+                paginationHelper.loadNextPage(new PaginationHelper.DataLoader<Ricorrenza>() {
+                    @Override
+                    public List<Ricorrenza> loadData(int offset, int limit) {
+                        RicercaAvanzataUseCase.Params params = new RicercaAvanzataUseCase.Params(
+                                nome, tipo, dataInizio, dataFine, limit, offset);
+                        return ricercaAvanzataUseCase.execute(params);
+                    }
+
+                    @Override
+                    public int getTotalCount() {
+                        // Creiamo un oggetto Params per getTotalCount
+                        // Usiamo 0 per limit e offset poiché non sono rilevanti per il conteggio totale
+                        RicercaAvanzataUseCase.Params params = new RicercaAvanzataUseCase.Params(
+                                nome, tipo, dataInizio, dataFine, 0, 0);
+                        return ricercaAvanzataUseCase.getTotalCount(params);
+                    }
+                });
+
+                mainHandler.post(() -> {
+                    List<Ricorrenza> results = paginationHelper.getCurrentPageItems();
+                    int totalResults = paginationHelper.getTotalCount();
+
+                    totalSearchResults.setValue(totalResults);
+                    risultatiRicercaAvanzata.setValue(results);
+
+                    isLastPage.setValue(!paginationHelper.hasNextPage());
+                    isLoading.setValue(false);
+                    currentPage.setValue(paginationHelper.getCurrentPage());
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    isLoading.setValue(false);
+                });
+            }
+        });
+    }
+
+    public void loadNextPage() {
+        if (isLoading.getValue() != null && isLoading.getValue()) return;
+        if (isLastPage.getValue() != null && isLastPage.getValue()) return;
+
+        isLoading.setValue(true);
+
+        executorService.execute(() -> {
+            try {
+                paginationHelper.loadNextPage(new PaginationHelper.DataLoader<Ricorrenza>() {
+                    @Override
+                    public List<Ricorrenza> loadData(int offset, int limit) {
+                        return ricorrenzaRepository.ricercaAvanzataPaginata(
+                                lastSearchParams.nome, lastSearchParams.tipo,
+                                lastSearchParams.dataInizio, lastSearchParams.dataFine,
+                                limit, offset);
+                    }
+
+                    @Override
+                    public int getTotalCount() {
+                        return ricorrenzaRepository.contaTotaleRisultati(
+                                lastSearchParams.nome, lastSearchParams.tipo,
+                                lastSearchParams.dataInizio, lastSearchParams.dataFine);
+                    }
+                });
+
+                mainHandler.post(() -> {
+                    List<Ricorrenza> newResults = paginationHelper.getCurrentPageItems();
+                    List<Ricorrenza> currentList = risultatiRicercaAvanzata.getValue();
+                    if (currentList != null) {
+                        currentList.addAll(newResults);
+                        risultatiRicercaAvanzata.setValue(currentList);
+                    }
+
+                    isLastPage.setValue(!paginationHelper.hasNextPage());
+                    isLoading.setValue(false);
+                    currentPage.setValue(paginationHelper.getCurrentPage());
+                });
+            } catch (Exception e) {
+                mainHandler.post(() -> {
+                    isLoading.setValue(false);
+                });
+            }
+        });
+    }
+
+    public void clearSearchState() {
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+        currentPage.setValue(0);
+        totalPages.setValue(0);
+        totalDatabaseItemCount.setValue(0);
+        lastSearchParams = null;
+    }
+
+    public void setSelectedTipo(TipoRicorrenza tipo) {
+        selectedTipo.setValue(tipo);
+    }
+
+    public void moveToNextDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        selectedDate.setValue(calendar.getTime());
+    }
+
+    public void moveToPreviousDay() {
+        Date currentDate = selectedDate.getValue();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        selectedDate.setValue(calendar.getTime());
+    }
+
+    public void debugRicorrenzeOggi() {
+        Date oggi = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(oggi);
+        int giorno = cal.get(Calendar.DAY_OF_MONTH);
+        int mese = cal.get(Calendar.MONTH) + 1;
+
+        executorService.execute(() -> {
+            int count = ricorrenzaRepository.contaRicorrenzePerGiornoMese(giorno, mese);
+            ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese).observeForever(ricorrenze -> {
+                Log.d(TAG, "Ricorrenze per oggi (" + giorno + "/" + mese + "): " + count);
+                for (Ricorrenza r : ricorrenze) {
+                    Log.d(TAG, "Ricorrenza: " + r.toString());
+                }
+                ricorrenzaRepository.getRicorrenzePerGiornoMese(giorno, mese).removeObserver(ricorrenze1 -> {});
+            });
+        });
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executorService.shutdown();
+    }
+
+    // Getters for LiveData
+    public LiveData<List<Ricorrenza>> getRicorrenzeDelGiorno() {
+        return ricorrenzeDelGiorno;
+    }
+
+    public LiveData<List<Ricorrenza>> getRicorrenzeReligiose() {
+        return ricorrenzeReligiose;
+    }
+
+    public LiveData<List<Ricorrenza>> getRicorrenzeLaiche() {
+        return ricorrenzeLaiche;
+    }
+
+    public LiveData<List<Ricorrenza>> getRisultatiRicerca() {
+        return risultatiRicerca;
+    }
+
+    public LiveData<List<Ricorrenza>> getRisultatiRicercaAvanzata() {
+        return risultatiRicercaAvanzata;
+    }
+
+    public LiveData<Boolean> getDeleteResult() {
+        return deleteResult;
+    }
+
+    public LiveData<Integer> getTotalItemCount() {
+        return totalDatabaseItemCount;
+    }
+
+    public LiveData<String> getImageLoadingStatus() {
+        return imageLoadingStatus;
+    }
+
+    public LiveData<Boolean> getIsLastPage() {
+        return isLastPage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<TipoRicorrenza> getSelectedTipo() {
+        return selectedTipo;
+    }
+
+    public LiveData<List<TipoRicorrenza>> getListaTipo() {
+        return listaTipoLiveData;
+    }
+
+    public LiveData<Date> getSelectedDate() {
+        return selectedDate;
+    }
+
+    public int getPageSize() {
+        return PAGE_SIZE;
+    }
+
+    public LiveData<List<TipoRicorrenza>> getAllTipiRicorrenza() {
+        return listaTipoLiveData;
+    }
+
+    public void clearSearch() {
+        // Implementa la logica per cancellare la ricerca
+    }
+
+    public void clearRisultatiRicerca() {
+        risultatiRicercaAvanzata.setValue(new ArrayList<>());
+    }
+
+    // Inner classes
+    private static class SearchParams {
+        final String nome;
+        final Integer tipo;
+        final String dataInizio;
+        final String dataFine;
+
+        SearchParams(String nome, Integer tipo, String dataInizio, String dataFine) {
+            this.nome = nome;
+            this.tipo = tipo;
+            this.dataInizio = dataInizio;
+            this.dataFine = dataFine;
+        }
+    }
+
+    public interface OnInsertCompleteListener {
+        void onInsertSuccess(int newId);
+        void onInsertFailure(String error);
+    }
+/*
+    public static class Factory implements ViewModelProvider.Factory {
+        private final Application application;
+        private final SavedStateHandle savedStateHandle;
+
+        public Factory(Application application, SavedStateHandle savedStateHandle) {
+            this.application = application;
+            this.savedStateHandle = savedStateHandle;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public <T extends androidx.lifecycle.ViewModel> T create(Class<T> modelClass) {
+            if (modelClass.isAssignableFrom(RicorrenzaViewModel.class)) {
+                return (T) new RicorrenzaViewModel(application, savedStateHandle);
+            }
+            throw new IllegalArgumentException("Unknown ViewModel class");
+        }
+    }
+
+ */
+}
+
 

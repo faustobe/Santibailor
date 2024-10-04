@@ -1,31 +1,31 @@
-Stiamo lavorando sull'app Android SantiBailor, che gestisce ricorrenze e santi. L'app utilizza l'architettura MVVM, Navigation Component e Hilt per la dependency injection. Dobbiamo completare e ottimizzare la sezione ricorrenze/santi. Le principali attività sono:
+Stiamo lavorando sul progetto Android SantiBailor, un'applicazione per la gestione di ricorrenze, santi e festività. Il nostro obiettivo attuale è ripristinare le funzionalità di ricerca e aggiunta di ricorrenze, integrandole nella sezione 'Impostazioni Ricorrenze'.
 
-1. Ripristinare la funzionalità AddRicorrenza: Implementare la funzionalità per aggiungere nuove ricorrenze, verificare la corretta integrazione con il ViewModel e il database
-2. Ottimizzare EditRicorrenza, inclusi:
-   a. Gestione della scelta del tipo ricorrenza
-   b. Verifica del salvataggio modifiche e caricamento immagini
-   c. Aggiunta di pulsanti di navigazione (es. Annulla)
-   d. Riorganizzazione del layout nell'ordine: prefisso, nome, suffisso, tipo, data, descrizione, bottoni
-   e. Ripristino della funzionalità del pulsante 'Oggi'
-   f. Gestione corretta del pulsante 'Back' del dispositivo
-3. Verifica e ottimizzazione della cancellazione ricorrenze
-4. Miglioramento generale dell'interfaccia utente e dell'esperienza utente nella sezione ricorrenze
+Specifiche del task:
+1. Ripristinare la funzionalità di ricerca utilizzando il nuovo motore di ricerca unificato.
+2. Ripristinare la funzionalità di aggiunta di nuove ricorrenze.
+3. Collegare queste funzionalità alla pagina 'Impostazioni Ricorrenze', che è accessibile dal SettingsFragment.
+4. Assicurarsi che il SettingsFragment sia correttamente collegato alla Home come hub per le impostazioni delle varie categorie.
 
-L'app usa Java, MVVM con ViewModel e LiveData, Room per la persistenza dei dati, e segue le best practices di Android con una chiara separazione delle responsabilità.
+Per completare questo task, avremo bisogno di modificare e integrare diversi componenti dell'applicazione. Basandoci sulla struttura del progetto, ecco una lista di file che dovremmo esaminare e potenzialmente modificare e che ti vengono passati in un unico file di testo(merged_files.txt):"
 
-Per favore, analizza il codice fornito, tenendo conto della project knowledge, proponi soluzioni dettagliate per ciascun punto, includendo snippet di codice dove necessario. Considera l'architettura esistente e suggerisci eventuali miglioramenti strutturali se necessario.
-Vorrei che analizzassi bene il codice presente prima di fornire soluzioni.
-Allego i seguenti file in un unico file di testo (merges_files.txt):
+Lista dei file allegati:
+1. .../java/it/faustobe/santibailor/presentation/features/settings/SettingsFragment.java
+2. .../java/it/faustobe/santibailor/presentation/features/settings/ricorrenze/ManageRicorrenzeFragment.java
+3. .../java/it/faustobe/santibailor/presentation/features/search/SearchFragment.java
+4. .../java/it/faustobe/santibailor/presentation/features/add/AddItemFragment.java
+5. .../java/it/faustobe/santibailor/presentation/common/viewmodels/RicorrenzaViewModel.java
+6. .../java/it/faustobe/santibailor/data/repository/SearchRepository.java
+7. .../java/it/faustobe/santibailor/data/repository/RicorrenzaRepository.java
+8. .../res/navigation/nav_graph.xml
+9. .../res/layout/fragment_settings.xml
+10. .../res/layout/fragment_manage_ricorrenze.xml
+11. .../res/layout/fragment_search.xml
+12. .../res/layout/fragment_add_item.xml
 
-1. MainActivity.java
-2. HomeFragment.java
-3. EditRicorrenzaFragment.java (se esiste, altrimenti il file che gestisce la modifica delle ricorrenze)
-4. AddRicorrenzaFragment.java (se esiste, altrimenti il file che gestisce l'aggiunta di nuove ricorrenze)
-5. RicorrenzaViewModel.java
-6. RicorrenzaAdapter.java
-7. Ricorrenza.java
-8. RicorrenzaDao.java
-9. RicorrenzaRepository.java
-10. nav_graph.xml
-11. Qualche layout XML rilevante per la sezione ricorrenze
+Per favore, esamina questi file e proponi un piano dettagliato per implementare le modifiche necessarie. Considera l'architettura MVVM esistente e l'uso di Hilt per la dependency injection. Assicurati che il piano includa:
+1. Modifiche necessarie ai layout XML.
+2. Aggiornamenti ai fragment e ai ViewModel.
+3. Modifiche al grafo di navigazione.
+4. Eventuali aggiornamenti necessari ai repository.
 
+Iniziamo con una panoramica delle modifiche proposte per ciascun file, e poi procederemo con l'implementazione passo dopo passo.

@@ -102,8 +102,9 @@ public class SettingsFragment extends Fragment {
     private void navigateToRicorrenzeSettings() {
         List<SettingItem> ricorrenzeSettings = new ArrayList<>();
         ricorrenzeSettings.add(new SettingItem("Gestione Ricorrenze", "Aggiungi, modifica o elimina ricorrenze", R.id.action_categorySettingsFragment_to_manageRicorrenzeFragment));
-        ricorrenzeSettings.add(new SettingItem("Visualizzazione", "Imposta le preferenze di visualizzazione", R.id.action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment));
-        ricorrenzeSettings.add(new SettingItem("Notifiche Ricorrenze", "Attiva o disattiva le notifiche", true ));
+        ricorrenzeSettings.add(new SettingItem("Cerca Ricorrenze", "Cerca tra le ricorrenze esistenti", R.id.action_categorySettingsFragment_to_searchFragment));
+        ricorrenzeSettings.add(new SettingItem("Aggiungi Nuova Ricorrenza", "Crea una nuova ricorrenza", R.id.action_categorySettingsFragment_to_addItemFragment));
+        ricorrenzeSettings.add(new SettingItem("Notifiche Ricorrenze", "Attiva o disattiva le notifiche", true));
         ricorrenzeSettings.add(new SettingItem("Sincronizzazione calendario", "Sincronizza con calendari esterni"));
 
         SettingItem[] settingItemsArray = ricorrenzeSettings.toArray(new SettingItem[0]);

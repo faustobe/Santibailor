@@ -10,7 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -23,6 +23,7 @@ import it.faustobe.santibailor.databinding.FragmentCategorySettingsBinding;
 public class CategorySettingsFragment extends Fragment implements CategorySettingsAdapter.OnSettingItemClickListener {
     private FragmentCategorySettingsBinding binding;
     private CategorySettingsAdapter adapter;
+    private List<SettingItem> settingItems;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
         binding.categoryTitle.setText(categoryTitle);
 
         if (settingItemsArray != null && settingItemsArray.length > 0) {
-            List<SettingItem> settingItems = Arrays.asList(settingItemsArray);
+            settingItems = Arrays.asList(settingItemsArray);
             setupRecyclerView(settingItems);
         } else {
             Log.e("CategorySettingsFragment", "Nessun SettingItem fornito");
@@ -50,16 +51,16 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
         setupBackButton();
     }
 
-    private void setupBackButton() {
-        binding.btnBackToSettings.setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_categorySettingsFragment_to_navigation_settings)
-        );
-    }
-
     private void setupRecyclerView(List<SettingItem> settingItems) {
         adapter = new CategorySettingsAdapter(settingItems, this);
         binding.settingsRecyclerView.setAdapter(adapter);
         binding.settingsRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    }
+
+    private void setupBackButton() {
+        binding.btnBackToSettings.setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_categorySettingsFragment_to_navigation_settings)
+        );
     }
 
     @Override
@@ -67,32 +68,36 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
         switch (item.getType()) {
             case NAVIGATION:
                 Integer navigationAction = item.getNavigationAction();
-                if (navigationAction != null) {
-                    try {
-                        // Usa SafeArgs per la navigazione
-                        NavDirections action =
-                                CategorySettingsFragmentDirections.actionCategorySettingsFragmentToManageRicorrenzeFragment();
-                        Navigation.findNavController(requireView()).navigate(action);
-                    } catch (Exception e) {
-                        Log.e("CategorySettingsFragment", "Errore di navigazione: " + e.getMessage());
-                        Toast.makeText(requireContext(), "Errore nella navigazione", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Log.e("CategorySettingsFragment", "Azione di navigazione non impostata per " + item.getTitle());
+                if (navigationAction != null && navigationAction != 0) {
+                    navigateToDestination(navigationAction);
                 }
                 break;
             case TOGGLE:
-                item.setToggleState(!item.isToggleState());
-                // Qui potresti voler salvare lo stato del toggle
+                boolean newState = !item.isToggleState();
+                item.setToggleState(newState);
+                // Qui potresti voler aggiornare lo stato nel ViewModel o nel repository
                 break;
             case ACTION:
                 performAction(item);
                 break;
         }
+        adapter.notifyDataSetChanged();
+    }
+
+    private void navigateToDestination(int destinationId) {
+        NavController navController = Navigation.findNavController(requireView());
+        try {
+            navController.navigate(destinationId);
+        } catch (Exception e) {
+            Log.e("CategorySettingsFragment", "Errore di navigazione: " + e.getMessage());
+            Toast.makeText(requireContext(), "Errore nella navigazione", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void performAction(SettingItem item) {
         // Implementa azioni specifiche qui
+        Log.d("CategorySettingsFragment", "Azione eseguita per: " + item.getTitle());
+        // Esempio: Toast.makeText(requireContext(), "Azione eseguita: " + item.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -19,6 +19,7 @@ import it.faustobe.santibailor.domain.usecase.InsertRicorrenzaUseCase;
 import it.faustobe.santibailor.domain.usecase.RicercaAvanzataUseCase;
 import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaImageUseCase;
 import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaUseCase;
+import it.faustobe.santibailor.util.ImageHandler;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -34,6 +35,12 @@ public class AppModule {
     @Singleton
     public RicorrenzaRepository provideRicorrenzaRepository(Application application) {
         return new RicorrenzaRepository(application);
+    }
+
+    @Provides
+    @Singleton
+    public ImageHandler provideImageHandler(@ApplicationContext Context context) {
+        return new ImageHandler(context);
     }
 
     @Provides

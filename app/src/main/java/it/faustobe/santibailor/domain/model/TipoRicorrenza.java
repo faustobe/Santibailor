@@ -43,6 +43,6 @@ public class TipoRicorrenza {
 
     @Override
     public String toString() {
-        return tipo;
+        return getTipo();
     }
 }

@@ -23,6 +23,12 @@ public interface RicorrenzaDao extends BaseDao<RicorrenzaEntity> {
     @Query("UPDATE santi SET image_url = :imageUrl WHERE id = :ricorrenzaId")
     void updateImageUrl(int ricorrenzaId, String imageUrl);
 
+    @Query("SELECT DISTINCT image_url FROM santi WHERE image_url IS NOT NULL AND image_url != ''")
+    List<String> getAllImageUrls();
+
+    @Query("SELECT DISTINCT image_url FROM santi WHERE image_url IS NOT NULL AND image_url != '' AND image_url LIKE 'file://%'")
+    List<String> getImageUrlsInUse();
+
     @Query("SELECT * FROM santi WHERE giorno_del_mese= :giorno AND id_mese = :mese ORDER BY RANDOM()")
     LiveData<List<RicorrenzaEntity>> getRicorrenzeDelGiorno(int giorno, int mese);
 

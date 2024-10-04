@@ -11,11 +11,14 @@
     <string name="create">Crea</string>
     <string name="update">Aggiorna</string>
     <string name="saint_of_day">Santo del giorno: %s</string>
-    <string name="immagine_ricorrenza">Immagine ricorrenza</string>
     <string name="add_ricorrenza">Aggiungi Ricorrenza</string>
     <string name="add_item">Aggiungi Elemento</string>
     <string name="fill_required_fields">Per favore, compila tutti i campi obbligatori</string>
     <string name="ricorrenza_added_success">Ricorrenza inserita con successo</string>
     <string name="insert_error">Errore nell\'inserimento: %1$s</string>
     <string name="required_field">Campo obbligatorio</string>
+    <string name="immagine_ricorrenza">Immagine della ricorrenza</string>
+    <string name="seleziona_immagine">Seleziona immagine</string>
+    <string name="no_saint_today">Nessun santo oggi</string>
+    <string name="other_saints_of_the_day">Altri santi del giorno (%1$d)</string>
 </resources>

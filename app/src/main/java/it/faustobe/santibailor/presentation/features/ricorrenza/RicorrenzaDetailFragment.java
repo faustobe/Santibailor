@@ -1,6 +1,8 @@
 package it.faustobe.santibailor.presentation.features.ricorrenza;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
+import com.google.android.gms.common.util.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentRicorrenzaDetailBinding;
@@ -47,6 +57,7 @@ public class RicorrenzaDetailFragment extends Fragment {
             Navigation.findNavController(v).navigate(action);
         });
     }
+
 
     @Override
     public void onDestroyView() {

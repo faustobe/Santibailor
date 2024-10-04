@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
 import it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao;
+import it.faustobe.santibailor.data.local.dao.SearchDao;
 import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
 import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
 
@@ -19,10 +20,9 @@ import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "santocal.db";
     private static volatile AppDatabase INSTANCE;
-
     public abstract RicorrenzaDao ricorrenzaDao();
-
     public abstract TipoRicorrenzaDao tipoRicorrenzaDao();
+    public abstract SearchDao searchDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {

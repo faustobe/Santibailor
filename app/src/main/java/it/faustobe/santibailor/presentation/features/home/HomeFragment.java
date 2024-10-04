@@ -22,14 +22,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
 import it.faustobe.santibailor.presentation.features.main.MainActivity;
 import it.faustobe.santibailor.R;
@@ -42,9 +45,11 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private RicorrenzaViewModel ricorrenzaViewModel;
+    private boolean isInitialized = false;
     private RicorrenzaAdapter ricorrenzaAdapter;
     private boolean isPersonalInfoExpanded = false;
     private boolean isSaintsListExpanded = false;
+    private boolean isCalendarExpanded = false;
     private HomeViewModel homeViewModel;
     private View expandPersonalInfoIcon;
     private static final String TAG = "HomeFragment";
@@ -65,7 +70,35 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d("HomeFragment", "onViewCreated called");
         ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
+        if (ricorrenzaAdapter == null) {
+            ricorrenzaAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, this::showDeleteConfirmationDialog, ricorrenzaViewModel);
+            binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
+        }
+        // Osserva le ricorrenze del giorno
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+        // Osserva il santo del giorno
+        ricorrenzaViewModel.getCurrentSaint().observe(getViewLifecycleOwner(), this::updateSaintOfDay);
+        if (!isInitialized) {
+            ricorrenzaViewModel.loadRicorrenzeForCurrentDate();
+            isInitialized = true;
+        }
+        // Imposta il listener per il pulsante di ricarica del santo
+        binding.reloadSaintButton.setOnClickListener(v -> {
+            Log.d("HomeFragment", "Refresh button clicked");
+            reloadSaintOfDay();
+        });
+        // Carica le ricorrenze per la data corrente
+        ricorrenzaViewModel.loadRicorrenzeForCurrentDate();
+
+        ricorrenzaViewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
+            if (isLoading) {
+                // Mostra un indicatore di caricamento
+            } else {
+                // Nascondi l'indicatore di caricamento
+            }
+        });
         nestedScrollView = binding.nestedScrollView;
         setupScrollListener();
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -77,7 +110,6 @@ public class HomeFragment extends Fragment {
         });
         setupDateDisplay();
         loadBackgroundImage();
-        setupSaintOfDay();
         setupPersonalInfo();
         setupSaintsList();
         updateComponentsState();
@@ -86,50 +118,54 @@ public class HomeFragment extends Fragment {
         observeDeleteResult();
         setInitialSaintsListState();
         observeRicorrenze();
+        setupCalendar();
+        setupBottomNavigation();
     }
 
     private void observeRicorrenze() {
         ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
-        ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
-        ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+        //ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
+        //ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+    }
+
+    private void updateRicorrenze(List<Ricorrenza> ricorrenze) {
+        if (ricorrenze == null) return;
+        Log.d("HomeFragment", "updateRicorrenze chiamato con " + ricorrenze.size() + " ricorrenze");
+        updateRicorrenzeList(ricorrenze);
     }
 
     private void updateRicorrenzeList(List<Ricorrenza> ricorrenze) {
         if (ricorrenze != null && !ricorrenze.isEmpty()) {
-            Ricorrenza mainSaint = ricorrenze.get(0);
-            binding.tvSaintOfDay.setText(mainSaint.getPrefix() + " " + mainSaint.getNome());
-            binding.tvSaintOfDay.setOnClickListener(v -> navigateToRicorrenzaDetail(mainSaint.getId()));
-
             if (ricorrenze.size() > 1) {
-                binding.tvSaintsListHeader.setText("Altri santi del giorno (" + (ricorrenze.size() - 1) + ")");
-                binding.saintsHeader.setVisibility(View.VISIBLE);
+                binding.expandCollapseSaintsIcon.setVisibility(View.VISIBLE);
+                ricorrenzaAdapter.setRicorrenze(ricorrenze.subList(1, ricorrenze.size()));
             } else {
-                binding.saintsHeader.setVisibility(View.GONE);
+                binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
+                binding.recyclerViewSaints.setVisibility(View.GONE);
             }
-
-            ricorrenzaAdapter.setRicorrenze(ricorrenze);
-            binding.recyclerViewSaints.setVisibility(View.VISIBLE);
         } else {
-            binding.tvSaintOfDay.setText("Nessun santo oggi");
-            binding.saintsHeader.setVisibility(View.GONE);
+            binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
             binding.recyclerViewSaints.setVisibility(View.GONE);
-            ricorrenzaAdapter.setRicorrenze(Collections.emptyList());
         }
-
-        setInitialSaintsListState();
         updateComponentsState();
     }
 
-    private void updateRicorrenzeReligiose(List<Ricorrenza> ricorrenzeReligiose) {
-        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze religiose
-        // Per ora, possiamo loggare il numero di ricorrenze religiose per debug
-        Log.d(TAG, "Ricorrenze religiose: " + (ricorrenzeReligiose != null ? ricorrenzeReligiose.size() : 0));
+    private void updateSaintOfDay(Ricorrenza saint) {
+        if (saint == null) return;
+        Log.d("HomeFragment", "Updated saint of day: " + saint.getPrefix() + " " + saint.getNome());
+        String saintText = saint.getPrefix() + " " + saint.getNome();
+        binding.tvSaintOfDay.setText(saintText);
+        binding.tvSaintOfDay.setOnClickListener(v -> navigateToRicorrenzaDetail(saint.getId()));
     }
 
-    private void updateRicorrenzeLaiche(List<Ricorrenza> ricorrenzeLaiche) {
-        // Implementazione da aggiungere quando saranno disponibili le viste per le ricorrenze laiche
-        // Per ora, possiamo loggare il numero di ricorrenze laiche per debug
-        Log.d(TAG, "Ricorrenze laiche: " + (ricorrenzeLaiche != null ? ricorrenzeLaiche.size() : 0));
+    private void updateRicorrenzeReligiose(List<Ricorrenza> ricorrenze) {
+        Log.d("HomeFragment", "Ricorrenze religiose: " + ricorrenze.size());
+        // Aggiorna l'UI per le ricorrenze religiose
+    }
+
+    private void updateRicorrenzeLaiche(List<Ricorrenza> ricorrenze) {
+        Log.d("HomeFragment", "Ricorrenze laiche: " + ricorrenze.size());
+        // Aggiorna l'UI per le ricorrenze laiche
     }
 
     private void updateInitialVisibility() {
@@ -168,31 +204,65 @@ public class HomeFragment extends Fragment {
         binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
 
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            if (ricorrenze != null && !ricorrenze.isEmpty()) {
-                Ricorrenza mainSaint = ricorrenze.get(0);
-                binding.tvSaintOfDay.setText(mainSaint.getPrefix() + " " + mainSaint.getNome());
-                binding.tvSaintOfDay.setOnClickListener(v -> navigateToRicorrenzaDetail(mainSaint.getId()));
+        binding.expandCollapseSaintsIcon.setOnClickListener(v -> toggleSaintsListExpansion());
 
-                if (ricorrenze.size() > 1) {
-                    binding.tvSaintsListHeader.setText("Altri santi del giorno (" + (ricorrenze.size() - 1) + ")");
-                    binding.saintsHeader.setVisibility(View.VISIBLE);
-                } else {
-                    binding.saintsHeader.setVisibility(View.GONE);
-                }
+        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
+    }
 
-                ricorrenzaAdapter.setRicorrenze(ricorrenze);
-                // notifyDataSetChanged() non è più necessario qui
-            } else {
-                binding.tvSaintOfDay.setText("Nessun santo oggi");
-                binding.saintsHeader.setVisibility(View.GONE);
-                ricorrenzaAdapter.setRicorrenze(Collections.emptyList()); // Aggiorna con una lista vuota
-            }
+    private void setupCalendar() {
+        Calendar calendar = Calendar.getInstance();
+        binding.tvWeekday.setText(new SimpleDateFormat("EEEE", Locale.ITALIAN).format(calendar.getTime()));
+        binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
+        binding.tvMonth.setText(DateUtils.getCurrentMonthNameFull());
 
-            setInitialSaintsListState();
+        // Imposta il calendario come espanso di default
+        binding.calendarContent.setVisibility(View.VISIBLE);
+        isCalendarExpanded = true;
+    }
+
+    private void reloadSaintOfDay() {
+        Log.d("HomeFragment", "reloadSaintOfDay chiamata");
+        ricorrenzaViewModel.refreshRandomSaint();
+    }
+/*
+    private void setupSaintOfDay() {
+        binding.reloadSaintButton.setOnClickListener(v -> {
+            Log.d("HomeFragment", "Refresh button clicked");
+            ricorrenzaViewModel.refreshRandomSaint();
         });
 
-        binding.saintsHeader.setOnClickListener(v -> toggleSaintsListExpansion());
+        ricorrenzaViewModel.getCurrentSaint().observe(getViewLifecycleOwner(), this::updateSaintOfDay);
+    }
+
+ */
+
+    private void toggleSaintsListExpansion() {
+        isSaintsListExpanded = !isSaintsListExpanded;
+        binding.recyclerViewSaints.setVisibility(isSaintsListExpanded ? View.VISIBLE : View.GONE);
+        binding.expandCollapseSaintsIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        updateComponentsState();
+    }
+
+    private void updateSaintsListIcon() {
+        if (binding.expandCollapseSaintsIcon != null) {
+            binding.expandCollapseSaintsIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
+        }
+    }
+
+    private void setupBottomNavigation() {
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.navigation_overview || itemId == R.id.navigation_help || itemId == R.id.navigation_add) {
+                navigateToAddItemFragment();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void navigateToAddItemFragment() {
+        NavDirections action = HomeFragmentDirections.actionHomeFragmentToAddItemFragment("default");
+        Navigation.findNavController(requireView()).navigate(action);
     }
 
     private void setInitialSaintsListState() {
@@ -215,33 +285,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void toggleSaintsListExpansion() {
-        isSaintsListExpanded = !isSaintsListExpanded;
-        if (ricorrenzaAdapter != null) {
-            ricorrenzaAdapter.setCollapsedView(!isSaintsListExpanded);
-        }
-        if (binding.recyclerViewSaints != null) {
-            if (isSaintsListExpanded) {
-                binding.recyclerViewSaints.setVisibility(View.VISIBLE);
-                ObjectAnimator.ofFloat(binding.recyclerViewSaints, "alpha", 0f, 1f).start();
-            } else {
-                ObjectAnimator.ofFloat(binding.recyclerViewSaints, "alpha", 1f, 0f).setDuration(200).start();
-                binding.recyclerViewSaints.postDelayed(() -> {
-                    binding.recyclerViewSaints.setVisibility(View.GONE);
-                    updateBottomMenuVisibility();
-                }, 200);
-            }
-        }
-        updateSaintsListIcon();
-        updateComponentsState();
-    }
-
-    private void updateSaintsListIcon() {
-        if (binding.expandCollapseIcon != null) {
-            binding.expandCollapseIcon.setImageResource(isSaintsListExpanded ? R.drawable.ic_expand_less : R.drawable.ic_expand_more);
-        }
-    }
-
     private void setupDateDisplay() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat weekdayFormat = new SimpleDateFormat("EEEE", Locale.ITALIAN);
@@ -250,14 +293,6 @@ public class HomeFragment extends Fragment {
         binding.tvWeekday.setText(weekdayFormat.format(calendar.getTime()));
         binding.tvDay.setText(String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
         binding.tvMonth.setText(DateUtils.getCurrentMonthNameFull());
-    }
-
-    private void setupSaintOfDay() {
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), ricorrenze -> {
-            if (ricorrenze != null && !ricorrenze.isEmpty()) {
-                binding.tvSaintOfDay.setText(ricorrenze.get(0).getPrefix() + " " + ricorrenze.get(0).getNome());
-            }
-        });
     }
 
     private void showDeleteConfirmationDialog(Ricorrenza ricorrenza) {
@@ -306,7 +341,7 @@ public class HomeFragment extends Fragment {
         if (header != null) {
             header.setOnClickListener(v -> togglePersonalInfoExpansion());
         }
-        expandPersonalInfoIcon = binding.cardPersonalInfo.findViewById(R.id.expand_collapse_icon);
+        expandPersonalInfoIcon = binding.cardPersonalInfo.findViewById(R.id.expand_collapse_saints_icon);
     }
 
     private void togglePersonalInfoExpansion() {
@@ -345,11 +380,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void updateComponentsState() {
-        boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
-        homeViewModel.setAllComponentsCollapsed(allCollapsed);
-    }
-
     private boolean isScrolledToTop() {
         return nestedScrollView.getScrollY() == 0;
     }
@@ -359,6 +389,11 @@ public class HomeFragment extends Fragment {
         if (allCollapsed && getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateComponentsVisibility(true);
         }
+    }
+
+    private void updateComponentsState() {
+        boolean allCollapsed = !isCalendarExpanded && !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
+        homeViewModel.setAllComponentsCollapsed(allCollapsed);
     }
 
     @Override

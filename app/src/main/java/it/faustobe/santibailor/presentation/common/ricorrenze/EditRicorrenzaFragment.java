@@ -4,8 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.MediaStore;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,17 +19,42 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import java.io.IOException;
+import java.util.List;
+
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentEditRicorrenzaBinding;
 import it.faustobe.santibailor.domain.model.Ricorrenza;
 import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 import it.faustobe.santibailor.util.DateUtils;
+import it.faustobe.santibailor.util.ImageHandler;
+
 public class EditRicorrenzaFragment extends Fragment {
 
     private FragmentEditRicorrenzaBinding binding;
     private RicorrenzaViewModel ricorrenzaViewModel;
     private Ricorrenza ricorrenzaToEdit;
+    private List<TipoRicorrenza> tipiRicorrenza;
+    private ArrayAdapter<TipoRicorrenza> tipiAdapter;
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private Uri selectedImageUri;
+    private ImageHandler imageHandler;
+    private ActivityResultLauncher<String> pickImageLauncher;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        pickImageLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        selectedImageUri = uri;
+                        imageHandler.loadImage(uri.toString(), binding.ivRicorrenza, R.drawable.placeholder_image);
+                    }
+                });
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,8 +67,11 @@ public class EditRicorrenzaFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
+        imageHandler = ImageHandler.getInstance(requireContext());
 
+        setupImageSelection();
         setupDatePickers();
+        setupTipiRicorrenza();
         setupListeners();
 
         if (getArguments() != null) {
@@ -49,6 +83,38 @@ public class EditRicorrenzaFragment extends Fragment {
             }
         } else {
             setupForNewRicorrenza();
+        }
+    }
+
+    private void setupImageSelection() {
+        binding.btnSelectImage.setOnClickListener(v -> openImageChooser());
+        binding.ivRicorrenza.setOnClickListener(v -> openImageChooser());
+    }
+
+    private void openImageChooser() {
+        pickImageLauncher.launch("image/*");
+    }
+
+    private void setupTipiRicorrenza() {
+        ArrayAdapter<TipoRicorrenza> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
+        binding.etTipo.setAdapter(adapter);
+
+        ricorrenzaViewModel.getAllTipiRicorrenza().observe(getViewLifecycleOwner(), tipi -> {
+            tipiRicorrenza = tipi;
+            adapter.clear();
+            adapter.addAll(tipiRicorrenza);
+            if (ricorrenzaToEdit != null) {
+                setSelectedTipoRicorrenza(ricorrenzaToEdit.getTipoRicorrenzaId());
+            }
+        });
+    }
+
+    private void setSelectedTipoRicorrenza(int tipoId) {
+        for (TipoRicorrenza tipo : tipiRicorrenza) {
+            if (tipo.getId() == tipoId) {
+                binding.etTipo.setText(tipo.getTipo(), false);
+                break;
+            }
         }
     }
 
@@ -75,6 +141,10 @@ public class EditRicorrenzaFragment extends Fragment {
             if (ricorrenza != null) {
                 ricorrenzaToEdit = ricorrenza;
                 populateFields(ricorrenza);
+                if (ricorrenza.getImageUrl() != null && !ricorrenza.getImageUrl().isEmpty()) {
+                    imageHandler.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
+                    selectedImageUri = Uri.parse(ricorrenza.getImageUrl());
+                }
             } else {
                 Toast.makeText(getContext(), "Ricorrenza non trovata", Toast.LENGTH_SHORT).show();
                 navigateBack();
@@ -85,23 +155,12 @@ public class EditRicorrenzaFragment extends Fragment {
     private void populateFields(Ricorrenza ricorrenza) {
         if (ricorrenza != null) {
             binding.etNome.setText(ricorrenza.getNome());
-            binding.etTipo.setText(getTipoRicorrenzaNomeFromId(ricorrenza.getTipoRicorrenzaId()));
+            setSelectedTipoRicorrenza(ricorrenza.getTipoRicorrenzaId());
             binding.etPrefisso.setText(ricorrenza.getPrefix());
             binding.etSuffisso.setText(ricorrenza.getSuffix());
             binding.etDescrizione.setText(ricorrenza.getBio());
             binding.datePicker.dayPicker.setValue(ricorrenza.getGiorno());
             binding.datePicker.monthPicker.setValue(ricorrenza.getIdMese()+1);
-        }
-    }
-
-    private String getTipoRicorrenzaNomeFromId(int tipoId) {
-        switch (tipoId) {
-            case TipoRicorrenza.RELIGIOSA:
-                return "Religiosa";
-            case TipoRicorrenza.LAICA:
-                return "Laica";
-            default:
-                return "Sconosciuto";
         }
     }
 
@@ -120,15 +179,25 @@ public class EditRicorrenzaFragment extends Fragment {
         String suffisso = binding.etSuffisso.getText().toString().trim();
         String descrizione = binding.etDescrizione.getText().toString().trim();
 
-        if (!validateInputs(nome, tipoNome)) {
+        TipoRicorrenza selectedTipo = getTipoRicorrenzaByNome(tipoNome);
+        if (!validateInputs(nome, selectedTipo)) {
             return;
         }
 
         int id = (ricorrenzaToEdit != null) ? ricorrenzaToEdit.getId() : 0;
         int giorno = binding.datePicker.dayPicker.getValue();
         int idMese = binding.datePicker.monthPicker.getValue() - 1;
-        int tipoRicorrenzaId = getTipoRicorrenzaIdFromNome(tipoNome);
-        String imageUrl = ricorrenzaToEdit != null ? ricorrenzaToEdit.getImageUrl() : "";
+        int tipoRicorrenzaId = selectedTipo.getId();
+        final String initialImageUrl = ricorrenzaToEdit != null ? ricorrenzaToEdit.getImageUrl() : null;
+        String updatedImageUrl = initialImageUrl;
+
+        if (selectedImageUri != null) {
+            updatedImageUrl = imageHandler.saveOrUpdateImageSafely(selectedImageUri, initialImageUrl);
+            if (updatedImageUrl == null) {
+                Toast.makeText(requireContext(), "Errore nel salvataggio dell'immagine", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
 
         Ricorrenza ricorrenza = new Ricorrenza(
                 id,
@@ -136,7 +205,7 @@ public class EditRicorrenzaFragment extends Fragment {
                 giorno,
                 nome,
                 descrizione,
-                imageUrl,
+                updatedImageUrl,
                 prefisso,
                 suffisso,
                 tipoRicorrenzaId
@@ -144,14 +213,6 @@ public class EditRicorrenzaFragment extends Fragment {
 
         if (ricorrenzaToEdit != null) {
             ricorrenzaViewModel.update(ricorrenza);
-            ricorrenzaViewModel.getUpdateResult().observe(getViewLifecycleOwner(), success -> {
-                if (success) {
-                    Toast.makeText(requireContext(), "Ricorrenza aggiornata", Toast.LENGTH_SHORT).show();
-                    navigateBack();
-                } else {
-                    Toast.makeText(requireContext(), "Errore nell'aggiornamento della ricorrenza", Toast.LENGTH_LONG).show();
-                }
-            });
         } else {
             ricorrenzaViewModel.insert(ricorrenza, new RicorrenzaViewModel.OnInsertCompleteListener() {
                 @Override
@@ -168,21 +229,17 @@ public class EditRicorrenzaFragment extends Fragment {
         }
     }
 
-    // Metodo di utilità per ottenere l'ID del tipo di ricorrenza dal nome
-    private int getTipoRicorrenzaIdFromNome(String tipoNome) {
-        switch (tipoNome.toLowerCase()) {
-            case "religiosa":
-                return TipoRicorrenza.RELIGIOSA;
-            case "laica":
-                return TipoRicorrenza.LAICA;
-            default:
-                // Gestisci il caso di default o lancia un'eccezione
-                throw new IllegalArgumentException("Tipo di ricorrenza non valido: " + tipoNome);
+    private TipoRicorrenza getTipoRicorrenzaByNome(String nome) {
+        for (TipoRicorrenza tipo : tipiRicorrenza) {
+            if (tipo.getTipo().equals(nome)) {
+                return tipo;
+            }
         }
+        return null;
     }
 
-    private boolean validateInputs(String nome, String tipo) {
-        if (nome.isEmpty() || tipo.isEmpty()) {
+    private boolean validateInputs(String nome, TipoRicorrenza tipo) {
+        if (nome.isEmpty() || tipo == null) {
             Toast.makeText(getContext(), "Compila tutti i campi obbligatori", Toast.LENGTH_SHORT).show();
             return false;
         }

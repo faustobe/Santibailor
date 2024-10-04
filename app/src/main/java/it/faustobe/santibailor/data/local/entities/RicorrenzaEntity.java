@@ -7,8 +7,10 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import it.faustobe.santibailor.domain.model.Searchable;
+
 @Entity(tableName = "santi")
-public class RicorrenzaEntity implements DatabaseEntity, Parcelable {
+public class RicorrenzaEntity implements DatabaseEntity, Parcelable, Searchable {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -96,34 +98,54 @@ public class RicorrenzaEntity implements DatabaseEntity, Parcelable {
     // Getter e Setter
     @Override
     public int getId() { return id; }
+
+    @Override
+    public String getSearchableContent() {
+        return nome + " " + bio; // Combiniamo nome e bio per la ricerca
+    }
+
+    @Override
+    public String getType() {//get tipo di contenuto per la ricerca, NON il tipo di Ricorrenza
+        return "Ricorrenza";
+    }
+
     @Override
     public void setId(int id) { this.id = id; }
+
     @Override
     public String getTableName() { return "santi"; }
 
     public int getIdMese() { return idMese; }
+
     public void setIdMese(int idMese) { this.idMese = idMese; }
 
     public int getGiornoDelMese() { return giornoDelMese; }
+
     public void setGiornoDelMese(int giornoDelMese) { this.giornoDelMese = giornoDelMese; }
 
     @NonNull
     public String getNome() { return nome; }
+
     public void setNome(@NonNull String nome) { this.nome = nome; }
 
     public String getBio() { return bio; }
+
     public void setBio(String bio) { this.bio = bio; }
 
     public String getImageUrl() { return imageUrl; }
+
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     public String getPrefix() { return prefix; }
+
     public void setPrefix(String prefix) { this.prefix = prefix; }
 
     public String getSuffix() { return suffix; }
+
     public void setSuffix(String suffix) { this.suffix = suffix; }
 
     public int getIdTipo() { return idTipo; }
+
     public void setIdTipo(int idTipo) { this.idTipo = idTipo; }
 
 }

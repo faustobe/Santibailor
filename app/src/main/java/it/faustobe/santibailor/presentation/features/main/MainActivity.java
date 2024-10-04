@@ -57,9 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("MainActivity", "onCreate called");
-        if (isDebugBuild()) {
-            setupStrictMode();
-        }
+        //if (isDebugBuild()) {setupStrictMode();}
         if (savedInstanceState == null) {
             clearSearchState();
         }
@@ -228,12 +226,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                if (drawer != null && drawer.isDrawerOpen(GravityCompat.START)) {
                     drawer.closeDrawer(GravityCompat.START);
                 } else {
-                    if (!navController.popBackStack()) {
-                        finish();
-                    }
+                    // Se il drawer non è aperto, permettiamo il comportamento di default
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
                 }
             }
         });

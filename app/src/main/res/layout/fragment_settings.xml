@@ -35,7 +35,7 @@
       android:id="@+id/btn_ricorrenze"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="Impostazioni per Ricorrenze"
+      android:text="Impostazioni Ricorrenze"
       android:layout_marginBottom="8dp"/>
 
   <Button

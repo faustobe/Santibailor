@@ -64,7 +64,6 @@ public class AddItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         // Gestione del pulsante indietro
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -96,6 +95,10 @@ public class AddItemFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        String itemType = AddItemFragmentArgs.fromBundle(getArguments()).getItemType();
+        if ("ricorrenza".equals(itemType)) {
+            setupRicorrenzaUI();
+        }
         isViewCreated = true;
         itemType = AddItemFragmentArgs.fromBundle(getArguments()).getItemType();// Recupera il tipo di elemento dagli argomenti del frammento
         setupUI();
@@ -133,6 +136,7 @@ public class AddItemFragment extends Fragment {
         binding.prefixInputLayout.setVisibility(View.VISIBLE);
         binding.suffixInputLayout.setVisibility(View.VISIBLE);
         binding.bioInputLayout.setVisibility(View.VISIBLE);
+        binding.titleTextView.setText(R.string.add_ricorrenza);
     }
 
     private void setupDatePickers() {

@@ -18,11 +18,26 @@
             android:padding="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_prefisso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Prefisso"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_prefisso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_nome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Nome"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_nome"
@@ -34,6 +49,21 @@
                     android:scrollbars="vertical"
                     android:gravity="top|start"
                     android:textSize="16sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_suffisso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Suffisso"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginTop="16dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_suffisso"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -59,36 +89,6 @@
                 android:layout_marginTop="16dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_prefisso"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Prefisso"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_prefisso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_suffisso"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Suffisso"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginTop="16dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_suffisso"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_descrizione"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -105,22 +105,22 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
-                android:id="@+id/iv_immagine"
+                android:id="@+id/ivRicorrenza"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
                 android:layout_marginTop="16dp"
                 android:scaleType="centerCrop"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/immagine_ricorrenza" />
 
             <Button
-                android:id="@+id/btn_carica_immagine"
+                android:id="@+id/btnSelectImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Carica immagine"
+                android:text="@string/seleziona_immagine"
                 android:layout_marginTop="16dp"
                 android:layout_gravity="center_horizontal" />
 
-            <!-- Bottone di salvataggio ora parte del contenuto scrollabile -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_salva"
                 android:layout_width="match_parent"

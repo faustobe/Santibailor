@@ -3,12 +3,14 @@ package it.faustobe.santibailor.presentation.common.viewmodels;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.Transformations;
-import androidx.lifecycle.ViewModelProvider;
+
 import android.content.SharedPreferences;
 import android.content.Context;
 import com.google.gson.Gson;
@@ -17,6 +19,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.inject.Inject;
+
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,11 +31,14 @@ import android.widget.ImageView;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import it.faustobe.santibailor.MyApplication;
+import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.data.AppDatabase;
 import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
 import it.faustobe.santibailor.data.repository.GenericRepository;
 import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
+import it.faustobe.santibailor.data.repository.SearchRepository;
 import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.SearchResult;
 import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.domain.usecase.DeleteRicorrenzaUseCase;
 import it.faustobe.santibailor.domain.usecase.GetRicorrenzaByIdUseCase;
@@ -42,7 +49,8 @@ import it.faustobe.santibailor.domain.usecase.InsertRicorrenzaUseCase;
 import it.faustobe.santibailor.domain.usecase.RicercaAvanzataUseCase;
 import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaImageUseCase;
 import it.faustobe.santibailor.domain.usecase.UpdateRicorrenzaUseCase;
-import it.faustobe.santibailor.util.ImageManager;
+//import it.faustobe.santibailor.util.ImageManager;
+import it.faustobe.santibailor.util.ImageHandler;
 import it.faustobe.santibailor.util.PaginationHelper;
 
 @HiltViewModel
@@ -62,7 +70,7 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     private final RicorrenzaRepository ricorrenzaRepository;
     private final ExecutorService executorService;
     private final Handler mainHandler;
-    private final ImageManager imageManager;
+    private final ImageHandler imageHandler;
     private final GenericRepository<Ricorrenza, RicorrenzaEntity, Ricorrenza> genericRepository;
     private final GetRicorrenzeDelGiornoUseCase getRicorrenzeDelGiornoUseCase;
     private final RicercaAvanzataUseCase ricercaAvanzataUseCase;
@@ -89,6 +97,14 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     private final MutableLiveData<Integer> totalSearchResults = new MutableLiveData<>(0);
     private final MutableLiveData<TipoRicorrenza> selectedTipo = new MutableLiveData<>();
     private final MutableLiveData<List<TipoRicorrenza>> listaTipoLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Ricorrenza> currentSaint = new MutableLiveData<>();
+    private List<Ricorrenza> saintsOfDay = new ArrayList<>();
+    private Random random = new Random();
+    private int lastLoadedDay = -1;
+    private int lastLoadedMonth = -1;
+
+
+
 
     private final LiveData<List<Ricorrenza>> ricorrenzeDelGiorno;
     private final LiveData<List<Ricorrenza>> ricorrenzeReligiose;
@@ -104,11 +120,18 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     private final PaginationHelper<Ricorrenza> paginationHelperReligiose;
     private final PaginationHelper<Ricorrenza> paginationHelperLaiche;
 
+    private final SearchRepository searchRepository;
+    private final MutableLiveData<List<SearchResult>> searchResults = new MutableLiveData<>();
+    //private final MutableLiveData<Integer> totalSearchResults = new MutableLiveData<>();
+
     private long lastLoadTime = 0;
     private SearchParams lastSearchParams;
 
     @Inject
-    public RicorrenzaViewModel(Application application,
+    public RicorrenzaViewModel(@NonNull Application application,
+                               RicorrenzaRepository repository,
+                               SearchRepository searchRepository,
+                               ImageHandler imageHandler,
                                SavedStateHandle savedStateHandle,
                                GetRicorrenzeDelGiornoUseCase getRicorrenzeDelGiornoUseCase,
                                RicercaAvanzataUseCase ricercaAvanzataUseCase,
@@ -126,7 +149,7 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         this.mainHandler = new Handler(Looper.getMainLooper());
         this.sharedPreferences = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
-        this.imageManager = initializeImageManager(application);
+        this.imageHandler = imageHandler;
         this.genericRepository = initializeGenericRepository(application);
         this.paginationHelper = new PaginationHelper<>(PAGE_SIZE);
         this.paginationHelperDelGiorno = new PaginationHelper<>(PAGE_SIZE);
@@ -141,6 +164,7 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         this.insertRicorrenzaUseCase = insertRicorrenzaUseCase;
         this.getTotalItemCountUseCase = getTotalItemCountUseCase;
         this.updateRicorrenzaImageUseCase = updateRicorrenzaImageUseCase;
+        this.searchRepository = searchRepository;
 
         selectedDate.setValue(new Date());
 
@@ -215,22 +239,124 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         );
     }
 
-    private ImageManager initializeImageManager(Application application) {
+    private ImageHandler initializeImageHandler(Application application) {
         if (application instanceof MyApplication) {
-            return ((MyApplication) application).getImageManager();
+            return ((MyApplication) application).getImageHandler();
         } else {
-            return new ImageManager(application);
+            return new ImageHandler(application);
         }
+    }
+
+    public void performSearch(String query, int limit, int offset) {
+        executorService.execute(() -> {
+            List<SearchResult> results = searchRepository.searchEntities(query, limit, offset);
+            int count = searchRepository.getTotalSearchResultsCount(query);
+            mainHandler.post(() -> {
+                searchResults.setValue(results);
+                totalSearchResults.setValue(count);
+            });
+        });
+    }
+
+    public LiveData<List<SearchResult>> getSearchResults() {
+        return searchResults;
+    }
+
+    public LiveData<Integer> getTotalSearchResults() {
+        return totalSearchResults;
+    }
+
+    public void reloadSaintOfDay() {
+        Log.d("RicorrenzaViewModel", "reloadSaintOfDay chiamata");
+        Calendar calendar = Calendar.getInstance();
+        int giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        int mese = calendar.get(Calendar.MONTH); // +1 perché Calendar.MONTH parte da 0
+        ricorrenzeDelGiornoPaginate.setValue(null);
+        loadRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public void setSelectedDate(Date date) {
+        if (selectedDate.getValue() == null || !selectedDate.getValue().equals(date)) {
+            selectedDate.setValue(date);
+        } else {
+            // Se la data è la stessa, forziamo comunque un refresh
+            loadRicorrenzeDelGiorno(date);
+        }
+    }
+
+    private void loadRicorrenzeDelGiorno(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int giorno = cal.get(Calendar.DAY_OF_MONTH);
+        int mese = cal.get(Calendar.MONTH);
+        loadRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    public void loadRicorrenzeForCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        int giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        int mese = calendar.get(Calendar.MONTH);
+        loadRicorrenzeDelGiorno(giorno, mese);
+    }
+
+    private void loadRicorrenzeDelGiorno(int giorno, int mese) {
+        if (isLoading.getValue() != null && isLoading.getValue()) return;
+        Log.d(TAG, "Tentativo di caricamento ricorrenze per " + giorno + "/" + mese);
+        if (ricorrenzeDelGiornoPaginate.getValue() != null &&
+                lastLoadedDay == giorno && lastLoadedMonth == mese) {
+            Log.d(TAG, "Dati già caricati per questo giorno, skip del caricamento");
+            refreshRandomSaint(); // Assicuriamoci che un santo sia selezionato
+            return;
+        }
+
+        isLoading.setValue(true);
+        executorService.execute(() -> {
+            GetRicorrenzeDelGiornoUseCase.Params params = new GetRicorrenzeDelGiornoUseCase.Params(giorno, mese);
+            List<Ricorrenza> ricorrenze = getRicorrenzeDelGiornoUseCase.executeSync(params);
+            mainHandler.post(() -> {
+                saintsOfDay = new ArrayList<>(ricorrenze);
+                ricorrenzeDelGiornoPaginate.setValue(ricorrenze);
+                lastLoadedDay = giorno;
+                lastLoadedMonth = mese;
+                Log.d(TAG, "Caricamento completato per " + giorno + "/" + mese + ": " + ricorrenze.size() + " ricorrenze");
+                refreshRandomSaint();
+                isLoading.setValue(false);
+            });
+        });
+    }
+
+    // ... altri metodi ...
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public void refreshRandomSaint() {
+        List<Ricorrenza> ricorrenze = ricorrenzeDelGiorno.getValue();
+        Log.d(TAG, "Refreshing random saint. Total saints: " + (ricorrenze != null ? ricorrenze.size() : 0));
+        if (ricorrenze != null && !ricorrenze.isEmpty()) {
+            int randomIndex = new Random().nextInt(ricorrenze.size());
+            Ricorrenza newSaint = ricorrenze.get(randomIndex);
+            if (!newSaint.equals(currentSaint.getValue())) {
+                currentSaint.setValue(newSaint);
+                Log.d(TAG, "New saint selected: " + newSaint.getNome());
+            } else {
+                Log.d(TAG, "Same saint selected, skipping update");
+            }
+        } else {
+            Log.d(TAG, "No saints available to select from");
+        }
+    }
+
+    public LiveData<Ricorrenza> getCurrentSaint() {
+        return currentSaint;
     }
 
     public void loadTipiRicorrenza() {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastLoadTime > CACHE_DURATION || listaTipoLiveData.getValue() == null) {
             executorService.execute(() -> {
-                List<TipoRicorrenza> tipos = getTipiRicorrenzaUseCase.execute(null);//faccio solo questa modifica
-                if (tipos.isEmpty() || !tipos.get(0).getTipo().equals("Tutte")) {
-                    tipos.add(0, new TipoRicorrenza(0, "Tutte"));
-                }
+                List<TipoRicorrenza> tipos = getTipiRicorrenzaUseCase.execute(null);
                 mainHandler.post(() -> {
                     listaTipoLiveData.setValue(tipos);
                     lastLoadTime = currentTime;
@@ -239,23 +365,8 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         }
     }
 
-    public void loadImage(String url, ImageView imageView, int placeholderResId) {
-        imageManager.loadImage(url, imageView, placeholderResId);
-    }
-
-    public void setDate(Date date) {
-        selectedDate.setValue(date);
-    }
-
-    public void loadRicorrenzeDelGiorno(int giorno, int mese) {
-        executorService.execute(() -> {
-            GetRicorrenzeDelGiornoUseCase.Params params = new GetRicorrenzeDelGiornoUseCase.Params(giorno, mese);
-            List<Ricorrenza> ricorrenze = getRicorrenzeDelGiornoUseCase.executeSync(params);
-            mainHandler.post(() -> {
-                List<Ricorrenza> paginatedRicorrenze = ricorrenze.subList(0, Math.min(ricorrenze.size(), PAGE_SIZE));
-                ricorrenzeDelGiornoPaginate.setValue(paginatedRicorrenze);
-            });
-        });
+    public void loadImage(String imageUrl, ImageView imageView, int placeholderResId) {
+        imageHandler.loadImage(imageUrl, imageView, R.drawable.placeholder_image);
     }
 
     public void loadRicorrenzeReligiose(int giorno, int mese) {
@@ -285,17 +396,6 @@ public class RicorrenzaViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getUpdateResult() {
         return updateResult;
-    }
-
-    public void delete(Ricorrenza ricorrenza) {
-        executorService.execute(() -> {
-            try {
-                deleteRicorrenzaUseCase.execute(ricorrenza);
-                mainHandler.post(() -> deleteResult.setValue(true));
-            } catch (Exception e) {
-                mainHandler.post(() -> deleteResult.setValue(false));
-            }
-        });
     }
 
     public LiveData<Ricorrenza> getRicorrenzaById(int id) {
@@ -501,11 +601,7 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     }
 
     public void setSelectedTipo(TipoRicorrenza tipo) {
-        if (tipo != null && "Tutte".equals(tipo.getTipo())) {
-            selectedTipo.setValue(null);
-        } else {
-            selectedTipo.setValue(tipo);
-        }
+        selectedTipo.setValue(tipo);
     }
 
     public void moveToNextDay() {
@@ -584,14 +680,6 @@ public class RicorrenzaViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsLastPage() {
         return isLastPage;
-    }
-
-    public LiveData<Boolean> getIsLoading() {
-        return isLoading;
-    }
-
-    public LiveData<Integer> getTotalSearchResults() {
-        return totalSearchResults;
     }
 
     public LiveData<TipoRicorrenza> getSelectedTipo() {

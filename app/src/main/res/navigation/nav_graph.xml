@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_homeFragment_to_ricorrenzaDetailFragment"
             app:destination="@id/ricorrenzaDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
     </fragment>
 
     <fragment
@@ -93,6 +96,12 @@
             android:id="@+id/action_categorySettingsFragment_to_manageRicorrenzeFragment"
             app:destination="@id/manageRicorrenzeFragment" />
         <action
+            android:id="@+id/action_categorySettingsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_categorySettingsFragment_to_addItemFragment"
+            app:destination="@id/addItemFragment" />
+        <action
             android:id="@+id/action_categorySettingsFragment_to_ricorrenzeVisualizationSettingsFragment"
             app:destination="@id/ricorrenzeVisualizationSettingsFragment" />
         <action
@@ -168,5 +177,17 @@
         app:destination="@id/navigation_home"
         app:popUpTo="@id/navigation_home"
         app:popUpToInclusive="true" />
+
+    <action
+        android:id="@+id/action_global_to_settings"
+        app:destination="@id/navigation_settings" />
+
+    <action
+        android:id="@+id/action_global_to_destination"
+        app:destination="@id/navigation_settings">
+        <argument
+            android:name="navigationAction"
+            app:argType="integer" />
+    </action>
 
 </navigation>

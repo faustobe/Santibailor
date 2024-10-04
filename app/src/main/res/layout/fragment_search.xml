@@ -6,6 +6,15 @@
     android:orientation="vertical"
     android:paddingBottom="56dp">
 
+    <!-- Nuova SearchView -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:iconifiedByDefault="false"
+        app:queryHint="Cerca ricorrenze" />
+
     <!-- Parametri di ricerca -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -122,7 +131,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_risultati"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:nestedScrollingEnabled="true" />
 

@@ -101,6 +101,14 @@ public class RicorrenzaRepository {
         executorService.execute(() -> ricorrenzaDao.updateImageUrl(ricorrenzaId, imageUrl));
     }
 
+    public List<String> getAllImageUrls() {
+        return ricorrenzaDao.getAllImageUrls();
+    }
+
+    public List<String> getImageUrlsInUse() {
+        return ricorrenzaDao.getImageUrlsInUse();
+    }
+
     public LiveData<List<Ricorrenza>> getRicorrenzeReligiose(int giorno, int mese) {
         return Transformations.map(
                 ricorrenzaDao.getRicorrenzeDelGiornoPerTipo(giorno, mese, TipoRicorrenzaEntity.RELIGIOSA),
