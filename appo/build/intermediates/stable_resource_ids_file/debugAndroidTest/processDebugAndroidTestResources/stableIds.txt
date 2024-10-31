@@ -1,2 +1,0 @@
-it.faustobe.santibailor.test:style/WhiteBackgroundTheme = 0x7f010001
-it.faustobe.santibailor.test:style/WhiteBackgroundDialogTheme = 0x7f010000

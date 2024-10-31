@@ -1,5 +1,0 @@
-it.faustobe.santibailor.test.app-core-1.6.1-0 /home/bapu/AndroidStudioProjects/.gradle/caches/transforms-4/251698c373ecb2215c2141d9ca53a02a/transformed/core-1.6.1/res
-it.faustobe.santibailor.test.app-androidTest-1 /home/bapu/AndroidStudioProjects/Santibailor/app/build/generated/res/resValues/androidTest/debug
-it.faustobe.santibailor.test.app-mergeDebugAndroidTestResources-2 /home/bapu/AndroidStudioProjects/Santibailor/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/merged.dir
-it.faustobe.santibailor.test.app-mergeDebugAndroidTestResources-3 /home/bapu/AndroidStudioProjects/Santibailor/app/build/intermediates/incremental/debugAndroidTest/mergeDebugAndroidTestResources/stripped.dir
-it.faustobe.santibailor.test.app-debugAndroidTest-4 /home/bapu/AndroidStudioProjects/Santibailor/app/build/intermediates/merged_res/debugAndroidTest/mergeDebugAndroidTestResources

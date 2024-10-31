@@ -9,6 +9,7 @@ public class SettingItem implements Parcelable {
     private final SettingType type;
     private Integer navigationAction;
     private boolean toggleState;
+    private String itemType;
 
     public enum SettingType {
         NAVIGATION, TOGGLE, ACTION
@@ -43,6 +44,7 @@ public class SettingItem implements Parcelable {
     public SettingType getType() { return type; }
     public Integer getNavigationAction() { return navigationAction; }
     public boolean isToggleState() { return toggleState; }
+    public String getItemType() {return itemType;}
 
     // Setter
     public void setToggleState(boolean toggleState) { this.toggleState = toggleState; }

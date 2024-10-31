@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,6 +65,19 @@ public class AddItemFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("AddItemFragment", "onCreate called");
+        if (getArguments() != null) {
+            itemType = AddItemFragmentArgs.fromBundle(getArguments()).getItemType();
+            Log.d("AddItemFragment", "Received itemType: " + itemType);
+        }
+        else {
+            Log.d("AddItemFragment", "No arguments received");
+        }
+        // Se itemType è null o vuoto, impostiamo un valore di default
+        if (itemType == null || itemType.isEmpty()) {
+
+            Log.d("AddItemFragment", "Using default itemType: elemento");
+        }
         // Gestione del pulsante indietro
         requireActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -95,10 +109,7 @@ public class AddItemFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String itemType = AddItemFragmentArgs.fromBundle(getArguments()).getItemType();
-        if ("ricorrenza".equals(itemType)) {
-            setupRicorrenzaUI();
-        }
+
         isViewCreated = true;
         itemType = AddItemFragmentArgs.fromBundle(getArguments()).getItemType();// Recupera il tipo di elemento dagli argomenti del frammento
         setupUI();
@@ -114,6 +125,7 @@ public class AddItemFragment extends Fragment {
     }
 
     private void setupUI() {
+        Log.d("AddItemFragment", "Setting up UI with itemType: " + itemType);
         binding.titleTextView.setVisibility(View.VISIBLE);
 
         switch (itemType) {

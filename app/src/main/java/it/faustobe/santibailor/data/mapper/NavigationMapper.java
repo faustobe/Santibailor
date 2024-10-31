@@ -24,7 +24,7 @@ public class NavigationMapper {
         destinationToActionMap.put(R.id.navigation_home, R.id.action_editRicorrenzaFragment_to_navigation_home);
 
         // Mappatura per SettingsFragment
-        destinationToActionMap.put(R.id.addItemFragment, R.id.action_settingsFragment_to_addItemFragment);
+        //destinationToActionMap.put(R.id.addItemFragment, R.id.action_settingsFragment_to_addItemFragment);
         destinationToActionMap.put(R.id.searchFragment, R.id.action_settingsFragment_to_searchFragment);
         destinationToActionMap.put(R.id.categorySettingsFragment, R.id.action_settingsFragment_to_categorySettingsFragment);
 

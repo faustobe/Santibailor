@@ -20,8 +20,17 @@ public interface RicorrenzaDao extends BaseDao<RicorrenzaEntity> {
     @Query("SELECT * FROM santi WHERE giorno_del_mese= :giorno AND id_mese= :mese")
     LiveData<List<RicorrenzaEntity>> getRicorrenzePerGiornoMeseLiveData(int giorno, int mese);
 
-    @Query("UPDATE santi SET image_url = :imageUrl WHERE id = :ricorrenzaId")
-    void updateImageUrl(int ricorrenzaId, String imageUrl);
+    @Query("UPDATE santi SET image_url = :newUrl WHERE id = :ricorrenzaId")
+    void updateImageUrl(int ricorrenzaId, String newUrl);
+
+    @Query("UPDATE santi SET image_url = :newUrl WHERE id = :ricorrenzaId")
+    void updateImageUrlById(int ricorrenzaId, String newUrl);
+
+    @Query("UPDATE santi SET image_url = :newUrl WHERE image_url = :oldUrl")
+    void updateImageUrlByOldUrl(String oldUrl, String newUrl);
+
+    @Query("SELECT * FROM santi WHERE image_url IS NOT NULL AND image_url != ''")
+    List<RicorrenzaEntity> getAllRicorrenzeWithImages();
 
     @Query("SELECT DISTINCT image_url FROM santi WHERE image_url IS NOT NULL AND image_url != ''")
     List<String> getAllImageUrls();
@@ -46,6 +55,9 @@ public interface RicorrenzaDao extends BaseDao<RicorrenzaEntity> {
 
     @Query("SELECT COUNT(*) FROM santi")
     int getTotalItemCount();
+
+    @Query("SELECT * FROM santi WHERE image_url = :imageUrl LIMIT 1")
+    RicorrenzaEntity getRicorrenzaByImageUrl(String imageUrl);
 
     @Query("SELECT * FROM santi WHERE " +
             "(:nome IS NULL OR santo LIKE '%' || :nome || '%') " +
@@ -106,4 +118,11 @@ public interface RicorrenzaDao extends BaseDao<RicorrenzaEntity> {
 
     @Query("SELECT * FROM santi WHERE giorno_del_mese= :giorno AND id_mese = :mese")
     List<RicorrenzaEntity> debugRicorrenzeDelGiorno(int giorno, int mese);
+
+    // su remoto
+    @Query("UPDATE santi SET bio = :bio WHERE id = :id")
+    void updateBio(int id, String bio);
+
+    @Query("SELECT bio FROM santi WHERE id = :id")
+    String getBio(int id);
 }

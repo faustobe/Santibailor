@@ -1,6 +1,7 @@
 package it.faustobe.santibailor.presentation.features.settings.ricorrenze;
-
+//fragment di gestione delle ricorrenze
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,11 +10,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentManageRicorrenzeBinding;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.util.NavigationUtils;
 
 public class ManageRicorrenzeFragment extends Fragment {
 
@@ -41,9 +44,11 @@ public class ManageRicorrenzeFragment extends Fragment {
     }
 
     private void navigateToAddRicorrenza() {
-        ManageRicorrenzeFragmentDirections.ActionManageRicorrenzeFragmentToAddItemFragment action =
-                ManageRicorrenzeFragmentDirections.actionManageRicorrenzeFragmentToAddItemFragment("ricorrenza");
-        Navigation.findNavController(requireView()).navigate(action);
+        NavController navController = Navigation.findNavController(requireView());
+        Bundle args = new Bundle();
+        args.putString("itemType", "ricorrenza");
+        Log.d("ManageRicorrenzeFragment", "Navigating to AddItemFragment with itemType: ricorrenza");
+        navController.navigate(R.id.action_manageRicorrenzeFragment_to_addItemFragment, args);
     }
 
     @Override

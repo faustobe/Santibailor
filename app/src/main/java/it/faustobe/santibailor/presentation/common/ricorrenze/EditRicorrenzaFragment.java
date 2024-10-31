@@ -1,6 +1,8 @@
 package it.faustobe.santibailor.presentation.common.ricorrenze;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -192,40 +194,79 @@ public class EditRicorrenzaFragment extends Fragment {
         String updatedImageUrl = initialImageUrl;
 
         if (selectedImageUri != null) {
-            updatedImageUrl = imageHandler.saveOrUpdateImageSafely(selectedImageUri, initialImageUrl);
-            if (updatedImageUrl == null) {
-                Toast.makeText(requireContext(), "Errore nel salvataggio dell'immagine", Toast.LENGTH_LONG).show();
-                return;
-            }
+            imageHandler.saveOrUpdateImageSafely(selectedImageUri, initialImageUrl, new ImageHandler.OnImageSavedListener() {
+                @Override
+                public void onImageSaved(String updatedImageUrl) {
+                    if (isAdded() && getContext() != null) {
+                        completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, updatedImageUrl, prefisso, suffisso, tipoRicorrenzaId);
+                    } else {
+                        Log.w("EditRicorrenzaFragment", "Fragment not attached or context is null when image save completed");
+                    }
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    if (isAdded() && getContext() != null) {
+                        Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
+                    }
+                }
+            });
+        } else {
+            completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, initialImageUrl, prefisso, suffisso, tipoRicorrenzaId);
+        }
+    }
+
+    private void completeRicorrenzaSave(int id, int idMese, int giorno, String nome, String descrizione,
+                                        String imageUrl, String prefisso, String suffisso, int tipoRicorrenzaId) {
+        if (!isAdded()) {
+            Log.w("EditRicorrenzaFragment", "Fragment not attached, cannot complete save");
+            return;
+        }
+
+        Context context = getContext();
+        if (context == null) {
+            Log.w("EditRicorrenzaFragment", "Context is null, cannot complete save");
+            return;
         }
 
         Ricorrenza ricorrenza = new Ricorrenza(
-                id,
-                idMese,
-                giorno,
-                nome,
-                descrizione,
-                updatedImageUrl,
-                prefisso,
-                suffisso,
-                tipoRicorrenzaId
+                id, idMese, giorno, nome, descrizione, imageUrl, prefisso, suffisso, tipoRicorrenzaId
         );
 
         if (ricorrenzaToEdit != null) {
             ricorrenzaViewModel.update(ricorrenza);
+            showToast(context, "Ricorrenza aggiornata");
+            safeNavigateBack();
         } else {
             ricorrenzaViewModel.insert(ricorrenza, new RicorrenzaViewModel.OnInsertCompleteListener() {
                 @Override
                 public void onInsertSuccess(int newId) {
-                    Toast.makeText(requireContext(), "Nuova ricorrenza creata", Toast.LENGTH_SHORT).show();
-                    navigateBack();
+                    if (isAdded() && getContext() != null) {
+                        showToast(getContext(), "Nuova ricorrenza creata");
+                        safeNavigateBack();
+                    }
                 }
 
                 @Override
                 public void onInsertFailure(String error) {
-                    Toast.makeText(requireContext(), "Errore nella creazione della ricorrenza: " + error, Toast.LENGTH_LONG).show();
+                    if (isAdded() && getContext() != null) {
+                        showToast(getContext(), "Errore nella creazione della ricorrenza: " + error);
+                    }
                 }
             });
+        }
+    }
+
+    private void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private void safeNavigateBack() {
+        if (isAdded() && getView() != null) {
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigateUp();
         }
     }
 

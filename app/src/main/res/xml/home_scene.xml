@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/collapsed"
+        motion:constraintSetStart="@+id/expanded"
+        motion:duration="400">
+        <OnSwipe
+            motion:touchAnchorId="@+id/calendar_card"
+            motion:touchAnchorSide="bottom"
+            motion:dragDirection="dragUp" />
+
+        <KeyFrameSet>
+            <!-- Animazione del calendario -->
+            <KeyPosition
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="50"
+                motion:percentWidth="0.8"
+                motion:percentHeight="0.8"
+                motion:percentX="0.1"
+                motion:percentY="0.1"
+                motion:curveFit="spline"/>
+
+            <!-- Animazione della card del santo -->
+            <KeyPosition
+                motion:motionTarget="@+id/saint_card"
+                motion:framePosition="50"
+                motion:percentWidth="1.1"
+                motion:percentHeight="1.1"
+                motion:curveFit="spline"/>
+
+            <!-- Animazione della card delle info personali -->
+            <KeyPosition
+                motion:motionTarget="@+id/card_personal_info"
+                motion:framePosition="50"
+                motion:percentWidth="1.2"
+                motion:percentHeight="1.2"
+                motion:curveFit="spline"/>
+        </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+        <!-- Constraint del calendario espanso -->
+        <Constraint
+            android:id="@+id/calendar_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/calendar_expanded_margin"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card del santo espansa -->
+        <Constraint
+            android:id="@+id/saint_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/calendar_card"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card delle info personali espansa -->
+        <Constraint
+            android:id="@+id/card_personal_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/saint_card"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/collapsed">
+        <!-- Constraint del calendario collassato -->
+        <Constraint
+            android:id="@+id/calendar_card"
+            android:layout_width="@dimen/calendar_collapsed_width"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/calendar_collapsed_margin"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"/>
+
+        <!-- Constraint della card del santo collassata -->
+        <Constraint
+            android:id="@+id/saint_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            motion:layout_constraintTop_toBottomOf="@id/calendar_card"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card delle info personali collassata -->
+        <Constraint
+            android:id="@+id/card_personal_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            motion:layout_constraintTop_toBottomOf="@id/saint_card"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+    </ConstraintSet>
+
+</MotionScene>

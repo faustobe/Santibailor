@@ -21,4 +21,10 @@
     <string name="seleziona_immagine">Seleziona immagine</string>
     <string name="no_saint_today">Nessun santo oggi</string>
     <string name="other_saints_of_the_day">Altri santi del giorno (%1$d)</string>
+    <string name="migrate_images">Migra Immagini</string>
+    <string name="expand_saints_list">Espandi lista santi</string>
+    <string name="reload_saint_of_day">Ricarica il santo del giorno</string>
+    <string name="personal_info">Info Personali</string>
+    <string name="title_add">Ricarica il santo del giorno</string>
+    <string name="title_overview">Info Personali</string>
 </resources>

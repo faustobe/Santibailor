@@ -1,8 +1,6 @@
 package it.faustobe.santibailor.presentation.features.ricorrenza;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +10,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.google.android.gms.common.util.IOUtils;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
+import com.bumptech.glide.Glide;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentRicorrenzaDetailBinding;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.domain.model.Ricorrenza;
 
 public class RicorrenzaDetailFragment extends Fragment {
 
@@ -41,13 +34,33 @@ public class RicorrenzaDetailFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
 
         int ricorrenzaId = RicorrenzaDetailFragmentArgs.fromBundle(getArguments()).getRicorrenzaId();
+        String ricorrenzaIdString = String.valueOf(ricorrenzaId);
 
         viewModel.getRicorrenzaById(ricorrenzaId).observe(getViewLifecycleOwner(), ricorrenza -> {
             if (ricorrenza != null) {
                 binding.tvNome.setText(ricorrenza.getNome());
-                binding.tvBio.setText(ricorrenza.getBio());
-                viewModel.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
-                // Aggiungi altri campi se necessario
+
+                // Carica la biografia da Firebase
+                viewModel.getBio(ricorrenzaIdString).observe(getViewLifecycleOwner(), bio -> {
+                    if (bio != null && !bio.isEmpty()) {
+                        binding.tvBio.setText(bio);
+                    } else {
+                        binding.tvBio.setText(ricorrenza.getBio());
+                    }
+                });
+
+                // Carica l'immagine da Firebase
+                viewModel.downloadImage(ricorrenzaIdString).observe(getViewLifecycleOwner(), imageData -> {
+                    if (imageData != null) {
+                        Glide.with(this)
+                                .load(imageData)
+                                .placeholder(R.drawable.placeholder_image)
+                                .into(binding.ivRicorrenza);
+                    } else {
+                        // Fallback all'URL dell'immagine locale se l'immagine Firebase non è disponibile
+                        viewModel.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
+                    }
+                });
             }
         });
 
@@ -58,6 +71,13 @@ public class RicorrenzaDetailFragment extends Fragment {
         });
     }
 
+    private void updateUI(Ricorrenza ricorrenza) {
+        if (ricorrenza != null) {
+            binding.tvNome.setText(ricorrenza.getNome());
+            binding.tvBio.setText(ricorrenza.getBio());
+            viewModel.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
+        }
+    }
 
     @Override
     public void onDestroyView() {

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/collapsed"
+        motion:constraintSetStart="@+id/expanded"
+        motion:duration="400">
+        <OnSwipe
+            motion:touchAnchorId="@+id/calendar_card"
+            motion:touchAnchorSide="bottom"
+            motion:dragDirection="dragUp" />
+        <KeyFrameSet>
+            <KeyPosition
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="25"
+                motion:percentWidth="0.9"
+                motion:percentHeight="0.9"
+                motion:percentX="0.05"
+                motion:percentY="0.05"
+                motion:curveFit="spline"/>
+            <KeyPosition
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="75"
+                motion:percentWidth="0.7"
+                motion:percentHeight="0.7"
+                motion:percentX="0.2"
+                motion:percentY="0.2"
+                motion:curveFit="spline"/>
+            <KeyAttribute
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="0"
+                android:scaleX="1"
+                android:scaleY="1" />
+            <KeyAttribute
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="100"
+                android:scaleX="0.7"
+                android:scaleY="0.7" />
+            <KeyAttribute
+                motion:motionTarget="@+id/tv_weekday"
+                motion:framePosition="50"
+                android:alpha="0.7" />
+            <KeyAttribute
+                motion:motionTarget="@+id/tv_month"
+                motion:framePosition="50"
+                android:alpha="0.7" />
+            <KeyCycle
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="25"
+                motion:waveShape="sin"
+                motion:wavePeriod="1"
+                android:rotation="5"
+                android:translationY="10dp"/>
+            <KeyCycle
+                motion:motionTarget="@+id/calendar_card"
+                motion:framePosition="75"
+                motion:waveShape="sin"
+                motion:wavePeriod="1"
+                android:rotation="-5"
+                android:translationY="-10dp"/>
+        </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/expanded">
+        <Constraint
+            android:id="@+id/calendar_card"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/calendar_expanded_margin"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:pathMotionArc="startHorizontal">
+            <CustomAttribute
+                motion:attributeName="cardElevation"
+                motion:customFloatValue="8" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_weekday">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_expanded_weekday_text_size" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_day">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_expanded_day_text_size" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_month">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_expanded_month_text_size" />
+        </Constraint>
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/collapsed">
+        <Constraint
+            android:id="@+id/calendar_card"
+            android:layout_width="@dimen/calendar_collapsed_width"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/calendar_collapsed_margin"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:pathMotionArc="startHorizontal">
+            <CustomAttribute
+                motion:attributeName="cardElevation"
+                motion:customFloatValue="2" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_weekday">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_collapsed_weekday_text_size" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_day">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_collapsed_day_text_size" />
+        </Constraint>
+        <Constraint android:id="@+id/tv_month">
+            <CustomAttribute
+                motion:attributeName="textSize"
+                motion:customDimension="@dimen/calendar_collapsed_month_text_size" />
+        </Constraint>
+    </ConstraintSet>
+
+</MotionScene>

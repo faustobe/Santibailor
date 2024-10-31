@@ -4,11 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:contentDescription="@string/background_description"/>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view"
@@ -16,20 +18,83 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/motionLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/transparent">
+            app:layoutDescription="@xml/home_scene">
 
-            <!-- Calendario e santo del giorno -->
+            <!-- Calendario (ridimensionabile) -->
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
+                android:id="@+id/calendar_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/calendar_expanded_margin"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="#55FFFFFF"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/calendar_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/tv_weekday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000000"
+                        android:textSize="47sp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#FF0000"
+                        android:textSize="97sp"
+                        android:textStyle="bold"
+                        android:shadowColor="#000"
+                        android:shadowDx="2"
+                        android:shadowDy="2"
+                        android:shadowRadius="1"
+                        app:layout_constraintTop_toBottomOf="@id/tv_weekday"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
+                        android:id="@+id/tv_month"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#000000"
+                        android:textSize="49sp"
+                        android:textStyle="bold"
+                        app:layout_constraintTop_toBottomOf="@id/tv_day"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+            <!-- Santo del giorno (espandibile) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/saint_card"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp"
-                app:cardBackgroundColor="#80FFFFFF">
+                app:cardBackgroundColor="#55FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/calendar_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:elevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -37,101 +102,77 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                        <!-- Contenuto del calendario (sempre visibile) -->
-                        <LinearLayout
-                            android:id="@+id/calendar_content"
-                            android:layout_width="match_parent"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageButton
+                            android:id="@+id/expand_collapse_saints_icon"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:src="@drawable/ic_expand_more"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/expand_saints_list"/>
 
-                            <TextView
-                                android:id="@+id/tv_weekday"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#000000"
-                                android:textSize="47sp"
-                                android:textStyle="bold"
-                                android:gravity="center"
-                                android:layout_gravity="center"/>
-
-                            <TextView
-                                android:id="@+id/tv_day"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textColor="#FF0000"
-                                android:textSize="97sp"
-                                android:textStyle="bold"
-                                android:shadowColor="#000"
-                                android:shadowDx="2"
-                                android:shadowDy="2"
-                                android:shadowRadius="1"
-                                android:gravity="center"/>
-
-                            <TextView
-                                android:id="@+id/tv_month"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="#000000"
-                                android:textSize="49sp"
-                                android:textStyle="bold"
-                                android:layout_gravity="center"/>
-                        </LinearLayout>
-
-                        <!-- Santo del giorno e pulsanti -->
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/tv_saint_of_day"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:layout_marginTop="16dp">
+                            android:layout_weight="1"
+                            android:textSize="18sp"
+                            android:textColor="#000000"
+                            android:gravity="center"/>
 
-                            <ImageButton
-                                android:id="@+id/expand_collapse_saints_icon"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_expand_more"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:contentDescription="Espandi lista santi"/>
-
-                            <TextView
-                                android:id="@+id/tv_saint_of_day"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:textSize="18sp"
-                                android:textColor="#000000"
-                                android:gravity="center"/>
-
-                            <ImageButton
-                                android:id="@+id/reload_saint_button"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_refresh"
-                                android:background="?attr/selectableItemBackgroundBorderless"
-                                android:contentDescription="Ricarica santo del giorno"/>
-                        </LinearLayout>
-
-                        <!-- Lista dei santi (espandibile) -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerView_saints"
-                            android:layout_width="match_parent"
+                        <ImageButton
+                            android:id="@+id/reload_saint_button"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_marginTop="8dp"/>
+                            android:src="@drawable/ic_refresh"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="@string/reload_saint_of_day"/>
+                    </LinearLayout>
 
+                    <ImageView
+                        android:id="@+id/saint_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:scaleType="centerCrop"
+                        android:layout_marginTop="16dp"
+                        android:contentDescription="@string/immagine_ricorrenza"
+                        android:visibility="gone"/>
 
+                    <TextView
+                        android:id="@+id/tv_saint_bio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:visibility="gone"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_saints"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:layout_marginTop="16dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:nestedScrollingEnabled="false"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Panel semitrasparente (collassabile) -->
+            <!-- Panel Info Personali (collassabile) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_personal_info"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 app:cardElevation="4dp"
                 app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="#80FFFFFF">
+                app:cardBackgroundColor="#80FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/saint_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,7 +186,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="16dp"
-                        android:text="Informazioni personali"
+                        android:text="@string/personal_info"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="#FF0000c0"
@@ -184,16 +225,19 @@
                             android:textSize="14sp"/>
                     </LinearLayout>
                 </LinearLayout>
+
             </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_migrate_images"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/migrate_images"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/card_personal_info"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- BottomNavigationView per il nuovo menu inferiore -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:menu="@menu/home_bottom_menu"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

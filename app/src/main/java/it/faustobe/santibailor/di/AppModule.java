@@ -2,6 +2,10 @@ package it.faustobe.santibailor.di;
 
 import android.app.Application;
 import android.content.Context;
+
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+
 import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
@@ -9,6 +13,7 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.remote.FirebaseRemoteDataSource;
 import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
 import it.faustobe.santibailor.domain.usecase.DeleteRicorrenzaUseCase;
 import it.faustobe.santibailor.domain.usecase.GetRicorrenzaByIdUseCase;
@@ -33,14 +38,35 @@ public class AppModule {
 
     @Provides
     @Singleton
-    public RicorrenzaRepository provideRicorrenzaRepository(Application application) {
-        return new RicorrenzaRepository(application);
+    public FirebaseFirestore provideFirebaseFirestore() {
+        return FirebaseFirestore.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    public FirebaseStorage provideFirebaseStorage() {
+        return FirebaseStorage.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    public FirebaseRemoteDataSource provideFirebaseRemoteDataSource(FirebaseFirestore firestore, FirebaseStorage storage) {
+        return new FirebaseRemoteDataSource(firestore, storage);
+    }
+
+    @Provides
+    @Singleton
+    public RicorrenzaRepository provideRicorrenzaRepository(Application application,
+                                                            FirebaseRemoteDataSource remoteDataSource,
+                                                            FirebaseFirestore firestore,
+                                                            FirebaseStorage storage) {
+        return new RicorrenzaRepository(application, remoteDataSource, firestore, storage);
     }
 
     @Provides
     @Singleton
     public ImageHandler provideImageHandler(@ApplicationContext Context context) {
-        return new ImageHandler(context);
+        return ImageHandler.getInstance(context);
     }
 
     @Provides

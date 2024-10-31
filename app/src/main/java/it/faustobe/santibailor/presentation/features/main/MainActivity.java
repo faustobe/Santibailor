@@ -1,7 +1,10 @@
 // MainActivity.java
 package it.faustobe.santibailor.presentation.features.main;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -16,6 +19,7 @@ import android.view.animation.DecelerateInterpolator;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,11 +55,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final long SHOW_ANIMATION_DURATION = 300; // 300ms per la riapparizione
     private static final long HIDE_ANIMATION_DURATION = 0; // 0ms per la scomparsa immediata
     private static final long SHOW_DELAY = 300; // 300ms di ritardo prima di mostrare il menu
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        verifyStoragePermissions(this);
         Log.d("MainActivity", "onCreate called");
         //if (isDebugBuild()) {setupStrictMode();}
         if (savedInstanceState == null) {
@@ -68,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         showBottomNavRunnable = this::showBottomNav;
         setupNavigation();
         setupBackPressedDispatcher();
+    }
+
+    public static void verifyStoragePermissions(Activity activity) {
+        int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    activity,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
     }
 
     private void setupNavigation() {
@@ -83,11 +105,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navView.setOnItemSelectedListener(item -> {
                 int itemId = item.getItemId();
                 if (itemId == R.id.navigation_home ||
-                        itemId == R.id.navigation_dashboard ||
-                        itemId == R.id.navigation_notifications ||
+                        itemId == R.id.navigation_add ||
+                        itemId == R.id.navigation_overview ||
                         itemId == R.id.navigation_settings) {
-                    navController.popBackStack(itemId, false);
-                    navController.navigate(itemId);
+                    if (itemId == R.id.navigation_add) {
+                        // Apre sempre come "Aggiungi Ricorrenza"
+                        openAddItemFragment("ricorrenza");
+                    } else {
+                        navController.popBackStack(itemId, false);
+                        navController.navigate(itemId);
+                    }
                     return true;
                 }
                 return false;
@@ -98,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             NavigationView navigationView = binding.navView;
             if (drawer != null && navigationView != null) {
                 AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                        R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_settings)
+                        R.id.navigation_home, R.id.navigation_overview, R.id.navigation_settings)
                         .setOpenableLayout(drawer)
                         .build();
                 NavigationUI.setupWithNavController(navigationView, navController);
@@ -109,6 +136,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navController.addOnDestinationChangedListener(this::onDestinationChanged);
         } else {
             Log.e("MainActivity", "NavHostFragment not found");
+        }
+    }
+
+    private void openAddItemFragment(String itemType) {
+        // Se necessario, puoi passare un tipo di item predefinito
+        Bundle args = new Bundle();
+        args.putString("itemType", itemType);
+        navController.navigate(R.id.action_global_to_add_item, args);
+    }
+
+    private void setHomeAddButtonListener() {
+        View homeView = navController.getCurrentDestination().getId() == R.id.navigation_home ?
+                findViewById(R.id.addItemFragment) : null;
+        if (homeView != null) {
+            View addButton = homeView.findViewById(R.id.btn_add_ricorrenza); // Assicurati che questo ID sia corretto
+            if (addButton != null) {
+                addButton.setOnClickListener(v -> openAddItemFragment("ricorrenza"));
+            }
         }
     }
 

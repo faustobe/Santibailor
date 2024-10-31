@@ -5,6 +5,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import it.faustobe.santibailor.domain.model.Searchable;
@@ -39,6 +40,7 @@ public class RicorrenzaEntity implements DatabaseEntity, Parcelable, Searchable 
     public RicorrenzaEntity() {}
 
     // Costruttore completo
+    @Ignore
     public RicorrenzaEntity(int id, int idMese, int giornoDelMese, @NonNull String nome, String bio,
                             String imageUrl, String prefix, String suffix, int idTipo) {
         this.id = id;
