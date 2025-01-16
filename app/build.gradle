@@ -102,11 +102,11 @@ dependencies {
     annotationProcessor libs.hilt.compiler
 
     // WorkManager
-    implementation libs.androidx.work.runtime
+    //implementation libs.androidx.work.runtime
     implementation libs.guava
 
     // Hilt con WorkManager
-    implementation libs.androidx.hilt.work
+    //implementation libs.androidx.hilt.work
     annotationProcessor libs.androidx.hilt.compiler
 
     // Per i test

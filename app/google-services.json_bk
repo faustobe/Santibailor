@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "846533541352",
-    "project_id": "deposito-santibailor",
-    "storage_bucket": "deposito-santibailor.firebasestorage.app"
+    "project_number": "139165352774",
+    "project_id": "santibailor-1476f",
+    "storage_bucket": "santibailor-1476f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:846533541352:android:ec3668181000b0dfd5b85d",
+        "mobilesdk_app_id": "1:139165352774:android:c90838f1c24c862f049b47",
         "android_client_info": {
           "package_name": "it.faustobe.santibailor"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAeDIcxYjixADnNPTgUapaOhH_bBXHywbk"
+          "current_key": "AIzaSyCDzgrITaoEaoGbvTqh2h93M1yRpMwWlxk"
         }
       ],
       "services": {

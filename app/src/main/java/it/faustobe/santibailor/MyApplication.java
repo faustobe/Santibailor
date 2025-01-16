@@ -4,8 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.work.Configuration;
-import androidx.work.WorkManager;
+//import androidx.work.Configuration;
+//import androidx.work.WorkManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
@@ -16,17 +16,13 @@ import com.google.firebase.auth.FirebaseAuthException;
 import dagger.hilt.android.HiltAndroidApp;
 import it.faustobe.santibailor.util.FirebaseErrorHandler;
 import it.faustobe.santibailor.util.ImageHandler;
-import it.faustobe.santibailor.worker.WorkManagerConfig;
-import it.faustobe.santibailor.worker.WorkScheduler;
+//import it.faustobe.santibailor.worker.WorkManagerConfig;
 
 import javax.inject.Inject;
 
 @HiltAndroidApp
-public class MyApplication extends Application implements Configuration.Provider {
+public class MyApplication extends Application {
     private static final String TAG = "MyApplication";
-
-    @Inject
-    WorkManagerConfig workManagerConfig;
 
     @Inject
     ImageHandler imageHandler;
@@ -51,11 +47,6 @@ public class MyApplication extends Application implements Configuration.Provider
                     }
                 });
 
-        // Inizializzazione di WorkManager
-        if (WorkManager.getInstance(this) == null) {
-            WorkManager.initialize(this, workManagerConfig.getWorkManagerConfiguration());
-        }
-        WorkScheduler.scheduleImageCleanup(this);
     }
 
     private void handleAuthenticationError(Exception exception) {
@@ -87,12 +78,6 @@ public class MyApplication extends Application implements Configuration.Provider
         } catch (Exception e) {
             Log.e(TAG, "Errore durante l'inizializzazione di Firebase", e);
         }
-    }
-
-    @NonNull
-    @Override
-    public Configuration getWorkManagerConfiguration() {
-        return workManagerConfig.getWorkManagerConfiguration();
     }
 
     public ImageHandler getImageHandler() {

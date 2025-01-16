@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.util.Log;
 import android.util.LruCache;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,15 +30,16 @@ public class FirebaseRemoteDataSource {
     private final StorageReference storageRef;
     private final LruCache<String, byte[]> imageCache;
     private final LruCache<String, String> bioCache;
+    private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>(false);
 
     public FirebaseRemoteDataSource(FirebaseFirestore db, FirebaseStorage storage) {
         this.db = db;
         this.storage = storage;
         this.storageRef = storage.getReference();
 
+        // Setup image cache
         int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         int cacheSize = maxMemory / 8;
-
         imageCache = new LruCache<String, byte[]>(cacheSize) {
             @Override
             protected int sizeOf(String key, byte[] value) {
@@ -50,6 +54,56 @@ public class FirebaseRemoteDataSource {
                 .setLocalCacheSettings(MemoryCacheSettings.newBuilder().build())
                 .build();
         db.setFirestoreSettings(settings);
+
+        // Test connection
+        testConnection();
+    }
+
+    private void testConnection() {
+        Log.d(TAG, "Testing Firestore connection...");
+        db.collection("saints")
+                .limit(1)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    String message = "Firestore connected successfully. Documents found: " + querySnapshot.size();
+                    if (querySnapshot.size() > 0) {
+                        DocumentSnapshot doc = querySnapshot.getDocuments().get(0);
+                        message += "\nFirst document ID: " + doc.getId();
+                        // Test storage connection if we have an image reference
+                        String imageUrl = doc.getString("image_url");
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            testStorageConnection(imageUrl);
+                        }
+                    }
+                    Log.d(TAG, message);
+                    isConnected.postValue(true);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Firestore connection error: " + e.getMessage());
+                    isConnected.postValue(false);
+                });
+    }
+
+    private void testStorageConnection(String imageUrl) {
+        StorageReference imageRef = storage.getReferenceFromUrl(imageUrl);
+        imageRef.getMetadata()
+                .addOnSuccessListener(storageMetadata ->
+                        Log.d(TAG, "Storage connection successful. Image size: " +
+                                storageMetadata.getSizeBytes() + " bytes"))
+                .addOnFailureListener(e ->
+                        Log.e(TAG, "Storage connection error: " + e.getMessage()));
+    }
+
+    public LiveData<Boolean> getConnectionState() {
+        return isConnected;
+    }
+
+    /**
+     * Richiede un nuovo test di connessione.
+     * Utile per verificare lo stato dopo problemi di rete.
+     */
+    public void checkConnection() {
+        testConnection();
     }
 
     public Task<Uri> uploadImage(String id, byte[] imageData) {

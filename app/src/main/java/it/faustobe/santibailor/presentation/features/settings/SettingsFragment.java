@@ -1,5 +1,7 @@
 package it.faustobe.santibailor.presentation.features.settings;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Lifecycle;
@@ -23,11 +26,23 @@ import androidx.navigation.Navigation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentSettingsBinding;
+import it.faustobe.santibailor.data.remote.FirebaseRemoteDataSource;
 
+@AndroidEntryPoint
 public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
+
+    @Inject
+    FirebaseRemoteDataSource firebaseRemoteDataSource;
+
+    public SettingsFragment() {
+        // Costruttore vuoto richiesto da Fragment
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,8 +65,22 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
+        setupFirebaseTest();
         setupListeners();
         setupMenu();
+
+        firebaseRemoteDataSource.getConnectionState().observe(getViewLifecycleOwner(), isConnected -> {
+            if (isConnected) {
+                // Connessione OK - procedi con le operazioni
+                Log.d(TAG, "Firebase connection established");
+            } else {
+                // Gestisci stato offline/errori
+                Log.d(TAG, "Firebase connection failed or offline");
+            }
+        });
+
+// Per forzare un test manuale
+        firebaseRemoteDataSource.checkConnection();
     }
 
     private void setupToolbar() {
@@ -62,6 +91,27 @@ public class SettingsFragment extends Fragment {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
         }
+    }
+
+    private void setupFirebaseTest() {
+        binding.btnTestFirebase.setOnClickListener(v -> {
+            binding.tvFirebaseStatus.setText("Testing connection...");
+            binding.tvFirebaseStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_default));
+            firebaseRemoteDataSource.checkConnection();
+        });
+
+        firebaseRemoteDataSource.getConnectionState().observe(getViewLifecycleOwner(), isConnected -> {
+            int color = isConnected ?
+                    ContextCompat.getColor(requireContext(), R.color.success_green) :
+                    ContextCompat.getColor(requireContext(), R.color.error_red);
+
+            String status = isConnected ?
+                    "Connected to Firebase" :
+                    "Connection failed - Check logs for details";
+
+            binding.tvFirebaseStatus.setText(status);
+            binding.tvFirebaseStatus.setTextColor(color);
+        });
     }
 
     private void setupMenu() {

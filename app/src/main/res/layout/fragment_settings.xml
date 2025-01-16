@@ -9,6 +9,39 @@
      android:orientation="vertical"
      android:padding="16dp">
 
+  <!-- Firebase Test Section -->
+  <LinearLayout
+      android:id="@+id/firebase_test_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="16dp"
+      android:background="@android:color/white"
+      android:elevation="2dp"
+      android:layout_marginBottom="16dp">
+
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Firebase Connection Status"
+       android:textStyle="bold"
+       android:layout_marginBottom="8dp"/>
+
+   <Button
+       android:id="@+id/btn_test_firebase"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="Test Firebase Connection" />
+
+   <TextView
+       android:id="@+id/tv_firebase_status"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:layout_marginTop="8dp"
+       android:textAlignment="center" />
+
+  </LinearLayout>
+
   <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
