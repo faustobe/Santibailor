@@ -10,19 +10,31 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import it.faustobe.santibailor.data.local.dao.ImpegnoDao;
+import it.faustobe.santibailor.data.local.dao.ItemSpesaDao;
+import it.faustobe.santibailor.data.local.dao.ListaSpesaDao;
+import it.faustobe.santibailor.data.local.dao.ProdottoFrequenteDao;
 import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
 import it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao;
 import it.faustobe.santibailor.data.local.dao.SearchDao;
+import it.faustobe.santibailor.data.local.entities.ImpegnoEntity;
+import it.faustobe.santibailor.data.local.entities.ItemSpesaEntity;
+import it.faustobe.santibailor.data.local.entities.ListaSpesaEntity;
+import it.faustobe.santibailor.data.local.entities.ProdottoFrequenteEntity;
 import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
 import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
 
-@Database(entities = {RicorrenzaEntity.class, TipoRicorrenzaEntity.class}, version = 5, exportSchema = false)
+@Database(entities = {RicorrenzaEntity.class, TipoRicorrenzaEntity.class, ImpegnoEntity.class, ListaSpesaEntity.class, ItemSpesaEntity.class, ProdottoFrequenteEntity.class}, version = 10, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "santocal.db";
     private static volatile AppDatabase INSTANCE;
     public abstract RicorrenzaDao ricorrenzaDao();
     public abstract TipoRicorrenzaDao tipoRicorrenzaDao();
     public abstract SearchDao searchDao();
+    public abstract ImpegnoDao impegnoDao();
+    public abstract ListaSpesaDao listaSpesaDao();
+    public abstract ItemSpesaDao itemSpesaDao();
+    public abstract ProdottoFrequenteDao prodottoFrequenteDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -32,7 +44,7 @@ public abstract class AppDatabase extends RoomDatabase {
                         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                         AppDatabase.class, DATABASE_NAME)
                                 .createFromAsset(DATABASE_NAME)
-                                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                                 .build();
                         Log.d("AppDatabase", "Database created successfully");
                     } catch (Exception e) {
@@ -111,6 +123,99 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("SELECT id, id_mese, giorno_del_mese, santo, bio, image_url, prefix, suffix, id_tipo FROM santi LIMIT 0");
+        }
+    };
+
+    private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Crea la tabella impegni
+            database.execSQL("CREATE TABLE IF NOT EXISTS impegni (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "titolo TEXT NOT NULL, " +
+                    "descrizione TEXT, " +
+                    "data_ora INTEGER NOT NULL, " +
+                    "categoria TEXT, " +
+                    "reminder_enabled INTEGER NOT NULL DEFAULT 0, " +
+                    "reminder_minutes_before INTEGER NOT NULL DEFAULT 30, " +
+                    "completato INTEGER NOT NULL DEFAULT 0, " +
+                    "note TEXT, " +
+                    "created_at INTEGER NOT NULL, " +
+                    "updated_at INTEGER NOT NULL)");
+
+            Log.d("AppDatabase", "Migration 5->6: Tabella impegni creata");
+        }
+    };
+
+    private static final Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Aggiungi i campi priorita e image_url alla tabella impegni
+            database.execSQL("ALTER TABLE impegni ADD COLUMN priorita TEXT DEFAULT 'MEDIA'");
+            database.execSQL("ALTER TABLE impegni ADD COLUMN image_url TEXT");
+            Log.d("AppDatabase", "Migration 6->7: Aggiunti campi priorita e image_url alla tabella impegni");
+        }
+    };
+
+    private static final Migration MIGRATION_7_8 = new Migration(7, 8) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Crea indici per velocizzare le query più comuni
+            // Indice composito su giorno e mese - usato in TUTTE le query principali
+            database.execSQL("CREATE INDEX IF NOT EXISTS idx_santi_giorno_mese ON santi(giorno_del_mese, id_mese)");
+
+            // Indice su tipo - usato per filtrare per tipo ricorrenza
+            database.execSQL("CREATE INDEX IF NOT EXISTS idx_santi_tipo ON santi(id_tipo)");
+
+            // Indice composito per query filtrate per giorno, mese E tipo
+            database.execSQL("CREATE INDEX IF NOT EXISTS idx_santi_giorno_mese_tipo ON santi(giorno_del_mese, id_mese, id_tipo)");
+
+            Log.d("AppDatabase", "Migration 7->8: Indici creati per ottimizzare le query");
+        }
+    };
+
+    private static final Migration MIGRATION_8_9 = new Migration(8, 9) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Crea tabella liste_spesa
+            database.execSQL("CREATE TABLE IF NOT EXISTS liste_spesa (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "nome TEXT NOT NULL, " +
+                    "data_creazione INTEGER NOT NULL, " +
+                    "completata INTEGER NOT NULL DEFAULT 0, " +
+                    "colore TEXT)");
+
+            // Crea tabella item_spesa con foreign key verso liste_spesa
+            database.execSQL("CREATE TABLE IF NOT EXISTS item_spesa (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "id_lista INTEGER NOT NULL, " +
+                    "nome TEXT NOT NULL, " +
+                    "quantita TEXT, " +
+                    "completato INTEGER NOT NULL DEFAULT 0, " +
+                    "categoria TEXT, " +
+                    "note TEXT, " +
+                    "ordine INTEGER NOT NULL DEFAULT 0, " +
+                    "FOREIGN KEY(id_lista) REFERENCES liste_spesa(id) ON DELETE CASCADE)");
+
+            // Crea indice sulla foreign key per ottimizzare le query
+            database.execSQL("CREATE INDEX IF NOT EXISTS idx_item_spesa_id_lista ON item_spesa(id_lista)");
+
+            Log.d("AppDatabase", "Migration 8->9: Tabelle liste_spesa e item_spesa create");
+        }
+    };
+
+    private static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Crea tabella prodotti_frequenti
+            database.execSQL("CREATE TABLE IF NOT EXISTS prodotti_frequenti (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "nome TEXT NOT NULL, " +
+                    "categoria TEXT, " +
+                    "frequenza_utilizzo INTEGER NOT NULL, " +
+                    "ultima_data_utilizzo INTEGER NOT NULL)");
+
+            Log.d("AppDatabase", "Migration 9->10: Tabella prodotti_frequenti creata");
         }
     };
 }

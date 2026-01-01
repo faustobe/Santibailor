@@ -6,11 +6,17 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import it.faustobe.santibailor.domain.model.Searchable;
 
-@Entity(tableName = "santi")
+@Entity(tableName = "santi",
+        indices = {
+                @Index(value = {"giorno_del_mese", "id_mese"}, name = "idx_santi_giorno_mese"),
+                @Index(value = {"id_tipo"}, name = "idx_santi_tipo"),
+                @Index(value = {"giorno_del_mese", "id_mese", "id_tipo"}, name = "idx_santi_giorno_mese_tipo")
+        })
 public class RicorrenzaEntity implements DatabaseEntity, Parcelable, Searchable {
     @PrimaryKey(autoGenerate = true)
     private int id;

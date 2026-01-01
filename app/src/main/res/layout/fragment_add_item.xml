@@ -57,6 +57,17 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Checkbox Personale (visibile solo per eventi laici) -->
+        <CheckBox
+            android:id="@+id/cb_personale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Evento personale (compleanno, anniversario, ecc.)"
+            android:textSize="14sp"
+            android:visibility="gone"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/prefixInputLayout"
             android:layout_width="match_parent"

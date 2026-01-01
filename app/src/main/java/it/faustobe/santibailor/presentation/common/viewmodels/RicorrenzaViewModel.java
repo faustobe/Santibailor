@@ -307,6 +307,15 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         lastLoadedDay = -1;
         lastLoadedMonth = -1;
         loadRicorrenzeForCurrentDate();
+
+        // Forza anche il reload delle liste separate (religiose e laiche)
+        Calendar calendar = Calendar.getInstance();
+        int giorno = calendar.get(Calendar.DAY_OF_MONTH);
+        int mese = calendar.get(Calendar.MONTH);
+        loadRicorrenzeReligiose(giorno, mese);
+        loadRicorrenzeLaiche(giorno, mese);
+
+        Log.d(TAG, "Forzato reload completo di tutte le liste");
     }
 
     private void loadRicorrenzeDelGiorno(int giorno, int mese) {
@@ -316,7 +325,6 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         if (ricorrenzeDelGiornoPaginate.getValue() != null &&
                 lastLoadedDay == giorno && lastLoadedMonth == mese) {
             Log.d(TAG, "Dati già caricati per questo giorno, usando cache");
-            refreshRandomSaint();
             return;
         }
 
@@ -334,7 +342,6 @@ public class RicorrenzaViewModel extends AndroidViewModel {
                     lastLoadedMonth = mese;
                     Log.d(TAG, "Caricamento completato per " + giorno + "/" + mese + ": " + ricorrenze.size() + " ricorrenze");
 
-                    refreshRandomSaint();
                     loadImagesForVisibleItems(paginatedRicorrenze);
 
                     isLoading.setValue(false);
@@ -412,8 +419,9 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     }
 
     public void refreshRandomSaint() {
-        List<Ricorrenza> ricorrenze = ricorrenzeDelGiorno.getValue();
-        Log.d(TAG, "Refreshing random saint. Total saints: " + (ricorrenze != null ? ricorrenze.size() : 0));
+        // Seleziona solo da ricorrenze RELIGIOSE (santi), non laiche o personali
+        List<Ricorrenza> ricorrenze = ricorrenzeReligiosePaginate.getValue();
+        Log.d(TAG, "Refreshing random saint. Total religious saints: " + (ricorrenze != null ? ricorrenze.size() : 0));
         if (ricorrenze != null && !ricorrenze.isEmpty()) {
             int randomIndex = new Random().nextInt(ricorrenze.size());
             Ricorrenza newSaint = ricorrenze.get(randomIndex);
@@ -424,7 +432,7 @@ public class RicorrenzaViewModel extends AndroidViewModel {
                 Log.d(TAG, "Same saint selected, skipping update");
             }
         } else {
-            Log.d(TAG, "No saints available to select from");
+            Log.d(TAG, "No religious saints available to select from");
         }
     }
 
@@ -477,7 +485,11 @@ public class RicorrenzaViewModel extends AndroidViewModel {
     public void loadRicorrenzeReligiose(int giorno, int mese) {
         executorService.execute(() -> {
             List<Ricorrenza> ricorrenze = ricorrenzaRepository.getRicorrenzeReligiosePaginate(giorno, mese, 0, PAGE_SIZE);
-            mainHandler.post(() -> ricorrenzeReligiosePaginate.setValue(ricorrenze));
+            mainHandler.post(() -> {
+                ricorrenzeReligiosePaginate.setValue(ricorrenze);
+                // Seleziona un santo casuale DOPO aver caricato i santi religiosi
+                refreshRandomSaint();
+            });
         });
     }
 
@@ -496,7 +508,11 @@ public class RicorrenzaViewModel extends AndroidViewModel {
         executorService.execute(() -> {
             try {
                 updateRicorrenzaUseCase.execute(ricorrenza);
-                mainHandler.post(() -> updateResult.setValue(true));
+                mainHandler.post(() -> {
+                    updateResult.setValue(true);
+                    // Forza il reload per aggiornare la home
+                    forceReloadRicorrenze();
+                });
             } catch (Exception e) {
                 mainHandler.post(() -> updateResult.setValue(false));
             }
@@ -517,7 +533,8 @@ public class RicorrenzaViewModel extends AndroidViewModel {
             mainHandler.post(() -> {
                 if (newId > 0) {
                     listener.onInsertSuccess((int) newId);
-                    loadRicorrenzeForCurrentDate();
+                    // Forza il reload per aggiornare la home (bypassa la cache)
+                    forceReloadRicorrenze();
 
                 } else {
                     listener.onInsertFailure("Inserimento fallito");
@@ -531,6 +548,8 @@ public class RicorrenzaViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(int id) {
                 deleteResult.postValue(true);
+                // NON facciamo reload automatico qui - causa crash
+                // Il reload avverrà naturalmente quando si torna alla home
             }
 
             @Override

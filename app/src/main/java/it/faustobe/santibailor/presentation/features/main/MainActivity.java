@@ -18,9 +18,14 @@ import android.view.animation.DecelerateInterpolator;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -64,6 +69,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Installa lo splash screen PRIMA di super.onCreate()
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
+
         super.onCreate(savedInstanceState);
         verifyStoragePermissions(this);
         Log.d("MainActivity", "onCreate called");
@@ -73,11 +81,48 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         bottomNav = binding.bottomNavView;
         showBottomNavRunnable = this::showBottomNav;
+
+        // Impedisci al bottom nav di rispondere agli insets
+        androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+            // Non applicare nessun inset, restituisci gli insets non consumati
+            return insets;
+        });
+
+        // Nascondi la navigation bar di sistema dopo che la view è pronta
+        binding.getRoot().post(this::hideSystemUI);
+
         setupNavigation();
         setupBackPressedDispatcher();
+    }
+
+    private void hideSystemUI() {
+        // Permetti all'app di disegnare dietro le barre di sistema
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
+        // Imposta i colori delle barre di sistema a completamente trasparente
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
+
+        WindowInsetsControllerCompat controller = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+        if (controller != null) {
+            // Nascondi sia status bar che navigation bar
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // Imposta il comportamento per quando l'utente fa swipe
+            controller.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            // Quando la finestra riprende il focus, ri-nascondi le barre
+            hideSystemUI();
+        }
     }
 
     public static void verifyStoragePermissions(Activity activity) {
@@ -106,11 +151,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 int itemId = item.getItemId();
                 if (itemId == R.id.navigation_home ||
                         itemId == R.id.navigation_add ||
-                        itemId == R.id.navigation_overview ||
+                        itemId == R.id.navigation_dashboard ||
                         itemId == R.id.navigation_settings) {
                     if (itemId == R.id.navigation_add) {
-                        // Apre sempre come "Aggiungi Ricorrenza"
-                        openAddItemFragment("ricorrenza");
+                        // Mostra dialog per scegliere tra Ricorrenza e Impegno
+                        showAddItemDialog();
                     } else {
                         navController.popBackStack(itemId, false);
                         navController.navigate(itemId);
@@ -125,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             NavigationView navigationView = binding.navView;
             if (drawer != null && navigationView != null) {
                 AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                        R.id.navigation_home, R.id.navigation_overview, R.id.navigation_settings)
+                        R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_settings)
                         .setOpenableLayout(drawer)
                         .build();
                 NavigationUI.setupWithNavController(navigationView, navController);
@@ -144,6 +189,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Bundle args = new Bundle();
         args.putString("itemType", itemType);
         navController.navigate(R.id.action_global_to_add_item, args);
+    }
+
+    private void showAddItemDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.aggiungi_nuovo_elemento);
+
+        String[] items = {getString(R.string.ricorrenza), getString(R.string.impegno), "Lista Spesa"};
+        builder.setItems(items, (dialog, which) -> {
+            if (which == 0) {
+                // Ricorrenza
+                openAddItemFragment("ricorrenza");
+            } else if (which == 1) {
+                // Impegno
+                openEditImpegnoFragment(-1);
+            } else {
+                // Lista Spesa
+                openListeSpesaFragment();
+            }
+        });
+
+        builder.setNegativeButton(R.string.annulla, null);
+        builder.show();
+    }
+
+    private void openListeSpesaFragment() {
+        navController.navigate(R.id.action_global_to_liste_spesa);
+    }
+
+    private void openEditImpegnoFragment(int impegnoId) {
+        Bundle args = new Bundle();
+        args.putInt("impegnoId", impegnoId);
+        navController.navigate(R.id.action_global_to_edit_impegno, args);
     }
 
     private void setHomeAddButtonListener() {
@@ -192,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void hideBottomNav() {
+    public void hideBottomNav() {
         if (isBottomNavVisible) {
             bottomNav.animate()
                     .translationY(bottomNav.getHeight())
@@ -322,6 +399,120 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (allVisible) {
             showBottomNav();
         }
+    }
+
+    // ========== EXPLORATION MODE ==========
+
+    /**
+     * Passa alla modalità ESPLORAZIONE: mostra toolbar fissa, nasconde bottom nav
+     */
+    public void showExplorationMode() {
+        Log.d("MainActivity", "============ showExplorationMode() ============");
+        Log.d("MainActivity", "Toolbar visibility PRIMA: " + (binding.appBarLayout != null ? binding.appBarLayout.getVisibility() : "null"));
+
+        // Mostra la toolbar di esplorazione
+        if (binding.appBarLayout != null) {
+            binding.appBarLayout.setVisibility(View.VISIBLE);
+            setupExplorationToolbar();
+            Log.d("MainActivity", "Toolbar visibility DOPO: " + binding.appBarLayout.getVisibility());
+        }
+
+        // Nascondi il bottom navigation
+        hideBottomNav();
+    }
+
+    /**
+     * Torna alla modalità PROMEMORIA: nasconde toolbar, mostra bottom nav
+     * @param navigateToHome se true, naviga alla Home; se false, rimane nella schermata corrente
+     */
+    public void hideExplorationMode(boolean navigateToHome) {
+        Log.d("MainActivity", "Ritorno a modalità PROMEMORIA (navigate=" + navigateToHome + ")");
+
+        // Nascondi la toolbar
+        if (binding.appBarLayout != null) {
+            binding.appBarLayout.setVisibility(View.GONE);
+        }
+
+        // Mostra il bottom navigation
+        showBottomNav();
+
+        // Naviga alla Home solo se richiesto
+        if (navigateToHome && navController != null) {
+            navController.navigate(R.id.navigation_home);
+        }
+    }
+
+    /**
+     * Torna alla modalità PROMEMORIA (versione semplice che naviga sempre alla Home)
+     */
+    public void hideExplorationMode() {
+        hideExplorationMode(true);
+    }
+
+    /**
+     * Imposta la toolbar di esplorazione con data corrente e button listeners
+     */
+    private void setupExplorationToolbar() {
+        // Aggiorna la data
+        updateToolbarDate();
+
+        // Click sulla data: torna a Home mantenendo modalità ESPLORAZIONE
+        if (binding.toolbarCalendarCard != null) {
+            binding.toolbarCalendarCard.setOnClickListener(v -> {
+                if (navController != null) {
+                    navController.navigate(R.id.navigation_home);
+                }
+            });
+        }
+
+        // Click sui pulsanti: naviga alle funzionalità
+        if (binding.toolbarBtnScrivi != null) {
+            binding.toolbarBtnScrivi.setOnClickListener(v ->
+                navController.navigate(R.id.action_global_to_note));
+        }
+
+        if (binding.toolbarBtnOrganizza != null) {
+            binding.toolbarBtnOrganizza.setOnClickListener(v ->
+                navController.navigate(R.id.action_global_to_organizza));
+        }
+
+        if (binding.toolbarBtnRicerca != null) {
+            binding.toolbarBtnRicerca.setOnClickListener(v ->
+                navController.navigate(R.id.searchFragment));
+        }
+
+        if (binding.toolbarBtnRiepilogo != null) {
+            binding.toolbarBtnRiepilogo.setOnClickListener(v ->
+                navController.navigate(R.id.action_global_to_riepilogo));
+        }
+    }
+
+    /**
+     * Aggiorna la data nella toolbar con la data corrente
+     */
+    private void updateToolbarDate() {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        java.text.SimpleDateFormat weekdayFormat = new java.text.SimpleDateFormat("EEEE", java.util.Locale.ITALIAN);
+        java.text.SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", java.util.Locale.ITALIAN);
+
+        if (binding.toolbarTvWeekday != null) {
+            binding.toolbarTvWeekday.setText(weekdayFormat.format(calendar.getTime()));
+        }
+
+        if (binding.toolbarTvDay != null) {
+            binding.toolbarTvDay.setText(String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH)));
+        }
+
+        if (binding.toolbarTvMonth != null) {
+            binding.toolbarTvMonth.setText(monthFormat.format(calendar.getTime()));
+        }
+    }
+
+    /**
+     * Verifica se siamo in modalità esplorazione (toolbar visibile)
+     */
+    public boolean isExplorationModeActive() {
+        return binding.appBarLayout != null && binding.appBarLayout.getVisibility() == View.VISIBLE;
     }
 
     public RicorrenzaViewModel getRicorrenzaViewModel() {

@@ -20,6 +20,14 @@
         <action
             android:id="@+id/action_homeFragment_to_addItemFragment"
             app:destination="@id/addItemFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_dettaglioListaSpesaFragment"
+            app:destination="@id/dettaglioListaSpesaFragment">
+            <argument
+                android:name="listaId"
+                app:argType="integer"
+                android:defaultValue="-1" />
+        </action>
     </fragment>
 
     <fragment
@@ -216,5 +224,125 @@
             app:argType="string"
             android:defaultValue="elemento" />
     </action>
+
+    <action
+        android:id="@+id/action_global_to_edit_impegno"
+        app:destination="@id/editImpegnoFragment">
+        <argument
+            android:name="impegnoId"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </action>
+
+    <!-- EditImpegnoFragment -->
+    <fragment
+        android:id="@+id/editImpegnoFragment"
+        android:name="it.faustobe.santibailor.presentation.features.impegni.EditImpegnoFragment"
+        android:label="@string/edit_impegno"
+        tools:layout="@layout/fragment_edit_impegno">
+        <argument
+            android:name="impegnoId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_editImpegnoFragment_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_home"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_editImpegnoFragment_to_impegniFragment"
+            app:destination="@id/impegniFragment"
+            app:popUpTo="@id/impegniFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
+    <!-- ImpegniFragment (Lista) -->
+    <fragment
+        android:id="@+id/impegniFragment"
+        android:name="it.faustobe.santibailor.presentation.features.impegni.ImpegniFragment"
+        android:label="@string/impegni"
+        tools:layout="@layout/fragment_impegni">
+        <action
+            android:id="@+id/action_impegniFragment_to_editImpegnoFragment"
+            app:destination="@id/editImpegnoFragment">
+            <argument
+                android:name="impegnoId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_impegni"
+        app:destination="@id/impegniFragment"/>
+
+    <!-- Liste Spesa Fragments -->
+    <fragment
+        android:id="@+id/listeSpesaFragment"
+        android:name="it.faustobe.santibailor.presentation.features.listespesa.ListeSpesaFragment"
+        android:label="Liste della Spesa"
+        tools:layout="@layout/fragment_liste_spesa">
+        <action
+            android:id="@+id/action_listeSpesaFragment_to_dettaglioListaSpesaFragment"
+            app:destination="@id/dettaglioListaSpesaFragment">
+            <argument
+                android:name="listaId"
+                app:argType="integer"
+                android:defaultValue="-1"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/dettaglioListaSpesaFragment"
+        android:name="it.faustobe.santibailor.presentation.features.listespesa.DettaglioListaSpesaFragment"
+        android:label="Dettaglio Lista Spesa"
+        tools:layout="@layout/fragment_dettaglio_lista_spesa">
+        <argument
+            android:name="listaId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+        <action
+            android:id="@+id/action_dettaglioListaSpesaFragment_to_listeSpesaFragment"
+            app:destination="@id/listeSpesaFragment"
+            app:popUpTo="@id/listeSpesaFragment"
+            app:popUpToInclusive="false"/>
+    </fragment>
+
+    <action
+        android:id="@+id/action_global_to_liste_spesa"
+        app:destination="@id/listeSpesaFragment"/>
+
+    <!-- Note Fragment -->
+    <fragment
+        android:id="@+id/noteFragment"
+        android:name="it.faustobe.santibailor.presentation.features.note.NoteFragment"
+        android:label="Note"
+        tools:layout="@layout/fragment_note"/>
+
+    <action
+        android:id="@+id/action_global_to_note"
+        app:destination="@id/noteFragment"/>
+
+    <!-- Organizza Giornata Fragment -->
+    <fragment
+        android:id="@+id/organizzaGiornataFragment"
+        android:name="it.faustobe.santibailor.presentation.features.organizza.OrganizzaGiornataFragment"
+        android:label="Organizza Giornata"
+        tools:layout="@layout/fragment_organizza_giornata"/>
+
+    <action
+        android:id="@+id/action_global_to_organizza"
+        app:destination="@id/organizzaGiornataFragment"/>
+
+    <!-- Riepilogo Fragment -->
+    <fragment
+        android:id="@+id/riepilogoFragment"
+        android:name="it.faustobe.santibailor.presentation.features.riepilogo.RiepilogoFragment"
+        android:label="Riepilogo"
+        tools:layout="@layout/fragment_riepilogo"/>
+
+    <action
+        android:id="@+id/action_global_to_riepilogo"
+        app:destination="@id/riepilogoFragment"/>
 
 </navigation>

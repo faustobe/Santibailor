@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp"
+    android:background="#FFFFFF">
+
+    <EditText
+        android:id="@+id/edit_nome_lista"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="Nome lista"
+        android:textSize="22sp"
+        android:textColor="#FF000000"
+        android:textColorHint="#FF666666"
+        android:background="#FFFFFFFF"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:inputType="text"
+        android:singleLine="true"
+        android:imeOptions="actionDone"/>
+
+</FrameLayout>

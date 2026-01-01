@@ -4,8 +4,8 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-//import androidx.work.Configuration;
-//import androidx.work.WorkManager;
+import androidx.work.Configuration;
+import androidx.work.WorkManager;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.appcheck.FirebaseAppCheck;
@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import dagger.hilt.android.HiltAndroidApp;
 import it.faustobe.santibailor.util.FirebaseErrorHandler;
 import it.faustobe.santibailor.util.ImageHandler;
-//import it.faustobe.santibailor.worker.WorkManagerConfig;
+import it.faustobe.santibailor.util.WorkManagerHelper;
 
 import javax.inject.Inject;
 
@@ -30,6 +30,19 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Inizializza manualmente WorkManager (dato che è disabilitato in AndroidManifest)
+        try {
+            Configuration config = new Configuration.Builder()
+                    .setMinimumLoggingLevel(Log.DEBUG)
+                    .build();
+            WorkManager.initialize(this, config);
+            Log.d(TAG, "WorkManager initialized manually");
+        } catch (IllegalStateException e) {
+            // WorkManager già inizializzato
+            Log.d(TAG, "WorkManager already initialized");
+        }
+
         FirebaseApp.initializeApp(this);
 
         // Inizializza Firebase App Check con Play Integrity
@@ -47,6 +60,9 @@ public class MyApplication extends Application {
                     }
                 });
 
+        // Schedula la notifica giornaliera del santo del giorno
+        WorkManagerHelper.scheduleDailySaintNotification(this);
+        Log.d(TAG, "WorkManager: Daily saint notification scheduled");
     }
 
     private void handleAuthenticationError(Exception exception) {
@@ -58,26 +74,6 @@ public class MyApplication extends Application {
             Log.e(TAG, "Autenticazione fallita con eccezione non specifica", exception);
         }
         // Qui potresti aggiungere ulteriori azioni in caso di fallimento dell'autenticazione
-    }
-
-    private void initializeFirebase() {
-        try {
-            FirebaseApp.initializeApp(this);
-            FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-            firebaseAppCheck.installAppCheckProviderFactory(
-                    PlayIntegrityAppCheckProviderFactory.getInstance());
-
-            FirebaseAuth.getInstance().signInAnonymously()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "Autenticazione anonima completata con successo");
-                        } else {
-                            FirebaseErrorHandler.handleException(task.getException());
-                        }
-                    });
-        } catch (Exception e) {
-            Log.e(TAG, "Errore durante l'inizializzazione di Firebase", e);
-        }
     }
 
     public ImageHandler getImageHandler() {

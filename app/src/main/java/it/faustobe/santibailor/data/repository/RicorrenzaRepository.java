@@ -277,7 +277,8 @@ public class RicorrenzaRepository {
     }
 
     public List<Ricorrenza> getRicorrenzeLaichePaginate(int giorno, int mese, int offset, int limit) {
-        return ricorrenzaDao.getRicorrenzeDelGiornoPerTipoPaginate(giorno, mese, TipoRicorrenzaEntity.LAICA, offset, limit)
+        // Usa la nuova query che include ENTRAMBE Laiche (2) E Personali (3)
+        return ricorrenzaDao.getRicorrenzeLaicheEPersonaliPaginate(giorno, mese, offset, limit)
                 .stream().map(RicorrenzaMapper::toDomain).collect(Collectors.toList());
     }
 

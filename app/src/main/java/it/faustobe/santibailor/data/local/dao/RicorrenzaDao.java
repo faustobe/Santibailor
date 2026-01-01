@@ -106,6 +106,10 @@ public interface RicorrenzaDao extends BaseDao<RicorrenzaEntity> {
     @Query("SELECT * FROM santi WHERE giorno_del_mese= :giorno AND id_mese = :mese AND id_tipo = :tipoId LIMIT :limit OFFSET :offset")
     List<RicorrenzaEntity> getRicorrenzeDelGiornoPerTipoPaginate(int giorno, int mese, int tipoId, int offset, int limit);
 
+    // Nuova query per ricorrenze laiche E personali insieme (tipo 2 o 3)
+    @Query("SELECT * FROM santi WHERE giorno_del_mese= :giorno AND id_mese = :mese AND id_tipo IN (2, 3) LIMIT :limit OFFSET :offset")
+    List<RicorrenzaEntity> getRicorrenzeLaicheEPersonaliPaginate(int giorno, int mese, int offset, int limit);
+
     @Query("SELECT COUNT(*) FROM santi WHERE giorno_del_mese= :giorno AND id_mese = :mese AND id_tipo = :tipoId")
     int getCountRicorrenzeDelGiornoPerTipo(int giorno, int mese, int tipoId);
 

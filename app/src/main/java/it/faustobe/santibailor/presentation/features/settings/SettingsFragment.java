@@ -203,12 +203,11 @@ public class SettingsFragment extends Fragment {
     }
 
     private void navigateToListeSpesaSettings() {
+        // Naviga alla schermata di configurazione delle liste spesa
         List<SettingItem> listeSpesaSettings = new ArrayList<>();
-        listeSpesaSettings.add(new SettingItem("Ordine della lista", "Scegli l'ordinamento della lista" ));
-        listeSpesaSettings.add(new SettingItem("Suggerimenti intelligenti", "Attiva/disattiva i suggerimenti", true ));
-        listeSpesaSettings.add(new SettingItem("Condivisione liste", "Opzioni per condividere le liste" ));
-        listeSpesaSettings.add(new SettingItem("Salvataggio liste preferite", "Crea e salva liste ricorrenti" ));
-        listeSpesaSettings.add(new SettingItem("Notifiche di promemoria", "Gestisci gli avvisi per le liste", true ));
+        listeSpesaSettings.add(new SettingItem("Categorie prodotti", "Gestisci categorie per i prodotti"));
+        listeSpesaSettings.add(new SettingItem("Prodotti frequenti", "Visualizza e modifica prodotti salvati"));
+        listeSpesaSettings.add(new SettingItem("Unità di misura", "Configura unità predefinite"));
 
         SettingItem[] settingItemsArray = listeSpesaSettings.toArray(new SettingItem[0]);
 

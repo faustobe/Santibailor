@@ -24,7 +24,64 @@
     <string name="migrate_images">Migra Immagini</string>
     <string name="expand_saints_list">Espandi lista santi</string>
     <string name="reload_saint_of_day">Ricarica il santo del giorno</string>
-    <string name="personal_info">Info Personali</string>
+    <string name="personal_info">I tuoi eventi</string>
     <string name="title_add">Ricarica il santo del giorno</string>
-    <string name="title_overview">Info Personali</string>
+    <string name="title_overview">I tuoi eventi</string>
+
+    <!-- Impegni -->
+    <string name="add_impegno">Aggiungi Impegno</string>
+    <string name="edit_impegno">Modifica Impegno</string>
+    <string name="title_impegno">Impegno</string>
+    <string name="titolo">Titolo</string>
+    <string name="titolo_hint">Titolo impegno *</string>
+    <string name="descrizione">Descrizione</string>
+    <string name="descrizione_hint">Descrizione impegno</string>
+    <string name="priorita">Priorità</string>
+    <string name="priorita_hint">Priorità *</string>
+    <string name="priorita_bassa">Bassa</string>
+    <string name="priorita_media">Media</string>
+    <string name="priorita_alta">Alta</string>
+    <string name="data_ora">Data e Ora</string>
+    <string name="categoria">Categoria</string>
+    <string name="categoria_hint">Categoria (es: Lavoro, Personale)</string>
+    <string name="reminder">Promemoria</string>
+    <string name="attiva_promemoria">Attiva promemoria</string>
+    <string name="minuti_prima">Minuti prima</string>
+    <string name="minuti_prima_hint">Minuti prima dell\'impegno</string>
+    <string name="completato">Completato</string>
+    <string name="note">Note</string>
+    <string name="note_hint">Note aggiuntive</string>
+    <string name="impegno_saved">Impegno salvato con successo</string>
+    <string name="impegno_deleted">Impegno eliminato</string>
+    <string name="impegno_updated">Impegno aggiornato</string>
+    <string name="seleziona_immagine_impegno">Seleziona Immagine</string>
+    <string name="immagine_impegno">Immagine impegno</string>
+    <string name="salva">Salva</string>
+    <string name="elimina">Elimina</string>
+    <string name="annulla">Annulla</string>
+    <string name="aggiungi_nuovo_elemento">Aggiungi nuovo elemento</string>
+    <string name="ricorrenza">Ricorrenza</string>
+    <string name="impegno">Impegno</string>
+    <string name="nessun_impegno">Nessun impegno trovato</string>
+    <string name="aggiungi_primo_impegno">Aggiungi il primo impegno</string>
+    <string name="impegni">Impegni</string>
+    <string name="vedi_tutti_impegni">Vedi tutti gli impegni</string>
+    <string name="filtra_per_categoria">Filtra per categoria</string>
+    <string name="filtra_per_priorita">Filtra per priorità</string>
+    <string name="mostra_completati">Mostra completati</string>
+    <string name="ora">Ora</string>
+    <string name="oggi">Oggi</string>
+    <string name="domani">Domani</string>
+    <string name="eventi_laici_personali">Eventi Laici e Personali</string>
+    <string name="no_eventi_laici">Nessun evento laico o personale oggi</string>
+    <string name="impegni_di_oggi">Impegni di Oggi</string>
+    <string name="nessun_impegno_oggi">Nessun impegno per oggi</string>
+    <string name="no_saints_today">Nessun santo oggi</string>
+
+    <!-- Nav Bar e Taccuino -->
+    <string name="santi">Santi</string>
+    <string name="eventi">Eventi</string>
+    <string name="taccuino">Taccuino</string>
+    <string name="scrivi_qui_le_tue_note">Scrivi qui le tue note...</string>
+    <string name="cancella">Cancella</string>
 </resources>

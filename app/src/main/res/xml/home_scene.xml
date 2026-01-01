@@ -30,6 +30,14 @@
                 motion:percentHeight="1.1"
                 motion:curveFit="spline"/>
 
+            <!-- Animazione della card eventi laici -->
+            <KeyPosition
+                motion:motionTarget="@+id/card_eventi_laici"
+                motion:framePosition="50"
+                motion:percentWidth="1.1"
+                motion:percentHeight="1.1"
+                motion:curveFit="spline"/>
+
             <!-- Animazione della card delle info personali -->
             <KeyPosition
                 motion:motionTarget="@+id/card_personal_info"
@@ -61,28 +69,81 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Constraint della card delle info personali espansa -->
+        <!-- Constraint della card eventi laici espansa -->
         <Constraint
-            android:id="@+id/card_personal_info"
+            android:id="@+id/card_eventi_laici"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             motion:layout_constraintTop_toBottomOf="@id/saint_card"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card delle info personali espansa -->
+        <Constraint
+            android:id="@+id/card_personal_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/card_eventi_laici"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Pulsanti azioni rapide invisibili quando espanso -->
+        <Constraint
+            android:id="@+id/layout_quick_actions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintStart_toEndOf="@id/calendar_card"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Card taccuino espansa -->
+        <Constraint
+            android:id="@+id/card_taccuino"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Card liste spesa espansa -->
+        <Constraint
+            android:id="@+id/card_liste_spesa"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/collapsed">
-        <!-- Constraint del calendario collassato -->
+        <!-- Constraint del calendario collassato (riga in alto, sinistra, con margini piccoli) -->
         <Constraint
             android:id="@+id/calendar_card"
-            android:layout_width="@dimen/calendar_collapsed_width"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/calendar_collapsed_margin"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Constraint della card del santo collassata -->
+        <!-- Pulsanti azioni rapide visibili quando collassato -->
+        <Constraint
+            android:id="@+id/layout_quick_actions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:alpha="1"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toBottomOf="@id/calendar_card"
+            motion:layout_constraintStart_toEndOf="@id/calendar_card"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card del santo a TUTTA LARGHEZZA sotto calendario -->
         <Constraint
             android:id="@+id/saint_card"
             android:layout_width="0dp"
@@ -92,13 +153,43 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Constraint della card delle info personali collassata -->
+        <!-- Constraint della card eventi laici a TUTTA LARGHEZZA -->
+        <Constraint
+            android:id="@+id/card_eventi_laici"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            motion:layout_constraintTop_toBottomOf="@id/saint_card"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Constraint della card delle info personali a TUTTA LARGHEZZA -->
         <Constraint
             android:id="@+id/card_personal_info"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            motion:layout_constraintTop_toBottomOf="@id/saint_card"
+            motion:layout_constraintTop_toBottomOf="@id/card_eventi_laici"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Card taccuino collassata -->
+        <Constraint
+            android:id="@+id/card_taccuino"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Card liste spesa collassata -->
+        <Constraint
+            android:id="@+id/card_liste_spesa"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
     </ConstraintSet>

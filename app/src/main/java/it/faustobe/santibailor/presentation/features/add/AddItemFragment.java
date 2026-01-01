@@ -145,10 +145,54 @@ public class AddItemFragment extends Fragment {
 
     private void setupRicorrenzaUI() {
         setupTypeDropdown();
+        setupPersonaleCheckbox();
         binding.prefixInputLayout.setVisibility(View.VISIBLE);
         binding.suffixInputLayout.setVisibility(View.VISIBLE);
         binding.bioInputLayout.setVisibility(View.VISIBLE);
         binding.titleTextView.setText(R.string.add_ricorrenza);
+    }
+
+    private void setupPersonaleCheckbox() {
+        // Listener per mostrare/nascondere il checkbox quando si seleziona il tipo
+        AutoCompleteTextView tipoField = (AutoCompleteTextView) binding.typeInputLayout.getEditText();
+        if (tipoField != null) {
+            tipoField.setOnItemClickListener((parent, view, position, id) -> {
+                String selectedTipo = (String) parent.getItemAtPosition(position);
+                updatePersonaleCheckboxVisibility(selectedTipo);
+            });
+
+            tipoField.addTextChangedListener(new android.text.TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    updatePersonaleCheckboxVisibility(s.toString().trim());
+                }
+
+                @Override
+                public void afterTextChanged(android.text.Editable s) {}
+            });
+
+            tipoField.setOnFocusChangeListener((v, hasFocus) -> {
+                if (!hasFocus) {
+                    String tipoNome = tipoField.getText().toString().trim();
+                    updatePersonaleCheckboxVisibility(tipoNome);
+                }
+            });
+        }
+    }
+
+    private void updatePersonaleCheckboxVisibility(String tipoNome) {
+        Log.d("AddItemFragment", "updatePersonaleCheckboxVisibility: " + tipoNome);
+        if ("Laico".equalsIgnoreCase(tipoNome)) {
+            Log.d("AddItemFragment", "Showing checkbox Personale");
+            binding.cbPersonale.setVisibility(View.VISIBLE);
+        } else {
+            Log.d("AddItemFragment", "Hiding checkbox Personale");
+            binding.cbPersonale.setVisibility(View.GONE);
+            binding.cbPersonale.setChecked(false);
+        }
     }
 
     private void setupDatePickers() {
@@ -287,7 +331,17 @@ public class AddItemFragment extends Fragment {
             return;
         }
 
-        int tipoId = tipo.equalsIgnoreCase("Religioso") ? TipoRicorrenza.RELIGIOSA : TipoRicorrenza.LAICA;
+        // Determina il tipo: se è Laico e checkbox Personale è selezionato, usa PERSONALE (3)
+        int tipoId;
+        if (tipo.equalsIgnoreCase("Religioso")) {
+            tipoId = TipoRicorrenza.RELIGIOSA;
+        } else if (tipo.equalsIgnoreCase("Laico") && binding.cbPersonale.isChecked()) {
+            tipoId = TipoRicorrenza.PERSONALE;
+            Log.d("AddItemFragment", "Saving as PERSONALE (checkbox checked)");
+        } else {
+            tipoId = TipoRicorrenza.LAICA;
+            Log.d("AddItemFragment", "Saving as LAICA");
+        }
 
         Ricorrenza ricorrenza = new Ricorrenza(0, mese, giorno, nome, bio,
                 selectedImageUri != null ? selectedImageUri.toString() : "",

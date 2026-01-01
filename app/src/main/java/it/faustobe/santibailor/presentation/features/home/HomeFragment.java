@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +48,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import it.faustobe.santibailor.domain.model.Impegno;
 import it.faustobe.santibailor.domain.model.Ricorrenza;
 import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
@@ -54,6 +57,10 @@ import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentHomeBinding;
 import it.faustobe.santibailor.util.DateUtils;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.presentation.features.impegni.ImpegniViewModel;
+import it.faustobe.santibailor.presentation.features.listespesa.ListeSpesaViewModel;
+import it.faustobe.santibailor.presentation.features.listespesa.ListeSpesaAdapter;
+import it.faustobe.santibailor.domain.model.ListaSpesa;
 import it.faustobe.santibailor.util.ImageHandler;
 //import it.faustobe.santibailor.util.ImageMigrationService;
 
@@ -64,12 +71,17 @@ public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
     private RicorrenzaViewModel ricorrenzaViewModel;
+    private ImpegniViewModel impegniViewModel;
+    private ListeSpesaViewModel listeSpesaViewModel;
     //private ImageMigrationService imageMigrationService;
     private boolean isInitialized = false;
     private RicorrenzaAdapter ricorrenzaAdapter;
+    private RicorrenzaAdapter eventiLaiciAdapter;
+    private RicorrenzaAdapter eventiPersonaliAdapter;
+    private ListeSpesaAdapter listeSpesaAdapter;
     private boolean isPersonalInfoExpanded = false;
     private boolean isSaintsListExpanded = false;
-    private boolean isCalendarExpanded = true;
+    private boolean isCalendarExpanded; // Inizializzato in setupCalendar() leggendo lo stato salvato
     private HomeViewModel homeViewModel;
     private View expandPersonalInfoIcon;
     private static final String TAG = "HomeFragment";
@@ -81,14 +93,21 @@ public class HomeFragment extends Fragment {
     private ValueAnimator calendarAnimator;
     private ConstraintSet expandedSet = new ConstraintSet();
     private ConstraintSet collapsedSet = new ConstraintSet();
+    private String currentNavSection = "santi"; // sezione corrente del nav bar
+    private SharedPreferences calendarPrefs;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Inizializza SharedPreferences per salvare lo stato del calendario
+        calendarPrefs = requireContext().getSharedPreferences("calendar_state", Context.MODE_PRIVATE);
+
         // Usa questo metodo per ottenere il ViewModel
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
+        impegniViewModel = new ViewModelProvider(this).get(ImpegniViewModel.class);
+        listeSpesaViewModel = new ViewModelProvider(this).get(ListeSpesaViewModel.class);
 
         // Inizializza ImageMigrationService solo se ricorrenzaViewModel è disponibile
         if (ricorrenzaViewModel != null && ricorrenzaViewModel.getRepository() != null) {
@@ -128,6 +147,20 @@ public class HomeFragment extends Fragment {
             ricorrenzaAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
             binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
             binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+
+        // Inizializza adapter per Eventi Laici Generali
+        if (eventiLaiciAdapter == null) {
+            eventiLaiciAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
+            binding.recyclerViewEventiLaici.setAdapter(eventiLaiciAdapter);
+            binding.recyclerViewEventiLaici.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+
+        // Inizializza adapter per Eventi Personali
+        if (eventiPersonaliAdapter == null) {
+            eventiPersonaliAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
+            binding.recyclerViewEventiPersonali.setAdapter(eventiPersonaliAdapter);
+            binding.recyclerViewEventiPersonali.setLayoutManager(new LinearLayoutManager(getContext()));
         }
 
         // Osserva le ricorrenze del giorno
@@ -178,45 +211,120 @@ public class HomeFragment extends Fragment {
         observeRicorrenze();
         setupCalendar();
         //setupBottomNavigation();
-        setupMigrationButton();
         setupCalendarCollapse();
-        setupCalendarAnimation();
+        // setupCalendarAnimation(); // RIMOSSO - causava conflitti con setupCalendarCollapse()
+        // setupNavBar(); // Rimosso - nav bar verticale eliminato
+        // setupTaccuino(); // Rimosso - ora usiamo i pulsanti azioni rapide
+        setupListeSpesa();
+        setupQuickActions();
+    }
+
+    /* RIMOSSO - Nav bar verticale eliminato
+    private void setupNavBar() {
+        View navBar = binding.navBarVertical.getRoot();
+
+        // Ottieni i bottoni dal nav bar
+        com.google.android.material.button.MaterialButton btnSanti = navBar.findViewById(R.id.btn_nav_santi);
+        com.google.android.material.button.MaterialButton btnEventi = navBar.findViewById(R.id.btn_nav_eventi);
+        com.google.android.material.button.MaterialButton btnImpegni = navBar.findViewById(R.id.btn_nav_impegni);
+        // com.google.android.material.button.MaterialButton btnTaccuino = navBar.findViewById(R.id.btn_nav_taccuino); // RIMOSSO
+
+        btnSanti.setOnClickListener(v -> showSection("santi"));
+        btnEventi.setOnClickListener(v -> showSection("eventi"));
+        btnImpegni.setOnClickListener(v -> showSection("impegni"));
+        // btnTaccuino.setOnClickListener(v -> showSection("taccuino")); // RIMOSSO
+    }
+    */
+
+    /* RIMOSSO - Taccuino sostituito con pulsanti azioni rapide
+    private void setupTaccuino() {
+        // ... codice rimosso ...
+    }
+    */
+
+    private void showSection(String section) {
+        currentNavSection = section;
+
+        // Quando il calendario è collassato, tutte le card sono visibili
+        // Il nav bar serve per scrollare alla sezione
+        /* RIMOSSO - Taccuino
+        if (section.equals("taccuino")) {
+            // ... codice rimosso ...
+        } else */
+        {
+            // Scroll alla sezione selezionata
+            View targetView = null;
+            switch (section) {
+                case "santi":
+                    targetView = binding.saintCard;
+                    break;
+                case "eventi":
+                    targetView = binding.cardEventiLaici;
+                    break;
+                case "impegni":
+                    targetView = binding.cardPersonalInfo;
+                    // Espandi automaticamente la card
+                    if (!isPersonalInfoExpanded) {
+                        togglePersonalInfoExpansion();
+                    }
+                    break;
+            }
+
+            if (targetView != null) {
+                final View finalView = targetView;
+                binding.nestedScrollView.post(() -> {
+                    binding.nestedScrollView.smoothScrollTo(0, finalView.getTop());
+                });
+            }
+        }
     }
 
     private void setupCalendar() {
         MotionLayout motionLayout = binding.motionLayout;
 
-        motionLayout.setTransitionListener(new MotionLayout.TransitionListener() {
-            @Override
-            public void onTransitionStarted(MotionLayout motionLayout, int startId, int endId) {
-                // Nascondi temporaneamente le altre card durante l'animazione
-                binding.saintCard.setVisibility(View.INVISIBLE);
-                binding.cardPersonalInfo.setVisibility(View.INVISIBLE);
+        // Ripristina lo stato salvato del calendario dopo che il layout è pronto
+        // Usa jumpToState() per impostare lo stato senza animazione
+        motionLayout.post(() -> {
+            // Controlla se esiste uno stato salvato
+            if (calendarPrefs.contains("is_expanded")) {
+                // Usa lo stato salvato
+                isCalendarExpanded = calendarPrefs.getBoolean("is_expanded", true);
+                Log.d(TAG, "Stato SALVATO trovato: " + (isCalendarExpanded ? "espanso" : "collassato"));
+            } else {
+                // Prima apertura: default ESPANSO
+                isCalendarExpanded = true;
+                Log.d(TAG, "Prima apertura: imposto ESPANSO");
             }
 
-            @Override
-            public void onTransitionChange(MotionLayout motionLayout, int startId, int endId, float progress) {
-                updateCalendarTextSize(progress);
+            if (isCalendarExpanded) {
+                motionLayout.jumpToState(R.id.expanded);
+                // Aggiorna le dimensioni del testo per lo stato espanso (progress = 0.0)
+                updateCalendarTextSize(0.0f);
+            } else {
+                motionLayout.jumpToState(R.id.collapsed);
+                // Aggiorna le dimensioni del testo per lo stato collassato (progress = 1.0)
+                updateCalendarTextSize(1.0f);
             }
 
-            @Override
-            public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
-                isCalendarExpanded = (currentId == R.id.expanded);
-                // Mostra nuovamente le altre card
-                binding.saintCard.setVisibility(View.VISIBLE);
-                binding.cardPersonalInfo.setVisibility(View.VISIBLE);
-                if (isCalendarExpanded) {
-                    scheduleCalendarCollapse();
-                }
-            }
-
-            @Override
-            public void onTransitionTrigger(MotionLayout motionLayout, int triggerId, boolean positive, float progress) {}
+            // Forza l'aggiornamento della visibilità dei pulsanti
+            updateQuickActionsVisibility();
+            Log.d(TAG, "Calendario ripristinato: " + (isCalendarExpanded ? "espanso" : "collassato"));
         });
 
-        binding.calendarCard.setOnClickListener(v -> toggleCalendarState());
+        // RIMOSSO - Click listener gestito in setupCalendarCollapse() per evitare conflitti
     }
 
+    private void showAllSections() {
+        // Mostra tutte le card quando il calendario è espanso
+        binding.saintCard.setVisibility(View.VISIBLE);
+        binding.cardEventiLaici.setVisibility(View.VISIBLE);
+        binding.cardPersonalInfo.setVisibility(View.VISIBLE);
+        // binding.cardTaccuino.setVisibility(View.GONE); // RIMOSSO - Taccuino sostituito con pulsanti azioni rapide
+    }
+
+    // METODO OBSOLETO - causava conflitti con setupCalendarCollapse()
+    // Modificava manualmente isCalendarExpanded senza sincronizzare con onTransitionCompleted
+    /*
     private void toggleCalendarState() {
         MotionLayout motionLayout = binding.motionLayout;
         if (motionLayout.getCurrentState() == R.id.expanded) {
@@ -226,13 +334,12 @@ public class HomeFragment extends Fragment {
         }
 
         isCalendarExpanded = !isCalendarExpanded;
-        if (isCalendarExpanded) {
-            scheduleCalendarCollapse();
-        } else {
-            collapseHandler.removeCallbacksAndMessages(null);
-        }
+        // Rimosso scheduleCalendarCollapse() - il calendario rimane nello stato scelto dall'utente
     }
+    */
 
+    // METODO OBSOLETO - non più utilizzato, MotionLayout gestisce l'animazione
+    /*
     private void setupCalendarAnimation() {
         calendarAnimator = ValueAnimator.ofFloat(0f, 1f);
         calendarAnimator.setDuration(300); // Durata dell'animazione in ms
@@ -243,7 +350,10 @@ public class HomeFragment extends Fragment {
 
         binding.calendarCard.setOnClickListener(v -> toggleCalendarState());
     }
+    */
 
+    // METODO OBSOLETO - MotionLayout gestisce automaticamente lo stato
+    /*
     private void updateCalendarState(float progress) {
         // Aggiorna le dimensioni del testo
         updateCalendarTextSize(progress);
@@ -272,6 +382,7 @@ public class HomeFragment extends Fragment {
         float currentElevation = expandedElevation + (collapsedElevation - expandedElevation) * progress;
         binding.calendarCard.setCardElevation(currentElevation);
     }
+    */
 
     private void updateCalendarTextSize(float progress) {
         float expandedWeekdaySize = getResources().getDimension(R.dimen.calendar_expanded_weekday_text_size);
@@ -328,9 +439,11 @@ public class HomeFragment extends Fragment {
             @Override
             public void onTransitionCompleted(MotionLayout motionLayout, int currentId) {
                 Log.d(TAG, "onTransitionCompleted: Transizione completata. Stato corrente: " + currentId);
-                if (currentId == R.id.expanded) {
-                    scheduleCalendarCollapse();
-                }
+                isCalendarExpanded = (currentId == R.id.expanded);
+
+                // Salva lo stato
+                calendarPrefs.edit().putBoolean("is_expanded", isCalendarExpanded).apply();
+                Log.d(TAG, "Stato salvato: " + (isCalendarExpanded ? "ESPANSO" : "COLLASSATO"));
             }
 
             @Override
@@ -351,27 +464,16 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setupMigrationButton() {
-        binding.btnMigrateImages.setOnClickListener(v -> {
-            startImageMigration();
-        });
-    }
-
-    private void startImageMigration() {
-        Log.d("HomeFragment", "Starting image migration");
-        new Thread(() -> {
-            imageHandler.migrateImages(ricorrenzaViewModel.getRepository());
-            requireActivity().runOnUiThread(() -> {
-                Toast.makeText(requireContext(), "Migrazione immagini completata", Toast.LENGTH_SHORT).show();
-                Log.d("HomeFragment", "Image migration completed");
-            });
-        }).start();
-    }
-
     private void observeRicorrenze() {
-        ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
-        //ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
-        //ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+        // Osserva il Santo del Giorno (selezionato casualmente)
+        ricorrenzaViewModel.getCurrentSaint().observe(getViewLifecycleOwner(), this::updateSaintOfDay);
+
+        // Osserva le ricorrenze religiose (Santi) separatamente dalle laiche
+        ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
+        ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
+
+        // Osserva gli impegni di oggi
+        impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), this::updateImpegniOggi);
     }
 
     private void updateRicorrenze(List<Ricorrenza> ricorrenze) {
@@ -397,7 +499,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateSaintOfDay(Ricorrenza saint) {
-        if (saint == null) return;
+        if (saint == null || binding == null || !isAdded()) return;
         Log.d("HomeFragment", "Updated saint of day: " + saint.getPrefix() + " " + saint.getNome());
         String saintText = saint.getPrefix() + " " + saint.getNome();
         binding.tvSaintOfDay.setText(saintText);
@@ -405,13 +507,134 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateRicorrenzeReligiose(List<Ricorrenza> ricorrenze) {
-        Log.d("HomeFragment", "Ricorrenze religiose: " + ricorrenze.size());
-        // Aggiorna l'UI per le ricorrenze religiose
+        if (binding == null || !isAdded()) return;
+        Log.d("HomeFragment", "Ricorrenze religiose (Santi): " + (ricorrenze != null ? ricorrenze.size() : 0));
+        if (ricorrenze == null || ricorrenze.isEmpty()) {
+            binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+            binding.tvSaintOfDay.setText(R.string.no_saints_today);
+            return;
+        }
+
+        // Ottieni il santo correntemente mostrato come "Santo del Giorno"
+        Ricorrenza currentSaint = ricorrenzaViewModel.getCurrentSaint().getValue();
+
+        // Filtra la lista per ESCLUDERE il santo già mostrato come "Santo del Giorno"
+        List<Ricorrenza> filteredList = new java.util.ArrayList<>();
+        for (Ricorrenza ricorrenza : ricorrenze) {
+            if (currentSaint == null || ricorrenza.getId() != currentSaint.getId()) {
+                filteredList.add(ricorrenza);
+            }
+        }
+
+        // Mostra TUTTI gli altri santi nella lista espandibile (escludendo quello già mostrato sopra)
+        if (!filteredList.isEmpty()) {
+            binding.expandCollapseSaintsIcon.setVisibility(View.VISIBLE);
+            ricorrenzaAdapter.setRicorrenze(filteredList);
+            Log.d("HomeFragment", "Showing " + filteredList.size() + " saints in expandable list (excluding current saint)");
+        } else {
+            binding.expandCollapseSaintsIcon.setVisibility(View.GONE);
+            binding.recyclerViewSaints.setVisibility(View.GONE);
+        }
+
+        updateComponentsState();
     }
 
     private void updateRicorrenzeLaiche(List<Ricorrenza> ricorrenze) {
-        Log.d("HomeFragment", "Ricorrenze laiche: " + ricorrenze.size());
-        // Aggiorna l'UI per le ricorrenze laiche
+        if (binding == null || !isAdded()) return;
+        Log.d("HomeFragment", "Ricorrenze laiche/personali: " + (ricorrenze != null ? ricorrenze.size() : 0));
+        if (ricorrenze == null || ricorrenze.isEmpty()) {
+            updateEventiLaiciGenerali(new java.util.ArrayList<>());
+            updateEventiPersonali(new java.util.ArrayList<>());
+            return;
+        }
+
+        // Separa eventi laici generali da personali
+        // Criteri: tipo PERSONALE (3) O imageUrl locale = personale
+        List<Ricorrenza> eventiGenerali = new java.util.ArrayList<>();
+        List<Ricorrenza> eventiPersonali = new java.util.ArrayList<>();
+
+        for (Ricorrenza ric : ricorrenze) {
+            if (ric.getTipoRicorrenzaId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.PERSONALE ||
+                (ric.getImageUrl() != null && ric.getImageUrl().startsWith("file://"))) {
+                eventiPersonali.add(ric);
+            } else {
+                eventiGenerali.add(ric);
+            }
+        }
+
+        Log.d("HomeFragment", "Eventi laici generali: " + eventiGenerali.size() + ", personali: " + eventiPersonali.size());
+        updateEventiLaiciGenerali(eventiGenerali);
+        updateEventiPersonali(eventiPersonali);
+    }
+
+    private void updateEventiLaiciGenerali(List<Ricorrenza> eventi) {
+        if (binding == null || !isAdded()) return;
+        Log.d("HomeFragment", "Eventi laici generali: " + eventi.size());
+        if (eventi == null || eventi.isEmpty()) {
+            binding.cardEventiLaici.setVisibility(View.GONE);
+            return;
+        }
+
+        Log.d("HomeFragment", "Setting card_eventi_laici to VISIBLE");
+        binding.cardEventiLaici.setVisibility(View.VISIBLE);
+        eventiLaiciAdapter.setRicorrenze(eventi);
+
+        // Forza l'aggiornamento del layout del MotionLayout
+        if (binding.motionLayout != null) {
+            binding.motionLayout.requestLayout();
+        }
+
+        Log.d("HomeFragment", "Displaying " + eventi.size() + " eventi laici generali");
+        for (Ricorrenza e : eventi) {
+            Log.d("HomeFragment", "  - " + e.getNomeCompleto());
+        }
+    }
+
+    private void updateEventiPersonali(List<Ricorrenza> eventi) {
+        if (binding == null || !isAdded()) return;
+        Log.d("HomeFragment", "Eventi personali: " + eventi.size());
+        if (eventi == null || eventi.isEmpty()) {
+            binding.tvEventiPersonaliLabel.setVisibility(View.GONE);
+            binding.recyclerViewEventiPersonali.setVisibility(View.GONE);
+            return;
+        }
+
+        binding.tvEventiPersonaliLabel.setVisibility(View.VISIBLE);
+        binding.recyclerViewEventiPersonali.setVisibility(View.VISIBLE);
+        eventiPersonaliAdapter.setRicorrenze(eventi);
+        Log.d("HomeFragment", "Displaying " + eventi.size() + " eventi personali in Info Personali card");
+        for (Ricorrenza e : eventi) {
+            Log.d("HomeFragment", "  - " + e.getNomeCompleto());
+        }
+    }
+
+    private void updateImpegniOggi(List<Impegno> impegni) {
+        if (binding == null || !isAdded()) return;
+        Log.d("HomeFragment", "Impegni di oggi: " + (impegni != null ? impegni.size() : 0));
+        if (impegni == null || impegni.isEmpty()) {
+            binding.tvImpegniOggiLabel.setVisibility(View.GONE);
+            binding.tvImpegniOggi.setVisibility(View.GONE);
+            return;
+        }
+
+        // Visualizza in card Info Personali
+        binding.tvImpegniOggiLabel.setVisibility(View.VISIBLE);
+        binding.tvImpegniOggi.setVisibility(View.VISIBLE);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < impegni.size(); i++) {
+            Impegno imp = impegni.get(i);
+            sb.append("• ").append(imp.getTitolo());
+            if (imp.getPriorita() != null) {
+                sb.append(" [").append(imp.getPriorita()).append("]");
+            }
+            if (i < impegni.size() - 1) {
+                sb.append("\n");
+            }
+        }
+        binding.tvImpegniOggi.setText(sb.toString());
+        Log.d("HomeFragment", "Displaying " + impegni.size() + " impegni in Info Personali card");
     }
 
     private void updateInitialVisibility() {
@@ -554,21 +777,34 @@ public class HomeFragment extends Fragment {
     }
 
     private void setupPersonalInfo() {
-        binding.tvPersonalEvent.setText("compleanno di zia Rosina");
+        // Osserva impegni di oggi
+        impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), impegniOggi -> {
+            if (impegniOggi != null && !impegniOggi.isEmpty()) {
+                binding.tvPersonalEvent.setText(impegniOggi.size() + " impegni oggi");
 
-        String todoList = """
-                - paga bolletta luce
-                - cambia filtro aria della cappa
-                - compra regalo per Denise - compleanno fra 5 gg
-                - finisci rapporto AZS - consegna fra 3 gg""";
-        binding.tvTodoList.setText(todoList);
+                StringBuilder sb = new StringBuilder("Oggi:\n");
+                for (int i = 0; i < Math.min(3, impegniOggi.size()); i++) {
+                    sb.append("• ").append(impegniOggi.get(i).getTitolo()).append("\n");
+                }
+                binding.tvTodayEvents.setText(sb.toString());
+            } else {
+                binding.tvPersonalEvent.setText("Nessun impegno per oggi");
+                binding.tvTodayEvents.setText("Goditi la giornata! 😊");
+            }
+        });
 
-        String todayEvents = """
-                oggi:
-                * gym
-                * ape con Chicca alle h 18
-                + la ricotta è in frigo da 4 giorni""";
-        binding.tvTodayEvents.setText(todayEvents);
+        // Osserva prossimi impegni futuri
+        impegniViewModel.getImpegniFuturi(5).observe(getViewLifecycleOwner(), impegniFuturi -> {
+            if (impegniFuturi != null && !impegniFuturi.isEmpty()) {
+                StringBuilder sb = new StringBuilder("Prossimi impegni:\n");
+                for (int i = 0; i < Math.min(5, impegniFuturi.size()); i++) {
+                    sb.append("• ").append(impegniFuturi.get(i).getTitolo()).append("\n");
+                }
+                binding.tvTodoList.setText(sb.toString());
+            } else {
+                binding.tvTodoList.setText("Nessun impegno programmato.\n\nAggiungi un nuovo impegno con il pulsante '+ Impegno' qui sotto!");
+            }
+        });
     }
 
     private void setupPersonalInfoCard() {
@@ -577,6 +813,12 @@ public class HomeFragment extends Fragment {
             header.setOnClickListener(v -> togglePersonalInfoExpansion());
         }
         expandPersonalInfoIcon = binding.cardPersonalInfo.findViewById(R.id.expand_collapse_saints_icon);
+
+        // Long press per aprire la lista completa degli impegni
+        binding.cardPersonalInfo.setOnLongClickListener(v -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_global_to_impegni);
+            return true;
+        });
     }
 
     private void togglePersonalInfoExpansion() {
@@ -627,10 +869,11 @@ public class HomeFragment extends Fragment {
     }
 
     private boolean isScrolledToTop() {
-        return nestedScrollView.getScrollY() == 0;
+        return nestedScrollView != null && nestedScrollView.getScrollY() == 0;
     }
 
     private void updateBottomMenuVisibility() {
+        if (!isAdded()) return;
         boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded;
         if (allCollapsed && getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateComponentsVisibility(true);
@@ -638,15 +881,112 @@ public class HomeFragment extends Fragment {
     }
 
     private void updateComponentsState() {
+        if (binding == null || !isAdded()) return;
         boolean allCollapsed = !isCalendarExpanded && !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
         homeViewModel.setAllComponentsCollapsed(allCollapsed);
+    }
+
+    private void setupListeSpesa() {
+        // Inizializza adapter con listener per navigare al dettaglio
+        listeSpesaAdapter = new ListeSpesaAdapter(new ListeSpesaAdapter.OnListaClickListener() {
+            @Override
+            public void onListaClick(ListaSpesa lista) {
+                // Naviga al dettaglio della lista
+                Bundle args = new Bundle();
+                args.putInt("listaId", lista.getId());
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_homeFragment_to_dettaglioListaSpesaFragment, args);
+            }
+
+            @Override
+            public void onDeleteClick(ListaSpesa lista) {
+                // Non implementato nella home - solo navigazione
+                onListaClick(lista);
+            }
+        });
+
+        binding.recyclerViewListeSpesa.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewListeSpesa.setAdapter(listeSpesaAdapter);
+
+        // Osserva le liste attive
+        listeSpesaViewModel.getListeAttive().observe(getViewLifecycleOwner(), liste -> {
+            if (liste != null && !liste.isEmpty()) {
+                binding.cardListeSpesa.setVisibility(View.VISIBLE);
+                binding.recyclerViewListeSpesa.setVisibility(View.VISIBLE);
+                binding.tvNoListe.setVisibility(View.GONE);
+                listeSpesaAdapter.setListe(liste);
+                Log.d("HomeFragment", "Displaying " + liste.size() + " liste spesa attive");
+            } else {
+                binding.cardListeSpesa.setVisibility(View.GONE);
+                Log.d("HomeFragment", "No active liste spesa found");
+            }
+        });
+    }
+
+    private void setupQuickActions() {
+        android.util.Log.d("HomeFragment", "setupQuickActions called");
+
+        if (binding == null) {
+            android.util.Log.e("HomeFragment", "binding is null!");
+            return;
+        }
+        if (binding.layoutQuickActions == null) {
+            android.util.Log.e("HomeFragment", "binding.layoutQuickActions is null!");
+            return;
+        }
+        if (binding.btnScrivi == null) {
+            android.util.Log.e("HomeFragment", "binding.btnScrivi is null!");
+            return;
+        }
+
+        android.util.Log.d("HomeFragment", "All quick action bindings are valid");
+
+        // Pulsante Scrivi - per note/post-it
+        binding.btnScrivi.setOnClickListener(v -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_global_to_note);
+        });
+
+        // Pulsante Organizza - per aggiungere più impegni rapidamente
+        binding.btnOrganizza.setOnClickListener(v -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_global_to_organizza);
+        });
+
+        // Pulsante Ricerca - ricerca globale
+        binding.btnRicerca.setOnClickListener(v -> {
+            Navigation.findNavController(requireView()).navigate(R.id.searchFragment);
+        });
+
+        // Pulsante Riepilogo - vista settimanale/mensile
+        binding.btnRiepilogo.setOnClickListener(v -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_global_to_riepilogo);
+        });
+
+        // Controlla visibilità dei pulsanti in base allo stato del calendario
+        // I pulsanti sono visibili quando il calendario è collassato
+        // Inizialmente il calendario è espanso, quindi nascondi i pulsanti
+        updateQuickActionsVisibility();
+    }
+
+    private void updateQuickActionsVisibility() {
+        if (binding != null && binding.layoutQuickActions != null) {
+            // I pulsanti sono visibili SOLO quando il calendario è collassato
+            // L'alpha è gestito dal MotionLayout (0 quando espanso, 1 quando collassato)
+            binding.layoutQuickActions.setVisibility(View.VISIBLE);
+            android.util.Log.d("HomeFragment", "Quick actions visibility. Calendar expanded: " + isCalendarExpanded);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (getActivity() instanceof MainActivity) {
-            ((MainActivity) getActivity()).showBottomNav();
+
+        Log.d(TAG, "onResume() chiamato");
+
+        // Ricarica i dati SOLO se non è il primo caricamento
+        if (isInitialized) {
+            ricorrenzaViewModel.forceReloadRicorrenze();
+        } else {
+            isInitialized = true;
         }
     }
 

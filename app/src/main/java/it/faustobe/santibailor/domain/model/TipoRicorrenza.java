@@ -5,6 +5,7 @@ import java.util.Objects;
 public class TipoRicorrenza {
     public static final int RELIGIOSA = 1;
     public static final int LAICA = 2;
+    public static final int PERSONALE = 3;
 
     private int id;
     private String tipo;
@@ -26,6 +27,10 @@ public class TipoRicorrenza {
 
     public boolean isLaica() {
         return this.id == LAICA;
+    }
+
+    public boolean isPersonale() {
+        return this.id == PERSONALE;
     }
 
     @Override

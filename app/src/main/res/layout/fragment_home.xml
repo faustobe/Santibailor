@@ -161,6 +161,47 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <!-- Card Eventi Laici Generali -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_eventi_laici"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="#80FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/saint_card"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_eventi_laici_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/eventi_laici_personali"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#FF006400"
+                        android:gravity="center"
+                        android:visibility="gone"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_eventi_laici"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:nestedScrollingEnabled="false"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <!-- Panel Info Personali (collassabile) -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_personal_info"
@@ -170,7 +211,7 @@
                 app:cardElevation="4dp"
                 app:cardCornerRadius="8dp"
                 app:cardBackgroundColor="#80FFFFFF"
-                app:layout_constraintTop_toBottomOf="@id/saint_card"
+                app:layout_constraintTop_toBottomOf="@id/card_eventi_laici"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -200,13 +241,56 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
+                        <!-- Sezione Eventi Personali -->
+                        <TextView
+                            android:id="@+id/tv_eventi_personali_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Eventi Personali"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF006400"
+                            android:visibility="gone"/>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerView_eventi_personali"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            android:nestedScrollingEnabled="false"
+                            android:visibility="gone"/>
+
+                        <!-- Sezione Impegni di Oggi -->
+                        <TextView
+                            android:id="@+id/tv_impegni_oggi_label"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/impegni_di_oggi"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#FF0000c0"
+                            android:layout_marginTop="16dp"
+                            android:visibility="gone"/>
+
+                        <TextView
+                            android:id="@+id/tv_impegni_oggi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:visibility="gone"/>
+
+                        <!-- Vecchi campi (mantenuti per compatibilità) -->
                         <TextView
                             android:id="@+id/tv_personal_event"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textColor="#000000"
                             android:textSize="16sp"
-                            android:background="@android:color/transparent"/>
+                            android:background="@android:color/transparent"
+                            android:visibility="gone"/>
 
                         <TextView
                             android:id="@+id/tv_todo_list"
@@ -228,15 +312,158 @@
 
             </com.google.android.material.card.MaterialCardView>
 
-            <Button
-                android:id="@+id/btn_migrate_images"
-                android:layout_width="wrap_content"
+            <!-- Pulsanti Azioni Rapide (visibili solo quando collassato) -->
+            <LinearLayout
+                android:id="@+id/layout_quick_actions"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:padding="0dp"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                app:layout_constraintTop_toTopOf="@id/calendar_card"
+                app:layout_constraintBottom_toBottomOf="@id/calendar_card"
+                app:layout_constraintStart_toEndOf="@id/calendar_card"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_scrivi"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Scrivi"
+                    android:textSize="8sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#CCFFFFFF"
+                    app:icon="@android:drawable/ic_menu_edit"
+                    app:iconTint="#000000"
+                    app:iconGravity="top"
+                    app:iconSize="18dp"
+                    app:iconPadding="2dp"
+                    app:strokeColor="#666666"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_organizza"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Organizza"
+                    android:textSize="8sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#CCFFFFFF"
+                    app:icon="@android:drawable/ic_menu_agenda"
+                    app:iconTint="#000000"
+                    app:iconGravity="top"
+                    app:iconSize="18dp"
+                    app:iconPadding="2dp"
+                    app:strokeColor="#666666"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_ricerca"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Ricerca"
+                    android:textSize="8sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#CCFFFFFF"
+                    app:icon="@android:drawable/ic_menu_search"
+                    app:iconTint="#000000"
+                    app:iconGravity="top"
+                    app:iconSize="18dp"
+                    app:iconPadding="2dp"
+                    app:strokeColor="#666666"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_riepilogo"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="Riepilogo"
+                    android:textSize="8sp"
+                    android:textColor="#000000"
+                    android:backgroundTint="#CCFFFFFF"
+                    app:icon="@android:drawable/ic_menu_view"
+                    app:iconTint="#000000"
+                    app:iconGravity="top"
+                    app:iconSize="18dp"
+                    app:iconPadding="2dp"
+                    app:strokeColor="#666666"
+                    app:strokeWidth="1dp"
+                    app:cornerRadius="8dp"/>
+            </LinearLayout>
+
+            <!-- Card Liste Spesa Attive -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_liste_spesa"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/migrate_images"
-                android:layout_marginTop="16dp"
+                android:layout_margin="16dp"
+                android:visibility="gone"
+                app:cardElevation="4dp"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="#80FFFFFF"
                 app:layout_constraintTop_toBottomOf="@id/card_personal_info"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Liste Spesa Attive"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#4CAF50"
+                        android:drawableStart="@drawable/ic_add"
+                        android:drawablePadding="8dp"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_liste_spesa"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:nestedScrollingEnabled="false"/>
+
+                    <TextView
+                        android:id="@+id/tv_no_liste"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Nessuna lista attiva"
+                        android:textSize="14sp"
+                        android:textColor="#666666"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:visibility="gone"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.core.widget.NestedScrollView>

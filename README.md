@@ -2,6 +2,94 @@
 
 Benvenuti nella documentazione ufficiale del progetto SantiBailor, un'applicazione Android per la gestione di ricorrenze, santi, impegni personali e liste della spesa.
 
+## 📋 Aggiornamenti Recenti
+
+### Sessione di Sviluppo: 30 Dicembre 2025
+
+**Implementazione Quick Actions nella Home**
+
+È stata completata l'implementazione di un sistema di azioni rapide nella schermata Home con le seguenti funzionalità:
+
+#### Funzionalità Implementate
+1. **Calendario Collassabile Migliorato**
+   - Calendario espanso all'apertura dell'app (vista riepilogo giornaliero)
+   - Animazione fluida di riduzione del calendario con testo che si ridimensiona dinamicamente
+   - Stato del calendario persistente durante la sessione (mantiene collapsed/expanded quando si naviga)
+   - Reset automatico allo stato espanso alla chiusura/riapertura dell'app
+
+2. **Quick Actions Buttons**
+   - Quattro pulsanti azioni rapide visibili quando il calendario è collassato:
+     * **Scrivi**: Navigazione rapida alle note/post-it
+     * **Organizza**: Accesso veloce alla gestione impegni multipli
+     * **Ricerca**: Ricerca globale nell'app
+     * **Riepilogo**: Vista riepilogativa delle attività
+   - Design coerente con Material Design 3
+   - Integrati nell'animazione del MotionLayout
+
+3. **Correzioni Tecniche**
+   - Risolto conflitto tra listener multipli che causava stati inconsistenti
+   - Implementato corretto aggiornamento delle dimensioni del testo quando lo stato viene ripristinato con `jumpToState()`
+   - Aggiunto supporto MotionLayout per `card_liste_spesa` (precedentemente invisibile)
+   - Rimossi metodi obsoleti che interferivano con la gestione dello stato
+
+#### File Modificati
+- `HomeFragment.java`: Gestione dello stato del calendario e animazioni
+- `home_scene.xml`: Definizione degli stati expanded/collapsed nel MotionLayout
+- `activity_main.xml`: Pulizia codice toolbar non utilizzata
+- `dimens.xml`: Dimensioni ottimizzate per calendario collassato
+
+## 🎯 Roadmap e Prossimi Step
+
+### Priorità Alta
+1. **Implementazione Completa Funzionalità Quick Actions**
+   - [ ] Completare navigazione pulsante "Scrivi" verso sistema note/post-it
+   - [ ] Implementare vista "Organizza" per gestione rapida impegni multipli
+   - [ ] Implementare vista "Riepilogo" con dashboard attività giornaliere
+
+2. **Ottimizzazione UX Home Screen**
+   - [ ] Migliorare animazioni transizioni calendario (considerare curve di easing personalizzate)
+   - [ ] Implementare gesture swipe per collapse/expand calendario
+   - [ ] Aggiungere feedback visivo/haptic ai pulsanti quick actions
+
+### Priorità Media
+3. **Sistema Notifiche Impegni**
+   - [ ] Implementare notifiche push per impegni del giorno
+   - [ ] Configurare NotificationHelper per reminder personalizzabili
+   - [ ] Integrare WorkManager per notifiche programmate
+
+4. **Gestione Liste Spesa**
+   - [ ] Migliorare UI card liste spesa (attualmente base)
+   - [ ] Implementare condivisione liste tra utenti
+   - [ ] Aggiungere categorizzazione automatica articoli
+
+5. **Sincronizzazione e Backup**
+   - [ ] Implementare backup su Firebase Storage
+   - [ ] Sincronizzazione cross-device tramite Firebase Realtime Database
+   - [ ] Export/Import dati in formato JSON
+
+### Priorità Bassa
+6. **Miglioramenti UI/UX Generali**
+   - [ ] Implementare dark mode completo
+   - [ ] Aggiungere supporto per temi personalizzati
+   - [ ] Migliorare accessibilità (TalkBack, dimensioni font dinamiche)
+
+7. **Testing e Performance**
+   - [ ] Implementare unit test per ViewModel e Repository
+   - [ ] Aggiungere integration test per flussi principali
+   - [ ] Ottimizzare query database per prestazioni migliori
+   - [ ] Profilare e ottimizzare consumo memoria
+
+8. **Funzionalità Avanzate**
+   - [ ] Integrazione calendario di sistema
+   - [ ] Widget home screen per visualizzazione rapida
+   - [ ] Supporto per ricorrenze ricorrenti personalizzate
+   - [ ] Sistema di tagging e categorizzazione avanzato
+
+### Note Tecniche
+- **Architettura**: Mantenere coerenza con pattern MVVM attuale
+- **Dipendenze**: Valutare aggiornamento a Jetpack Compose per nuove UI (lungo termine)
+- **Compatibilità**: Supporto minimo Android 6.0 (API 23), target Android 14 (API 34)
+
 ## Introduzione al Progetto
 
 SantiBailor è un'applicazione Android che offre agli utenti un modo semplice e intuitivo per gestire ricorrenze, tenere traccia di santi e festività, organizzare impegni personali e creare liste della spesa. L'applicazione è strutturata seguendo le best practices di sviluppo Android, utilizzando l'architettura MVVM (Model-View-ViewModel) e componenti moderni come Room per la persistenza dei dati.
@@ -1564,4 +1652,6 @@ Questa documentazione è un progetto in continua evoluzione. Se trovi aree che n
 
 ---
 
-Ultimo aggiornamento: 2024-09-25
+**Ultimo aggiornamento**: 30 Dicembre 2025
+**Versione Documentazione**: 2.0
+**Stato Progetto**: In sviluppo attivo

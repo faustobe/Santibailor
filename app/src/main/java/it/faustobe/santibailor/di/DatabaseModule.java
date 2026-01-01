@@ -12,10 +12,13 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.dao.ImpegnoDao;
+import it.faustobe.santibailor.data.local.dao.ItemSpesaDao;
+import it.faustobe.santibailor.data.local.dao.ListaSpesaDao;
+import it.faustobe.santibailor.data.local.dao.ProdottoFrequenteDao;
 import it.faustobe.santibailor.data.local.dao.SearchDao;
 import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
 import it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao;
-// Importa altri DAO se necessario
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -39,5 +42,27 @@ public class DatabaseModule {
         return database.tipoRicorrenzaDao();
     }
 
-    // Aggiungi altri metodi @Provides per altri DAO se necessario
+    @Provides
+    @Singleton
+    public ImpegnoDao provideImpegnoDao(AppDatabase database) {
+        return database.impegnoDao();
+    }
+
+    @Provides
+    @Singleton
+    public ListaSpesaDao provideListaSpesaDao(AppDatabase database) {
+        return database.listaSpesaDao();
+    }
+
+    @Provides
+    @Singleton
+    public ItemSpesaDao provideItemSpesaDao(AppDatabase database) {
+        return database.itemSpesaDao();
+    }
+
+    @Provides
+    @Singleton
+    public ProdottoFrequenteDao provideProdottoFrequenteDao(AppDatabase database) {
+        return database.prodottoFrequenteDao();
+    }
 }

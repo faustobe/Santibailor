@@ -1,0 +1,3 @@
+{
+  "instructions": "Progetto Android nativo JAVA. Build solo da CLI con Gradle, NO Android Studio. Testing su dispositivo fisico via ADB. RAM limitata (8GB). App calendario santi personalizzabile con gestione impegni e spese."
+}

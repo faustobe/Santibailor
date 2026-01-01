@@ -54,6 +54,23 @@ public class Ricorrenza {
     public int getTipoRicorrenzaId() { return idTipo; }
     public void setTipoRicorrenzaId(int idTipo) { this.idTipo = idTipo; }
 
+    /**
+     * Restituisce il nome completo della ricorrenza (prefix + nome + suffix)
+     */
+    public String getNomeCompleto() {
+        StringBuilder fullName = new StringBuilder();
+        if (prefix != null && !prefix.isEmpty()) {
+            fullName.append(prefix).append(" ");
+        }
+        if (nome != null) {
+            fullName.append(nome);
+        }
+        if (suffix != null && !suffix.isEmpty()) {
+            fullName.append(" ").append(suffix);
+        }
+        return fullName.toString().trim();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

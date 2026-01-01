@@ -101,20 +101,92 @@ public class EditRicorrenzaFragment extends Fragment {
         ArrayAdapter<TipoRicorrenza> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line);
         binding.etTipo.setAdapter(adapter);
 
+        // Listener per mostrare/nascondere il checkbox Personale quando si clicca su un item
+        binding.etTipo.setOnItemClickListener((parent, view, position, id) -> {
+            TipoRicorrenza selectedTipo = (TipoRicorrenza) parent.getItemAtPosition(position);
+            updatePersonaleCheckboxVisibility(selectedTipo);
+        });
+
+        // Listener alternativo per quando il testo cambia (necessario per alcuni dispositivi)
+        binding.etTipo.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String tipoNome = s.toString().trim();
+                TipoRicorrenza tipo = getTipoRicorrenzaByNome(tipoNome);
+                if (tipo != null) {
+                    updatePersonaleCheckboxVisibility(tipo);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {}
+        });
+
         ricorrenzaViewModel.getAllTipiRicorrenza().observe(getViewLifecycleOwner(), tipi -> {
             tipiRicorrenza = tipi;
             adapter.clear();
             adapter.addAll(tipiRicorrenza);
             if (ricorrenzaToEdit != null) {
                 setSelectedTipoRicorrenza(ricorrenzaToEdit.getTipoRicorrenzaId());
+            } else {
+                // In modalità creazione, controlla se il campo ha già un valore
+                String currentText = binding.etTipo.getText().toString().trim();
+                if (!currentText.isEmpty()) {
+                    TipoRicorrenza tipo = getTipoRicorrenzaByNome(currentText);
+                    if (tipo != null) {
+                        updatePersonaleCheckboxVisibility(tipo);
+                    }
+                }
+            }
+        });
+
+        // Listener aggiuntivo quando l'utente apre il dropdown o cambia focus
+        binding.etTipo.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus) {
+                // Quando perde il focus, verifica il testo e aggiorna il checkbox
+                String tipoNome = binding.etTipo.getText().toString().trim();
+                TipoRicorrenza tipo = getTipoRicorrenzaByNome(tipoNome);
+                if (tipo != null) {
+                    updatePersonaleCheckboxVisibility(tipo);
+                }
             }
         });
     }
 
+    private void updatePersonaleCheckboxVisibility(TipoRicorrenza selectedTipo) {
+        Log.d("EditRicorrenzaFragment", "updatePersonaleCheckboxVisibility called with tipo: " +
+              (selectedTipo != null ? selectedTipo.getTipo() + " (id=" + selectedTipo.getId() + ")" : "null"));
+        if (selectedTipo != null && selectedTipo.getId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.LAICA) {
+            Log.d("EditRicorrenzaFragment", "Showing checkbox Personale");
+            binding.cbPersonale.setVisibility(View.VISIBLE);
+        } else {
+            Log.d("EditRicorrenzaFragment", "Hiding checkbox Personale");
+            binding.cbPersonale.setVisibility(View.GONE);
+            binding.cbPersonale.setChecked(false);
+        }
+    }
+
     private void setSelectedTipoRicorrenza(int tipoId) {
+        // Se è PERSONALE (3), mostriamo come LAICA (2) nel dropdown
+        int displayTipoId = tipoId;
+        boolean isPersonale = (tipoId == it.faustobe.santibailor.domain.model.TipoRicorrenza.PERSONALE);
+
+        if (isPersonale) {
+            displayTipoId = it.faustobe.santibailor.domain.model.TipoRicorrenza.LAICA;
+        }
+
         for (TipoRicorrenza tipo : tipiRicorrenza) {
-            if (tipo.getId() == tipoId) {
+            if (tipo.getId() == displayTipoId) {
                 binding.etTipo.setText(tipo.getTipo(), false);
+
+                // Mostra il checkbox Personale se è LAICA o PERSONALE
+                if (displayTipoId == it.faustobe.santibailor.domain.model.TipoRicorrenza.LAICA) {
+                    binding.cbPersonale.setVisibility(View.VISIBLE);
+                    binding.cbPersonale.setChecked(isPersonale);
+                }
                 break;
             }
         }
@@ -145,7 +217,13 @@ public class EditRicorrenzaFragment extends Fragment {
                 populateFields(ricorrenza);
                 if (ricorrenza.getImageUrl() != null && !ricorrenza.getImageUrl().isEmpty()) {
                     imageHandler.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
-                    selectedImageUri = Uri.parse(ricorrenza.getImageUrl());
+                    // NON impostare selectedImageUri qui - deve essere impostato solo quando l'utente seleziona una nuova immagine
+                }
+                // Mostra il pulsante Elimina SOLO per ricorrenze NON religiose (laiche e personali)
+                if (ricorrenza.getTipoRicorrenzaId() != it.faustobe.santibailor.domain.model.TipoRicorrenza.RELIGIOSA) {
+                    binding.btnElimina.setVisibility(View.VISIBLE);
+                } else {
+                    binding.btnElimina.setVisibility(View.GONE);
                 }
             } else {
                 Toast.makeText(getContext(), "Ricorrenza non trovata", Toast.LENGTH_SHORT).show();
@@ -172,6 +250,38 @@ public class EditRicorrenzaFragment extends Fragment {
 
     private void setupListeners() {
         binding.btnSalva.setOnClickListener(v -> saveRicorrenza());
+        binding.btnElimina.setOnClickListener(v -> showDeleteConfirmDialog());
+    }
+
+    private void showDeleteConfirmDialog() {
+        if (ricorrenzaToEdit == null) return;
+
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Conferma eliminazione")
+                .setMessage("Sei sicuro di voler eliminare questa ricorrenza?")
+                .setPositiveButton("Elimina", (dialog, which) -> deleteRicorrenza())
+                .setNegativeButton("Annulla", null)
+                .show();
+    }
+
+    private void deleteRicorrenza() {
+        if (ricorrenzaToEdit == null || !isAdded() || getContext() == null) return;
+
+        // Elimina l'immagine se presente e locale
+        if (ricorrenzaToEdit.getImageUrl() != null &&
+            !ricorrenzaToEdit.getImageUrl().isEmpty() &&
+            !ricorrenzaToEdit.getImageUrl().startsWith("https://firebasestorage.googleapis.com")) {
+            imageHandler.deleteImage(ricorrenzaToEdit.getImageUrl());
+        }
+
+        ricorrenzaViewModel.deleteRicorrenza(ricorrenzaToEdit);
+
+        // Naviga indietro immediatamente senza aspettare il risultato
+        // Il delete è asincrono ma il fragment non deve aspettare
+        if (isAdded() && getContext() != null) {
+            Toast.makeText(getContext(), "Eliminazione in corso...", Toast.LENGTH_SHORT).show();
+            navigateBack();
+        }
     }
 
     private void saveRicorrenza() {
@@ -189,30 +299,72 @@ public class EditRicorrenzaFragment extends Fragment {
         int id = (ricorrenzaToEdit != null) ? ricorrenzaToEdit.getId() : 0;
         int giorno = binding.datePicker.dayPicker.getValue();
         int idMese = binding.datePicker.monthPicker.getValue() - 1;
-        int tipoRicorrenzaId = selectedTipo.getId();
+
+        // Determina il tipo finale: se è LAICA e checkbox Personale è selezionato, usa PERSONALE (3)
+        int baseTipoId = selectedTipo.getId();
+        final int tipoRicorrenzaId;
+        if (baseTipoId == it.faustobe.santibailor.domain.model.TipoRicorrenza.LAICA
+                && binding.cbPersonale.isChecked()) {
+            tipoRicorrenzaId = it.faustobe.santibailor.domain.model.TipoRicorrenza.PERSONALE;
+        } else {
+            tipoRicorrenzaId = baseTipoId;
+        }
+
         final String initialImageUrl = ricorrenzaToEdit != null ? ricorrenzaToEdit.getImageUrl() : null;
         String updatedImageUrl = initialImageUrl;
 
         if (selectedImageUri != null) {
-            imageHandler.saveOrUpdateImageSafely(selectedImageUri, initialImageUrl, new ImageHandler.OnImageSavedListener() {
-                @Override
-                public void onImageSaved(String updatedImageUrl) {
-                    if (isAdded() && getContext() != null) {
-                        completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, updatedImageUrl, prefisso, suffisso, tipoRicorrenzaId);
-                    } else {
-                        Log.w("EditRicorrenzaFragment", "Fragment not attached or context is null when image save completed");
+            // Determina se è una ricorrenza personale o un Santo da Firebase
+            boolean isFirebaseRicorrenza = initialImageUrl != null && initialImageUrl.startsWith("https://firebasestorage.googleapis.com");
+
+            if (isFirebaseRicorrenza) {
+                // Santo da Firebase: continua a usare Firebase
+                imageHandler.saveOrUpdateImageSafely(selectedImageUri, initialImageUrl, new ImageHandler.OnImageSavedListener() {
+                    @Override
+                    public void onImageSaved(String updatedImageUrl) {
+                        if (isAdded() && getContext() != null) {
+                            completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, updatedImageUrl, prefisso, suffisso, tipoRicorrenzaId);
+                        } else {
+                            Log.w("EditRicorrenzaFragment", "Fragment not attached or context is null when image save completed");
+                        }
                     }
+
+                    @Override
+                    public void onError(Exception e) {
+                        if (isAdded() && getContext() != null) {
+                            Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
+                        }
+                    }
+                });
+            } else {
+                // Ricorrenza personale: usa solo storage locale
+                // Se c'era una vecchia immagine locale, eliminiamola prima
+                if (initialImageUrl != null && !initialImageUrl.isEmpty()) {
+                    imageHandler.deleteImage(initialImageUrl);
                 }
 
-                @Override
-                public void onError(Exception e) {
-                    if (isAdded() && getContext() != null) {
-                        Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
+                imageHandler.saveLocalImageOnly(selectedImageUri, new ImageHandler.OnImageSavedListener() {
+                    @Override
+                    public void onImageSaved(String updatedImageUrl) {
+                        if (isAdded() && getContext() != null) {
+                            completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, updatedImageUrl, prefisso, suffisso, tipoRicorrenzaId);
+                        } else {
+                            Log.w("EditRicorrenzaFragment", "Fragment not attached or context is null when image save completed");
+                        }
                     }
-                }
-            });
+
+                    @Override
+                    public void onError(Exception e) {
+                        if (isAdded() && getContext() != null) {
+                            Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
+                        }
+                    }
+                });
+            }
         } else {
             completeRicorrenzaSave(id, idMese, giorno, nome, descrizione, initialImageUrl, prefisso, suffisso, tipoRicorrenzaId);
         }
@@ -271,6 +423,10 @@ public class EditRicorrenzaFragment extends Fragment {
     }
 
     private TipoRicorrenza getTipoRicorrenzaByNome(String nome) {
+        if (tipiRicorrenza == null) {
+            Log.w("EditRicorrenzaFragment", "tipiRicorrenza is null in getTipoRicorrenzaByNome");
+            return null;
+        }
         for (TipoRicorrenza tipo : tipiRicorrenza) {
             if (tipo.getTipo().equals(nome)) {
                 return tipo;
@@ -288,8 +444,9 @@ public class EditRicorrenzaFragment extends Fragment {
     }
 
     private void navigateBack() {
-        NavController navController = Navigation.findNavController(requireView());
-        navController.navigateUp();
+        if (getView() != null) {
+            Navigation.findNavController(getView()).navigateUp();
+        }
     }
 
     @Override

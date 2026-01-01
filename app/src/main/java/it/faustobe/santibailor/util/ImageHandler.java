@@ -115,6 +115,7 @@ public class ImageHandler {
     }
 
     private Uri saveLocalImage(Uri imageUri) throws IOException {
+        Log.d(TAG, "saveLocalImage: Starting image save for URI: " + imageUri);
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), imageUri);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
@@ -122,18 +123,54 @@ public class ImageHandler {
 
         String fileName = "image_" + System.currentTimeMillis() + ".jpg";
         File directory = new File(context.getFilesDir(), "images");
+        Log.d(TAG, "saveLocalImage: Target directory: " + directory.getAbsolutePath());
         if (!directory.exists()) {
-            directory.mkdirs();
+            boolean created = directory.mkdirs();
+            Log.d(TAG, "saveLocalImage: Directory created: " + created);
+        } else {
+            Log.d(TAG, "saveLocalImage: Directory already exists");
         }
         File file = new File(directory, fileName);
+        Log.d(TAG, "saveLocalImage: Target file: " + file.getAbsolutePath());
 
         try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(compressedImage);
         }
 
+        Log.d(TAG, "saveLocalImage: File saved successfully, size: " + file.length() + " bytes");
         return Uri.fromFile(file);
     }
 
+    /**
+     * Salva immagine solo in locale (per Impegni e Ricorrenze personali)
+     * Non carica su Firebase
+     */
+    public void saveLocalImageOnly(Uri imageUri, OnImageSavedListener listener) {
+        Log.d(TAG, "saveLocalImageOnly called with URI: " + imageUri);
+        executorService.execute(() -> {
+            try {
+                Uri localUri = saveLocalImage(imageUri);
+                String localPath = localUri.toString(); // file://...
+                Log.d(TAG, "Image saved locally at: " + localPath);
+                mainHandler.post(() -> {
+                    if (listener != null) {
+                        listener.onImageSaved(localPath);
+                    }
+                });
+            } catch (IOException e) {
+                Log.e(TAG, "Error saving local image", e);
+                mainHandler.post(() -> {
+                    if (listener != null) {
+                        listener.onError(e);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Salva immagine e carica su Firebase (per Santi dal database Firebase)
+     */
     public void saveOrUpdateImageSafely(Uri newImageUri, String existingImageUrl, OnImageSavedListener listener) {
         executorService.execute(() -> {
             try {
@@ -200,7 +237,13 @@ public class ImageHandler {
             return R.drawable.default_ricorrenza_image;
         }
         if (url.startsWith("file://")) {
-            return new File(url.substring(7));
+            File file = new File(url.substring(7));
+            if (file.exists()) {
+                return file;
+            } else {
+                Log.w(TAG, "Local file does not exist: " + url + ", using placeholder");
+                return R.drawable.default_ricorrenza_image;
+            }
         } else if (url.startsWith("content://")) {
             return url;
         } else if (url.startsWith("https://firebasestorage.googleapis.com")) {
@@ -211,23 +254,43 @@ public class ImageHandler {
     }
 
     public void deleteImage(String imageUrl) {
-        if (imageUrl == null) return;
+        if (imageUrl == null || imageUrl.isEmpty()) return;
 
         if (imageUrl.startsWith("https://firebasestorage.googleapis.com")) {
+            // Cancella da Firebase
             StorageReference ref = firebaseStorage.getReferenceFromUrl(imageUrl);
             ref.delete().addOnSuccessListener(aVoid -> {
                 Log.d(TAG, "Firebase image deleted successfully");
             }).addOnFailureListener(e -> {
                 Log.e(TAG, "Error deleting Firebase image", e);
             });
-        } else if (imageUrl.startsWith("file://") || imageUrl.startsWith("content://")) {
-            Uri uri = Uri.parse(imageUrl);
-            File file = new File(uri.getPath());
-            if (file.exists() && file.delete()) {
-                Log.d(TAG, "Local image deleted successfully");
+        } else if (imageUrl.startsWith("file://")) {
+            // Cancella file locale
+            String path = imageUrl.substring(7); // Rimuovi "file://"
+            File file = new File(path);
+            if (file.exists()) {
+                if (file.delete()) {
+                    Log.d(TAG, "Local image deleted successfully: " + path);
+                } else {
+                    Log.e(TAG, "Failed to delete local image: " + path);
+                }
             } else {
-                Log.e(TAG, "Error deleting local image");
+                Log.w(TAG, "Local image file not found: " + path);
             }
+        } else if (imageUrl.startsWith("/")) {
+            // Path assoluto senza prefisso file://
+            File file = new File(imageUrl);
+            if (file.exists()) {
+                if (file.delete()) {
+                    Log.d(TAG, "Local image deleted successfully: " + imageUrl);
+                } else {
+                    Log.e(TAG, "Failed to delete local image: " + imageUrl);
+                }
+            } else {
+                Log.w(TAG, "Local image file not found: " + imageUrl);
+            }
+        } else {
+            Log.w(TAG, "Unknown image URL format, cannot delete: " + imageUrl);
         }
     }
 
