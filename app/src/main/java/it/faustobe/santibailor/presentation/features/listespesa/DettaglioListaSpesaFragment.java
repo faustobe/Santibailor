@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentDettaglioListaSpesaBinding;
 import it.faustobe.santibailor.domain.model.ItemSpesa;
 import it.faustobe.santibailor.domain.model.ListaSpesa;
@@ -51,7 +52,7 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         }
 
         if (listaId == -1) {
-            Toast.makeText(getContext(), "Errore: lista non trovata", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_list_not_found), Toast.LENGTH_SHORT).show();
             Navigation.findNavController(view).navigateUp();
             return;
         }
@@ -145,15 +146,15 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
             binding.etNuovoItem.setText("");
             KeyboardUtils.hideKeyboard(this); // Chiudi tastiera dopo aver aggiunto
         } else {
-            Toast.makeText(getContext(), "Inserisci il nome del prodotto", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.insert_product_name), Toast.LENGTH_SHORT).show();
         }
     }
 
 
     private void showListaMenu() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Opzioni lista")
-                .setItems(new String[]{"Elimina lista"}, (dialog, which) -> {
+                .setTitle(R.string.list_options)
+                .setItems(new String[]{getString(R.string.delete_list)}, (dialog, which) -> {
                     if (which == 0) {
                         showDeleteListaDialog();
                     }
@@ -165,13 +166,13 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         viewModel.getListaById(listaId).observe(getViewLifecycleOwner(), lista -> {
             if (lista != null) {
                 new AlertDialog.Builder(requireContext())
-                        .setTitle("Elimina lista")
-                        .setMessage("Sei sicuro di voler eliminare \"" + lista.getNome() + "\"?")
-                        .setPositiveButton("Elimina", (dialog, which) -> {
+                        .setTitle(R.string.delete_list)
+                        .setMessage(getString(R.string.confirm_delete_list, lista.getNome()))
+                        .setPositiveButton(R.string.elimina, (dialog, which) -> {
                             viewModel.deleteLista(lista);
                             Navigation.findNavController(requireView()).navigateUp();
                         })
-                        .setNegativeButton("Annulla", null)
+                        .setNegativeButton(R.string.annulla, null)
                         .show();
             }
         });
@@ -179,12 +180,12 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
 
     private void showDeleteCompletatiDialog() {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Elimina completati")
-                .setMessage("Vuoi eliminare tutti i prodotti già acquistati?")
-                .setPositiveButton("Elimina", (dialog, which) -> {
+                .setTitle(R.string.delete_completed_items)
+                .setMessage(R.string.confirm_delete_completed)
+                .setPositiveButton(R.string.elimina, (dialog, which) -> {
                     viewModel.deleteItemCompletati(listaId);
                 })
-                .setNegativeButton("Annulla", null)
+                .setNegativeButton(R.string.annulla, null)
                 .show();
     }
 
@@ -233,12 +234,12 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
     @Override
     public void onItemDelete(ItemSpesa item) {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Elimina prodotto")
-                .setMessage("Vuoi eliminare \"" + item.getNome() + "\"?")
-                .setPositiveButton("Elimina", (dialog, which) -> {
+                .setTitle(R.string.delete_product)
+                .setMessage(getString(R.string.confirm_delete_product, item.getNome()))
+                .setPositiveButton(R.string.elimina, (dialog, which) -> {
                     viewModel.deleteItem(item);
                 })
-                .setNegativeButton("Annulla", null)
+                .setNegativeButton(R.string.annulla, null)
                 .show();
     }
 

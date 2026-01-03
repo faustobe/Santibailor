@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Categorie Impegni -->
+    <string-array name="impegni_categories">
+        <item>Lavoro</item>
+        <item>Personale</item>
+        <item>Famiglia</item>
+        <item>Salute</item>
+        <item>Studio</item>
+        <item>Sport</item>
+        <item>Shopping</item>
+        <item>Viaggio</item>
+    </string-array>
+
+    <!-- Mesi dell'anno -->
+    <string-array name="months">
+        <item>Gennaio</item>
+        <item>Febbraio</item>
+        <item>Marzo</item>
+        <item>Aprile</item>
+        <item>Maggio</item>
+        <item>Giugno</item>
+        <item>Luglio</item>
+        <item>Agosto</item>
+        <item>Settembre</item>
+        <item>Ottobre</item>
+        <item>Novembre</item>
+        <item>Dicembre</item>
+    </string-array>
+
+    <!-- Giorni della settimana -->
+    <string-array name="weekdays">
+        <item>Lunedì</item>
+        <item>Martedì</item>
+        <item>Mercoledì</item>
+        <item>Giovedì</item>
+        <item>Venerdì</item>
+        <item>Sabato</item>
+        <item>Domenica</item>
+    </string-array>
+
+    <!-- Giorni della settimana (abbreviati) -->
+    <string-array name="weekdays_short">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Gio</item>
+        <item>Ven</item>
+        <item>Sab</item>
+        <item>Dom</item>
+    </string-array>
+</resources>

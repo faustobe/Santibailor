@@ -29,7 +29,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Impostazioni"
+                    android:text="@string/title_settings"
                     android:textSize="24sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/white"/>
@@ -60,63 +60,63 @@
                     android:id="@+id/btn_generali"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Generali"
+                    android:text="@string/settings_general"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_account"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Account"
+                    android:text="@string/settings_account"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_ricorrenze"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ricorrenze"
+                    android:text="@string/settings_ricorrenze"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_impegni"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Impegni"
+                    android:text="@string/settings_impegni"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_liste_spesa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Liste della Spesa"
+                    android:text="@string/settings_liste_spesa"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_notifiche"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Notifiche"
+                    android:text="@string/settings_notifiche"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_integrazioni"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Integrazioni"
+                    android:text="@string/settings_integrazioni"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_privacy_sicurezza"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Privacy e Sicurezza"
+                    android:text="@string/settings_privacy"
                     android:layout_marginBottom="8dp"/>
 
                 <Button
                     android:id="@+id/btn_supporto_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Supporto e Informazioni"
+                    android:text="@string/settings_support"
                     android:layout_marginBottom="8dp"/>
 
             </LinearLayout>

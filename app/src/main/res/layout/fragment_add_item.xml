@@ -14,7 +14,7 @@
             android:id="@+id/titleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aggiungi elemento"
+            android:text="@string/edit_item"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
@@ -23,7 +23,7 @@
             android:id="@+id/nameInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nome"
+            android:hint="@string/name_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
 
@@ -45,7 +45,7 @@
             android:id="@+id/typeInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tipo"
+            android:hint="@string/type_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_marginBottom="8dp">
 
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Evento personale (compleanno, anniversario, ecc.)"
+            android:text="@string/personal_event"
             android:textSize="14sp"
             android:visibility="gone"/>
 
@@ -72,7 +72,7 @@
             android:id="@+id/prefixInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Prefisso"
+            android:hint="@string/prefix_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
 
@@ -87,7 +87,7 @@
             android:id="@+id/suffixInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Suffisso"
+            android:hint="@string/suffix_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
 
@@ -102,7 +102,7 @@
             android:id="@+id/bioInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Biografia"
+            android:hint="@string/biography_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_marginBottom="8dp">
 
@@ -128,7 +128,7 @@
             android:id="@+id/selectImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seleziona Immagine"
+            android:text="@string/select_image"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"/>
 
@@ -136,7 +136,7 @@
             android:id="@+id/saveButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Salva"
+            android:text="@string/salva"
             android:layout_marginTop="16dp"/>
 
     </LinearLayout>

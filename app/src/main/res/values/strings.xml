@@ -98,6 +98,126 @@
     <string name="select_language">Seleziona Lingua</string>
     <string name="settings_category">Impostazioni Categoria</string>
     <string name="back_to_settings">Torna alle Impostazioni</string>
+    <string name="theme_applied">Tema applicato</string>
+    <string name="language_applied_restart">Lingua applicata. Riavviare l\'app</string>
+    <string name="navigation_error">Errore nella navigazione</string>
+    <string name="feature_in_development">Funzionalità in sviluppo</string>
+
+    <!-- Impostazioni - Categorie Principali -->
+    <string name="settings_general">Generali</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_ricorrenze">Ricorrenze</string>
+    <string name="settings_impegni">Impegni</string>
+    <string name="settings_liste_spesa">Liste della Spesa</string>
+    <string name="settings_notifiche">Notifiche</string>
+    <string name="settings_integrazioni">Integrazioni</string>
+    <string name="settings_privacy">Privacy e Sicurezza</string>
+    <string name="settings_support">Supporto e Informazioni</string>
+
+    <!-- Impostazioni - Categoria Generali -->
+    <string name="settings_general_category">Impostazioni Generali</string>
+    <string name="settings_general_theme_title">Tema</string>
+    <string name="settings_general_theme_desc">Seleziona il tema dell\'app</string>
+    <string name="settings_general_language_title">Lingua</string>
+    <string name="settings_general_language_desc">Scegli la lingua dell\'app</string>
+    <string name="settings_general_notifications_title">Notifiche</string>
+    <string name="settings_general_notifications_desc">Gestisci le notifiche push</string>
+    <string name="settings_general_font_title">Font e dimensione del testo</string>
+    <string name="settings_general_font_desc">Personalizza il carattere e la dimensione</string>
+    <string name="settings_general_sync_title">Sincronizzazione</string>
+    <string name="settings_general_sync_desc">Opzioni per sincronizzare i dati</string>
+    <string name="settings_general_backup_title">Backup e ripristino</string>
+    <string name="settings_general_backup_desc">Gestisci backup e ripristino dei dati</string>
+
+    <!-- Impostazioni - Categoria Account -->
+    <string name="settings_account_category">Impostazioni Account</string>
+    <string name="settings_account_profile_title">Profilo utente</string>
+    <string name="settings_account_profile_desc">Modifica le informazioni personali</string>
+    <string name="settings_account_manage_title">Gestione account</string>
+    <string name="settings_account_manage_desc">Collega o disconnetti account</string>
+    <string name="settings_account_password_title">Cambio password</string>
+    <string name="settings_account_password_desc">Modifica la password o configura l\'autenticazione</string>
+    <string name="settings_account_export_title">Esporta dati</string>
+    <string name="settings_account_export_desc">Esporta le informazioni personali</string>
+    <string name="settings_account_delete_title">Elimina account</string>
+    <string name="settings_account_delete_desc">Elimina definitivamente l\'account</string>
+
+    <!-- Impostazioni - Categoria Ricorrenze -->
+    <string name="settings_ricorrenze_category">Impostazioni Ricorrenze</string>
+    <string name="settings_ricorrenze_manage_title">Gestione Ricorrenze</string>
+    <string name="settings_ricorrenze_manage_desc">Aggiungi, modifica o elimina ricorrenze</string>
+    <string name="settings_ricorrenze_search_title">Cerca Ricorrenze</string>
+    <string name="settings_ricorrenze_search_desc">Cerca tra le ricorrenze esistenti</string>
+    <string name="settings_ricorrenze_add_title">Aggiungi Nuova Ricorrenza</string>
+    <string name="settings_ricorrenze_add_desc">Crea una nuova ricorrenza</string>
+    <string name="settings_ricorrenze_notifications_title">Notifiche Ricorrenze</string>
+    <string name="settings_ricorrenze_notifications_desc">Attiva o disattiva le notifiche</string>
+    <string name="settings_ricorrenze_sync_title">Sincronizzazione calendario</string>
+    <string name="settings_ricorrenze_sync_desc">Sincronizza con calendari esterni</string>
+
+    <!-- Impostazioni - Categoria Impegni -->
+    <string name="settings_impegni_category">Impostazioni Impegni</string>
+    <string name="settings_impegni_view_title">Visualizzazione impegni</string>
+    <string name="settings_impegni_view_desc">Scegli il formato di visualizzazione</string>
+    <string name="settings_impegni_reminders_title">Promemoria per impegni</string>
+    <string name="settings_impegni_reminders_desc">Gestisci i promemoria</string>
+    <string name="settings_impegni_categories_title">Categorie impegni</string>
+    <string name="settings_impegni_categories_desc">Crea e gestisci categorie personalizzate</string>
+    <string name="settings_impegni_sharing_title">Condivisione</string>
+    <string name="settings_impegni_sharing_desc">Opzioni per condividere gli impegni</string>
+    <string name="settings_impegni_duration_title">Durata predefinita</string>
+    <string name="settings_impegni_duration_desc">Imposta una durata standard</string>
+
+    <!-- Impostazioni - Categoria Liste Spesa -->
+    <string name="settings_liste_category">Impostazioni Liste Spesa</string>
+    <string name="settings_liste_categories_title">Categorie prodotti</string>
+    <string name="settings_liste_categories_desc">Gestisci categorie per i prodotti</string>
+    <string name="settings_liste_frequent_title">Prodotti frequenti</string>
+    <string name="settings_liste_frequent_desc">Visualizza e modifica prodotti salvati</string>
+    <string name="settings_liste_units_title">Unità di misura</string>
+    <string name="settings_liste_units_desc">Configura unità predefinite</string>
+
+    <!-- Impostazioni - Categoria Notifiche -->
+    <string name="settings_notifications_category">Impostazioni Notifiche</string>
+    <string name="settings_notifications_ricorrenze_title">Notifiche per Ricorrenze</string>
+    <string name="settings_notifications_ricorrenze_desc">Imposta le notifiche per eventi ricorrenti</string>
+    <string name="settings_notifications_impegni_title">Notifiche per Impegni</string>
+    <string name="settings_notifications_impegni_desc">Gestisci i promemoria per gli impegni</string>
+    <string name="settings_notifications_silent_title">Notifiche silenziose</string>
+    <string name="settings_notifications_silent_desc">Configura la modalità non disturbare</string>
+    <string name="settings_notifications_snooze_title">Snooze delle notifiche</string>
+    <string name="settings_notifications_snooze_desc">Opzioni per posticipare le notifiche</string>
+
+    <!-- Impostazioni - Categoria Integrazioni -->
+    <string name="settings_integrations_category">Impostazioni Integrazioni</string>
+    <string name="settings_integrations_calendar_title">Integrazione con Calendari</string>
+    <string name="settings_integrations_calendar_desc">Collega calendari esterni</string>
+    <string name="settings_integrations_voice_title">Integrazione con Assistenti Vocali</string>
+    <string name="settings_integrations_voice_desc">Collega assistenti vocali</string>
+    <string name="settings_integrations_third_party_title">Integrazione con App di Terze Parti</string>
+    <string name="settings_integrations_third_party_desc">Collega app per la gestione delle attività</string>
+
+    <!-- Impostazioni - Categoria Privacy e Sicurezza -->
+    <string name="settings_privacy_category">Impostazioni Privacy &amp; Sicurezza</string>
+    <string name="settings_privacy_lock_title">Blocco dell\'app</string>
+    <string name="settings_privacy_lock_desc">Attiva blocco con PIN o biometrico</string>
+    <string name="settings_privacy_permissions_title">Permessi</string>
+    <string name="settings_privacy_permissions_desc">Gestisci i permessi dell\'app</string>
+    <string name="settings_privacy_history_title">Cronologia dati</string>
+    <string name="settings_privacy_history_desc">Visualizza e gestisci la cronologia</string>
+    <string name="settings_privacy_encryption_title">Crittografia dati</string>
+    <string name="settings_privacy_encryption_desc">Abilita la crittografia per dati sensibili</string>
+
+    <!-- Impostazioni - Categoria Supporto -->
+    <string name="settings_support_category">Info e Supporto</string>
+    <string name="settings_support_contact_title">Contatti e Supporto</string>
+    <string name="settings_support_contact_desc">Accedi all\'assistenza</string>
+    <string name="settings_support_faq_title">Domande frequenti (FAQ)</string>
+    <string name="settings_support_faq_desc">Visualizza le domande comuni</string>
+    <string name="settings_support_version_title">Versione dell\'app</string>
+    <string name="settings_support_version_desc">Informazioni sulla versione</string>
+    <string name="settings_support_feedback_title">Feedback</string>
+    <string name="settings_support_feedback_desc">Invia feedback o suggerimenti</string>
 
     <!-- Ricerca -->
     <string name="search">Cerca</string>
@@ -137,12 +257,79 @@
     <string name="modifica">Modifica</string>
     <string name="select_image">Seleziona Immagine</string>
     <string name="edit_item">Aggiungi elemento</string>
+    <string name="prefix_hint">Prefisso</string>
+    <string name="name_hint">Nome</string>
+    <string name="suffix_hint">Suffisso</string>
+    <string name="type_hint">Tipo</string>
+    <string name="description_hint">Descrizione</string>
+    <string name="biography_hint">Biografia</string>
+    <string name="manage_ricorrenze">Gestione Ricorrenze</string>
+    <string name="add_ricorrenza_button">Aggiungi Ricorrenza</string>
+    <string name="view_all_ricorrenze">Visualizza Tutte le Ricorrenze</string>
+    <string name="import_export_ricorrenze">Importa/Esporta Ricorrenze</string>
+    <string name="ricorrenza_not_found">Ricorrenza non trovata</string>
+    <string name="deleting_in_progress">Eliminazione in corso...</string>
+    <string name="error_saving_image">Errore nel salvataggio dell\'immagine: %s</string>
+    <string name="fill_all_required_fields">Compila tutti i campi obbligatori</string>
+    <string name="confirm_delete">Conferma eliminazione</string>
+    <string name="confirm_delete_ricorrenza">Sei sicuro di voler eliminare questa ricorrenza?</string>
+    <string name="ricorrenza_deleted_success">Ricorrenza cancellata con successo</string>
+    <string name="error_deleting">Errore durante la cancellazione</string>
+    <string name="invalid_ricorrenza_id">ID ricorrenza non valido</string>
+    <string name="search_type_hint">Tipo di Ricorrenza</string>
+    <string name="search_date_start_hint">Data inizio</string>
+    <string name="search_date_end_hint">Data fine</string>
+    <string name="search_debug_params">Parametri di ricerca:\n%s</string>
 
     <!-- Quick Actions -->
     <string name="quick_action_write">Scrivi</string>
     <string name="quick_action_organize">Organizza</string>
     <string name="quick_action_search">Ricerca</string>
     <string name="quick_action_summary">Riepilogo</string>
+
+    <!-- Impegni -->
+    <string name="filters_label">Filtri</string>
+    <string name="all_filter">Tutti</string>
+    <string name="future_filter">Futuri</string>
+    <string name="confirm_delete_impegno">Sei sicuro di voler eliminare questo impegno?</string>
+    <string name="error_saving_image_impegno">Errore salvataggio immagine: %s</string>
+
+    <!-- Liste Spesa -->
+    <string name="close_list">Chiudi lista</string>
+    <string name="list_menu">Menu lista</string>
+    <string name="add_product_hint">Aggiungi prodotto...</string>
+    <string name="add_button_desc">Aggiungi</string>
+    <string name="new_list_hint">Nuova lista...</string>
+    <string name="list_name_hint">Nome lista</string>
+    <string name="error_list_not_found">Errore: lista non trovata</string>
+    <string name="insert_product_name">Inserisci il nome del prodotto</string>
+    <string name="list_options">Opzioni lista</string>
+    <string name="delete_list">Elimina lista</string>
+    <string name="confirm_delete_list">Sei sicuro di voler eliminare \"%s\"?</string>
+    <string name="delete_completed_items">Elimina completati</string>
+    <string name="confirm_delete_completed">Vuoi eliminare tutti i prodotti già acquistati?</string>
+    <string name="delete_product">Elimina prodotto</string>
+    <string name="confirm_delete_product">Vuoi eliminare \"%s\"?</string>
+    <string name="new_list">Nuova lista</string>
+    <string name="insert_list_name">Inserisci il nome della lista</string>
+    <string name="insert_name">Inserisci un nome</string>
+    <string name="delete_completed_lists">Elimina liste completate</string>
+    <string name="confirm_delete_completed_lists">Sei sicuro di voler eliminare tutte le liste completate?</string>
+
+    <!-- Dashboard -->
+    <string name="overview">Panoramica</string>
+    <string name="ricorrenze_statistics">📊 Statistiche Ricorrenze</string>
+    <string name="total_label">Totali</string>
+    <string name="today_label">Oggi</string>
+    <string name="ricorrenze_by_type">🏷️ Ricorrenze per Tipo</string>
+    <string name="religious_label">⛪ Religiose:</string>
+    <string name="secular_label">🌍 Laiche:</string>
+    <string name="impegni_statistics">📅 Statistiche Impegni</string>
+    <string name="future_label">Futuri</string>
+    <string name="done_label">Fatti</string>
+    <string name="info_label">ℹ️ Informazioni</string>
+    <string name="database_loading">Database: Caricamento...</string>
+    <string name="notifications_checking">Notifiche: Verificando...</string>
 
     <!-- Riepilogo -->
     <string name="summary">Riepilogo</string>
@@ -157,6 +344,39 @@
     <string name="no_commitments_period">Nessun impegno in questo periodo</string>
     <string name="commitments_saved">%d impegni salvati</string>
     <string name="insert_at_least_one">Inserisci almeno un impegno</string>
+
+    <!-- Organizza Giornata -->
+    <string name="organizza_giornata">Organizza Giornata</string>
+    <string name="add_commitments_quickly">Aggiungi impegni rapidamente</string>
+    <string name="commitment_1_hint">Impegno 1</string>
+    <string name="commitment_2_hint">Impegno 2</string>
+    <string name="commitment_3_hint">Impegno 3</string>
+    <string name="commitment_4_hint">Impegno 4</string>
+    <string name="commitment_5_hint">Impegno 5</string>
+    <string name="time_hint_0900">Ora (es. 09:00)</string>
+    <string name="time_hint_1030">Ora (es. 10:30)</string>
+    <string name="time_hint_1400">Ora (es. 14:00)</string>
+    <string name="time_hint_1600">Ora (es. 16:00)</string>
+    <string name="time_hint_1800">Ora (es. 18:00)</string>
+    <string name="save_all_commitments">Salva tutti gli impegni</string>
+
+    <!-- Note -->
+    <string name="note_title_hint">Titolo</string>
+    <string name="note_content_hint">Contenuto</string>
+    <string name="note_title_dummy">Titolo nota</string>
+    <string name="note_content_dummy">Contenuto della nota...</string>
+    <string name="note_modified_dummy">Modificata: 01/01/2026 12:00</string>
+    <string name="notes_and_memos">Note e Appunti</string>
+    <string name="notes_auto_save_info">Le note vengono salvate automaticamente</string>
+
+    <!-- Toolbar / Home -->
+    <string name="day_dummy">30</string>
+    <string name="month_dummy">Dicembre</string>
+    <string name="weekday_dummy">martedì</string>
+
+    <!-- Altro -->
+    <string name="temp_category_message">Questa categoria non è ancora stata implementata.</string>
+    <string name="time_separator">:</string>
 
     <!-- Visualizzazione Ricorrenze -->
     <string name="visualization_settings">Impostazioni di Visualizzazione</string>

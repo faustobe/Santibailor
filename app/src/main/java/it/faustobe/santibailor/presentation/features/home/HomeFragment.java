@@ -702,7 +702,7 @@ public class HomeFragment extends Fragment {
             NavDirections action = HomeFragmentDirections.actionHomeFragmentToRicorrenzaDetailFragment(ricorrenzaId);
             Navigation.findNavController(requireView()).navigate(action);
         } else {
-            Toast.makeText(requireContext(), "ID ricorrenza non valido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.invalid_ricorrenza_id), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -777,7 +777,7 @@ public class HomeFragment extends Fragment {
             NavDirections action = HomeFragmentDirections.actionHomeFragmentToRicorrenzaDetailFragment(ricorrenzaId);
             Navigation.findNavController(requireView()).navigate(action);
         } else {
-            Toast.makeText(requireContext(), "ID ricorrenza non valido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.invalid_ricorrenza_id), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -793,10 +793,10 @@ public class HomeFragment extends Fragment {
 
     private void showDeleteConfirmationDialog(Ricorrenza ricorrenza) {
         new AlertDialog.Builder(requireContext())
-                .setTitle("Conferma cancellazione")
-                .setMessage("Sei sicuro di voler cancellare questa ricorrenza?")
-                .setPositiveButton("Sì", (dialog, which) -> deleteRicorrenza(ricorrenza))
-                .setNegativeButton("No", null)
+                .setTitle(R.string.confirm_delete)
+                .setMessage(R.string.confirm_delete_ricorrenza)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> deleteRicorrenza(ricorrenza))
+                .setNegativeButton(android.R.string.cancel, null)
                 .show();
     }
 
@@ -807,9 +807,9 @@ public class HomeFragment extends Fragment {
     private void observeDeleteResult() {
         ricorrenzaViewModel.getDeleteResult().observe(getViewLifecycleOwner(), isSuccess -> {
             if (isSuccess) {
-                Toast.makeText(requireContext(), "Ricorrenza cancellata con successo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.ricorrenza_deleted_success), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(requireContext(), "Errore durante la cancellazione", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.error_deleting), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -28,7 +28,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Filtri"
+                    android:text="@string/filters_label"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:paddingBottom="8dp"/>
@@ -44,7 +44,7 @@
                         android:id="@+id/chip_show_all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tutti"
+                        android:text="@string/all_filter"
                         android:checked="true"
                         style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
@@ -59,7 +59,7 @@
                         android:id="@+id/chip_future"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Futuri"
+                        android:text="@string/future_filter"
                         style="@style/Widget.MaterialComponents.Chip.Filter"/>
 
                     <com.google.android.material.chip.Chip

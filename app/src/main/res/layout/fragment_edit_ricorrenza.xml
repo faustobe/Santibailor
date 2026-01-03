@@ -21,7 +21,7 @@
                 android:id="@+id/til_prefisso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Prefisso"
+                android:hint="@string/prefix_hint"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -35,7 +35,7 @@
                 android:id="@+id/til_nome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nome"
+                android:hint="@string/name_hint"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginTop="16dp">
 
@@ -55,7 +55,7 @@
                 android:id="@+id/til_suffisso"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Suffisso"
+                android:hint="@string/suffix_hint"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginTop="16dp">
 
@@ -70,7 +70,7 @@
                 android:id="@+id/til_tipo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tipo"
+                android:hint="@string/type_hint"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_marginTop="16dp">
 
@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Evento personale (compleanno, anniversario, ecc.)"
+                android:text="@string/personal_event"
                 android:textSize="14sp"
                 android:visibility="gone"/>
 
@@ -102,7 +102,7 @@
                 android:id="@+id/til_descrizione"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Descrizione"
+                android:hint="@string/description_hint"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginTop="16dp">
 
@@ -135,14 +135,14 @@
                 android:id="@+id/btn_salva"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Salva"
+                android:text="@string/salva"
                 android:layout_marginTop="24dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_elimina"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Elimina"
+                android:text="@string/elimina"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
                 android:backgroundTint="@android:color/holo_red_dark"

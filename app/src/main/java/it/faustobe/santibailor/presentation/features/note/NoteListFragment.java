@@ -108,7 +108,7 @@ public class NoteListFragment extends Fragment implements NoteAdapter.OnNotaClic
     @Override
     public void onNotaLongClick(Nota nota) {
         // Per ora non implementato, potrebbe aprire un menu contestuale
-        Toast.makeText(getContext(), "Long click su: " + nota.getTitolo(), Toast.LENGTH_SHORT).show();
+        // TODO: Implementare menu contestuale
     }
 
     @Override

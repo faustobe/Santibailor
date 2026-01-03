@@ -66,7 +66,7 @@ public class NoteFragment extends Fragment {
         // Pulsante salva
         btnSave.setOnClickListener(v -> {
             saveNote();
-            Toast.makeText(getContext(), "Nota salvata", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.note_saved), Toast.LENGTH_SHORT).show();
         });
 
         // Auto-save mentre scrivi (con delay)
@@ -101,7 +101,7 @@ public class NoteFragment extends Fragment {
         long lastSaved = prefs.getLong(KEY_LAST_SAVED, 0);
         if (lastSaved > 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALIAN);
-            tvLastSaved.setText("Ultimo salvataggio: " + sdf.format(new Date(lastSaved)));
+            tvLastSaved.setText(getString(R.string.last_saved, sdf.format(new Date(lastSaved))));
         }
     }
 
@@ -115,7 +115,7 @@ public class NoteFragment extends Fragment {
 
     private void updateLastSavedText() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ITALIAN);
-        tvLastSaved.setText("Ultimo salvataggio: " + sdf.format(new Date()));
+        tvLastSaved.setText(getString(R.string.last_saved, sdf.format(new Date())));
     }
 
     @Override

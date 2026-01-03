@@ -98,6 +98,126 @@
     <string name="select_language">Select Language</string>
     <string name="settings_category">Category Settings</string>
     <string name="back_to_settings">Back to Settings</string>
+    <string name="theme_applied">Theme applied</string>
+    <string name="language_applied_restart">Language applied. Restart the app</string>
+    <string name="navigation_error">Navigation error</string>
+    <string name="feature_in_development">Feature in development</string>
+
+    <!-- Settings - Main Categories -->
+    <string name="settings_general">General</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_ricorrenze">Recurrences</string>
+    <string name="settings_impegni">Commitments</string>
+    <string name="settings_liste_spesa">Shopping Lists</string>
+    <string name="settings_notifiche">Notifications</string>
+    <string name="settings_integrazioni">Integrations</string>
+    <string name="settings_privacy">Privacy and Security</string>
+    <string name="settings_support">Support and Information</string>
+
+    <!-- Settings - General Category -->
+    <string name="settings_general_category">General Settings</string>
+    <string name="settings_general_theme_title">Theme</string>
+    <string name="settings_general_theme_desc">Select app theme</string>
+    <string name="settings_general_language_title">Language</string>
+    <string name="settings_general_language_desc">Choose app language</string>
+    <string name="settings_general_notifications_title">Notifications</string>
+    <string name="settings_general_notifications_desc">Manage push notifications</string>
+    <string name="settings_general_font_title">Font and text size</string>
+    <string name="settings_general_font_desc">Customize font and size</string>
+    <string name="settings_general_sync_title">Synchronization</string>
+    <string name="settings_general_sync_desc">Options to sync data</string>
+    <string name="settings_general_backup_title">Backup and restore</string>
+    <string name="settings_general_backup_desc">Manage data backup and restore</string>
+
+    <!-- Settings - Account Category -->
+    <string name="settings_account_category">Account Settings</string>
+    <string name="settings_account_profile_title">User profile</string>
+    <string name="settings_account_profile_desc">Edit personal information</string>
+    <string name="settings_account_manage_title">Account management</string>
+    <string name="settings_account_manage_desc">Link or disconnect accounts</string>
+    <string name="settings_account_password_title">Change password</string>
+    <string name="settings_account_password_desc">Modify password or configure authentication</string>
+    <string name="settings_account_export_title">Export data</string>
+    <string name="settings_account_export_desc">Export personal information</string>
+    <string name="settings_account_delete_title">Delete account</string>
+    <string name="settings_account_delete_desc">Permanently delete account</string>
+
+    <!-- Settings - Recurrences Category -->
+    <string name="settings_ricorrenze_category">Recurrence Settings</string>
+    <string name="settings_ricorrenze_manage_title">Manage Recurrences</string>
+    <string name="settings_ricorrenze_manage_desc">Add, edit or delete recurrences</string>
+    <string name="settings_ricorrenze_search_title">Search Recurrences</string>
+    <string name="settings_ricorrenze_search_desc">Search existing recurrences</string>
+    <string name="settings_ricorrenze_add_title">Add New Recurrence</string>
+    <string name="settings_ricorrenze_add_desc">Create a new recurrence</string>
+    <string name="settings_ricorrenze_notifications_title">Recurrence Notifications</string>
+    <string name="settings_ricorrenze_notifications_desc">Enable or disable notifications</string>
+    <string name="settings_ricorrenze_sync_title">Calendar synchronization</string>
+    <string name="settings_ricorrenze_sync_desc">Sync with external calendars</string>
+
+    <!-- Settings - Commitments Category -->
+    <string name="settings_impegni_category">Commitment Settings</string>
+    <string name="settings_impegni_view_title">Commitment view</string>
+    <string name="settings_impegni_view_desc">Choose display format</string>
+    <string name="settings_impegni_reminders_title">Commitment reminders</string>
+    <string name="settings_impegni_reminders_desc">Manage reminders</string>
+    <string name="settings_impegni_categories_title">Commitment categories</string>
+    <string name="settings_impegni_categories_desc">Create and manage custom categories</string>
+    <string name="settings_impegni_sharing_title">Sharing</string>
+    <string name="settings_impegni_sharing_desc">Options to share commitments</string>
+    <string name="settings_impegni_duration_title">Default duration</string>
+    <string name="settings_impegni_duration_desc">Set a standard duration</string>
+
+    <!-- Settings - Shopping Lists Category -->
+    <string name="settings_liste_category">Shopping List Settings</string>
+    <string name="settings_liste_categories_title">Product categories</string>
+    <string name="settings_liste_categories_desc">Manage product categories</string>
+    <string name="settings_liste_frequent_title">Frequent products</string>
+    <string name="settings_liste_frequent_desc">View and edit saved products</string>
+    <string name="settings_liste_units_title">Units of measurement</string>
+    <string name="settings_liste_units_desc">Configure default units</string>
+
+    <!-- Settings - Notifications Category -->
+    <string name="settings_notifications_category">Notification Settings</string>
+    <string name="settings_notifications_ricorrenze_title">Recurrence Notifications</string>
+    <string name="settings_notifications_ricorrenze_desc">Set notifications for recurring events</string>
+    <string name="settings_notifications_impegni_title">Commitment Notifications</string>
+    <string name="settings_notifications_impegni_desc">Manage commitment reminders</string>
+    <string name="settings_notifications_silent_title">Silent notifications</string>
+    <string name="settings_notifications_silent_desc">Configure do not disturb mode</string>
+    <string name="settings_notifications_snooze_title">Notification snooze</string>
+    <string name="settings_notifications_snooze_desc">Options to postpone notifications</string>
+
+    <!-- Settings - Integrations Category -->
+    <string name="settings_integrations_category">Integration Settings</string>
+    <string name="settings_integrations_calendar_title">Calendar Integration</string>
+    <string name="settings_integrations_calendar_desc">Link external calendars</string>
+    <string name="settings_integrations_voice_title">Voice Assistant Integration</string>
+    <string name="settings_integrations_voice_desc">Link voice assistants</string>
+    <string name="settings_integrations_third_party_title">Third-Party App Integration</string>
+    <string name="settings_integrations_third_party_desc">Link task management apps</string>
+
+    <!-- Settings - Privacy and Security Category -->
+    <string name="settings_privacy_category">Privacy &amp; Security Settings</string>
+    <string name="settings_privacy_lock_title">App lock</string>
+    <string name="settings_privacy_lock_desc">Enable PIN or biometric lock</string>
+    <string name="settings_privacy_permissions_title">Permissions</string>
+    <string name="settings_privacy_permissions_desc">Manage app permissions</string>
+    <string name="settings_privacy_history_title">Data history</string>
+    <string name="settings_privacy_history_desc">View and manage history</string>
+    <string name="settings_privacy_encryption_title">Data encryption</string>
+    <string name="settings_privacy_encryption_desc">Enable encryption for sensitive data</string>
+
+    <!-- Settings - Support Category -->
+    <string name="settings_support_category">Info and Support</string>
+    <string name="settings_support_contact_title">Contact and Support</string>
+    <string name="settings_support_contact_desc">Access assistance</string>
+    <string name="settings_support_faq_title">Frequently Asked Questions (FAQ)</string>
+    <string name="settings_support_faq_desc">View common questions</string>
+    <string name="settings_support_version_title">App version</string>
+    <string name="settings_support_version_desc">Version information</string>
+    <string name="settings_support_feedback_title">Feedback</string>
+    <string name="settings_support_feedback_desc">Send feedback or suggestions</string>
 
     <!-- Search -->
     <string name="search">Search</string>
@@ -137,12 +257,79 @@
     <string name="modifica">Edit</string>
     <string name="select_image">Select Image</string>
     <string name="edit_item">Add item</string>
+    <string name="prefix_hint">Prefix</string>
+    <string name="name_hint">Name</string>
+    <string name="suffix_hint">Suffix</string>
+    <string name="type_hint">Type</string>
+    <string name="description_hint">Description</string>
+    <string name="biography_hint">Biography</string>
+    <string name="manage_ricorrenze">Manage Recurrences</string>
+    <string name="add_ricorrenza_button">Add Recurrence</string>
+    <string name="view_all_ricorrenze">View All Recurrences</string>
+    <string name="import_export_ricorrenze">Import/Export Recurrences</string>
+    <string name="ricorrenza_not_found">Recurrence not found</string>
+    <string name="deleting_in_progress">Deleting...</string>
+    <string name="error_saving_image">Error saving image: %s</string>
+    <string name="fill_all_required_fields">Fill all required fields</string>
+    <string name="confirm_delete">Confirm deletion</string>
+    <string name="confirm_delete_ricorrenza">Are you sure you want to delete this recurrence?</string>
+    <string name="ricorrenza_deleted_success">Recurrence deleted successfully</string>
+    <string name="error_deleting">Error during deletion</string>
+    <string name="invalid_ricorrenza_id">Invalid recurrence ID</string>
+    <string name="search_type_hint">Recurrence Type</string>
+    <string name="search_date_start_hint">Start date</string>
+    <string name="search_date_end_hint">End date</string>
+    <string name="search_debug_params">Search parameters:\n%s</string>
 
     <!-- Quick Actions -->
     <string name="quick_action_write">Write</string>
     <string name="quick_action_organize">Organize</string>
     <string name="quick_action_search">Search</string>
     <string name="quick_action_summary">Summary</string>
+
+    <!-- Commitments -->
+    <string name="filters_label">Filters</string>
+    <string name="all_filter">All</string>
+    <string name="future_filter">Future</string>
+    <string name="confirm_delete_impegno">Are you sure you want to delete this commitment?</string>
+    <string name="error_saving_image_impegno">Error saving image: %s</string>
+
+    <!-- Shopping Lists -->
+    <string name="close_list">Close list</string>
+    <string name="list_menu">List menu</string>
+    <string name="add_product_hint">Add product...</string>
+    <string name="add_button_desc">Add</string>
+    <string name="new_list_hint">New list...</string>
+    <string name="list_name_hint">List name</string>
+    <string name="error_list_not_found">Error: list not found</string>
+    <string name="insert_product_name">Enter product name</string>
+    <string name="list_options">List options</string>
+    <string name="delete_list">Delete list</string>
+    <string name="confirm_delete_list">Are you sure you want to delete \"%s\"?</string>
+    <string name="delete_completed_items">Delete completed</string>
+    <string name="confirm_delete_completed">Do you want to delete all purchased products?</string>
+    <string name="delete_product">Delete product</string>
+    <string name="confirm_delete_product">Do you want to delete \"%s\"?</string>
+    <string name="new_list">New list</string>
+    <string name="insert_list_name">Enter list name</string>
+    <string name="insert_name">Enter a name</string>
+    <string name="delete_completed_lists">Delete completed lists</string>
+    <string name="confirm_delete_completed_lists">Are you sure you want to delete all completed lists?</string>
+
+    <!-- Dashboard -->
+    <string name="overview">Overview</string>
+    <string name="ricorrenze_statistics">📊 Recurrence Statistics</string>
+    <string name="total_label">Total</string>
+    <string name="today_label">Today</string>
+    <string name="ricorrenze_by_type">🏷️ Recurrences by Type</string>
+    <string name="religious_label">⛪ Religious:</string>
+    <string name="secular_label">🌍 Secular:</string>
+    <string name="impegni_statistics">📅 Commitment Statistics</string>
+    <string name="future_label">Future</string>
+    <string name="done_label">Done</string>
+    <string name="info_label">ℹ️ Information</string>
+    <string name="database_loading">Database: Loading...</string>
+    <string name="notifications_checking">Notifications: Checking...</string>
 
     <!-- Summary -->
     <string name="summary">Summary</string>
@@ -157,6 +344,39 @@
     <string name="no_commitments_period">No commitments in this period</string>
     <string name="commitments_saved">%d commitments saved</string>
     <string name="insert_at_least_one">Insert at least one commitment</string>
+
+    <!-- Organize Day -->
+    <string name="organizza_giornata">Organize Day</string>
+    <string name="add_commitments_quickly">Add commitments quickly</string>
+    <string name="commitment_1_hint">Commitment 1</string>
+    <string name="commitment_2_hint">Commitment 2</string>
+    <string name="commitment_3_hint">Commitment 3</string>
+    <string name="commitment_4_hint">Commitment 4</string>
+    <string name="commitment_5_hint">Commitment 5</string>
+    <string name="time_hint_0900">Time (e.g. 09:00)</string>
+    <string name="time_hint_1030">Time (e.g. 10:30)</string>
+    <string name="time_hint_1400">Time (e.g. 14:00)</string>
+    <string name="time_hint_1600">Time (e.g. 16:00)</string>
+    <string name="time_hint_1800">Time (e.g. 18:00)</string>
+    <string name="save_all_commitments">Save all commitments</string>
+
+    <!-- Notes -->
+    <string name="note_title_hint">Title</string>
+    <string name="note_content_hint">Content</string>
+    <string name="note_title_dummy">Note title</string>
+    <string name="note_content_dummy">Note content...</string>
+    <string name="note_modified_dummy">Modified: 01/01/2026 12:00</string>
+    <string name="notes_and_memos">Notes and Memos</string>
+    <string name="notes_auto_save_info">Notes are automatically saved</string>
+
+    <!-- Toolbar / Home -->
+    <string name="day_dummy">30</string>
+    <string name="month_dummy">December</string>
+    <string name="weekday_dummy">Tuesday</string>
+
+    <!-- Other -->
+    <string name="temp_category_message">This category has not been implemented yet.</string>
+    <string name="time_separator">:</string>
 
     <!-- Recurrence Visualization -->
     <string name="visualization_settings">Visualization Settings</string>

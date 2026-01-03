@@ -92,21 +92,21 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
         try {
             navController.navigate(destinationId);
         } catch (Exception e) {
-            Log.e("CategorySettingsFragment", "Errore di navigazione: " + e.getMessage());
-            Toast.makeText(requireContext(), "Errore nella navigazione", Toast.LENGTH_SHORT).show();
+            Log.e("CategorySettingsFragment", "Navigation error: " + e.getMessage());
+            Toast.makeText(requireContext(), getString(R.string.navigation_error), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void performAction(SettingItem item) {
         String title = item.getTitle();
 
-        if ("Tema".equals(title)) {
+        if (getString(R.string.settings_general_theme_title).equals(title)) {
             showThemeDialog();
-        } else if ("Lingua".equals(title)) {
+        } else if (getString(R.string.settings_general_language_title).equals(title)) {
             showLanguageDialog();
         } else {
-            Log.d("CategorySettingsFragment", "Azione eseguita per: " + title);
-            Toast.makeText(requireContext(), "Funzionalità in sviluppo", Toast.LENGTH_SHORT).show();
+            Log.d("CategorySettingsFragment", "Action executed for: " + title);
+            Toast.makeText(requireContext(), getString(R.string.feature_in_development), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -133,7 +133,7 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
                     String selectedTheme = themes[which];
                     ThemeManager.saveTheme(requireContext(), selectedTheme);
                     ThemeManager.applyTheme(selectedTheme);
-                    Toast.makeText(requireContext(), "Tema applicato", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), getString(R.string.theme_applied), Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 })
                 .setNegativeButton(android.R.string.cancel, null)
@@ -163,7 +163,7 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
                     String selectedLanguage = languages[which];
                     LanguageManager.saveLanguage(requireContext(), selectedLanguage);
                     LanguageManager.applyLanguage(requireContext(), selectedLanguage);
-                    Toast.makeText(requireContext(), "Lingua applicata. Riavviare l'app", Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), getString(R.string.language_applied_restart), Toast.LENGTH_LONG).show();
                     dialog.dismiss();
 
                     // Ricrea l'activity per applicare la lingua

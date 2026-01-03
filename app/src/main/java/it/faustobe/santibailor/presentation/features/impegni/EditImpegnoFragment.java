@@ -176,16 +176,7 @@ public class EditImpegnoFragment extends Fragment {
 
     private void setupCategoriaDropdown() {
         // Categorie comuni predefinite
-        String[] categorieComuni = {
-                "Lavoro",
-                "Personale",
-                "Famiglia",
-                "Salute",
-                "Studio",
-                "Sport",
-                "Shopping",
-                "Viaggio"
-        };
+        String[] categorieComuni = getResources().getStringArray(R.array.impegni_categories);
 
         ArrayAdapter<String> categoriaAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -341,7 +332,7 @@ public class EditImpegnoFragment extends Fragment {
 
                         @Override
                         public void onError(Exception e) {
-                            Toast.makeText(requireContext(), "Errore salvataggio immagine: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), getString(R.string.error_saving_image_impegno, e.getMessage()), Toast.LENGTH_SHORT).show();
                             completeSave(null);
                         }
                     }

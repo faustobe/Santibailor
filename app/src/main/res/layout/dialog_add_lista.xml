@@ -9,7 +9,7 @@
         android:id="@+id/edit_nome_lista"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:hint="Nome lista"
+        android:hint="@string/list_name_hint"
         android:textSize="22sp"
         android:textColor="#FF000000"
         android:textColorHint="#FF666666"

@@ -92,7 +92,8 @@ public class SettingsFragment extends Fragment {
             binding.firebaseStatusIndicator.setBackgroundTintList(
                     android.content.res.ColorStateList.valueOf(color));
 
-            String status = isConnected ? "Connesso a Firebase" : "Offline";
+            // Log can remain in English for debugging
+            String status = isConnected ? "Connected to Firebase" : "Offline";
             Log.d(TAG, status);
         });
     }
@@ -134,116 +135,113 @@ public class SettingsFragment extends Fragment {
 
     private void navigateToRicorrenzeSettings() {
         List<SettingItem> ricorrenzeSettings = new ArrayList<>();
-        ricorrenzeSettings.add(new SettingItem("Gestione Ricorrenze", "Aggiungi, modifica o elimina ricorrenze", R.id.action_categorySettingsFragment_to_manageRicorrenzeFragment));
-        ricorrenzeSettings.add(new SettingItem("Cerca Ricorrenze", "Cerca tra le ricorrenze esistenti", R.id.action_categorySettingsFragment_to_searchFragment));
-        ricorrenzeSettings.add(new SettingItem("Aggiungi Nuova Ricorrenza", "Crea una nuova ricorrenza", R.id.action_categorySettingsFragment_to_addItemFragment));
-        ricorrenzeSettings.add(new SettingItem("Notifiche Ricorrenze", "Attiva o disattiva le notifiche", true));
-        ricorrenzeSettings.add(new SettingItem("Sincronizzazione calendario", "Sincronizza con calendari esterni"));
+        ricorrenzeSettings.add(new SettingItem(getString(R.string.settings_ricorrenze_manage_title), getString(R.string.settings_ricorrenze_manage_desc), R.id.action_categorySettingsFragment_to_manageRicorrenzeFragment));
+        ricorrenzeSettings.add(new SettingItem(getString(R.string.settings_ricorrenze_search_title), getString(R.string.settings_ricorrenze_search_desc), R.id.action_categorySettingsFragment_to_searchFragment));
+        ricorrenzeSettings.add(new SettingItem(getString(R.string.settings_ricorrenze_add_title), getString(R.string.settings_ricorrenze_add_desc), R.id.action_categorySettingsFragment_to_addItemFragment));
+        ricorrenzeSettings.add(new SettingItem(getString(R.string.settings_ricorrenze_notifications_title), getString(R.string.settings_ricorrenze_notifications_desc), true));
+        ricorrenzeSettings.add(new SettingItem(getString(R.string.settings_ricorrenze_sync_title), getString(R.string.settings_ricorrenze_sync_desc)));
 
         SettingItem[] settingItemsArray = ricorrenzeSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Ricorrenze", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_ricorrenze_category), settingItemsArray);
     }
 
     private void navigateToGeneralSettings() {
         List<SettingItem> generalSettings = new ArrayList<>();
-        // Tema e Lingua sono ACTION (usano solo costruttore title, description)
-        generalSettings.add(new SettingItem("Tema", "Seleziona il tema dell'app"));
-        generalSettings.add(new SettingItem("Lingua", "Scegli la lingua dell'app"));
-        // Le altre per ora sono anche ACTION
-        generalSettings.add(new SettingItem("Notifiche", "Gestisci le notifiche push"));
-        generalSettings.add(new SettingItem("Font e dimensione del testo", "Personalizza il carattere e la dimensione"));
-        generalSettings.add(new SettingItem("Sincronizzazione", "Opzioni per sincronizzare i dati" ));
-        generalSettings.add(new SettingItem("Backup e ripristino", "Gestisci backup e ripristino dei dati"));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_theme_title), getString(R.string.settings_general_theme_desc)));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_language_title), getString(R.string.settings_general_language_desc)));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_notifications_title), getString(R.string.settings_general_notifications_desc)));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_font_title), getString(R.string.settings_general_font_desc)));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_sync_title), getString(R.string.settings_general_sync_desc)));
+        generalSettings.add(new SettingItem(getString(R.string.settings_general_backup_title), getString(R.string.settings_general_backup_desc)));
 
         SettingItem[] settingItemsArray = generalSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Generali", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_general_category), settingItemsArray);
     }
 
     private void navigateToAccountSettings() {
         List<SettingItem> accountSettings = new ArrayList<>();
-        accountSettings.add(new SettingItem("Profilo utente", "Modifica le informazioni personali" ));
-        accountSettings.add(new SettingItem("Gestione account", "Collega o disconnetti account" ));
-        accountSettings.add(new SettingItem("Cambio password", "Modifica la password o configura l'autenticazione" ));
-        accountSettings.add(new SettingItem("Esporta dati", "Esporta le informazioni personali" ));
-        accountSettings.add(new SettingItem("Elimina account", "Elimina definitivamente l'account" ));
+        accountSettings.add(new SettingItem(getString(R.string.settings_account_profile_title), getString(R.string.settings_account_profile_desc)));
+        accountSettings.add(new SettingItem(getString(R.string.settings_account_manage_title), getString(R.string.settings_account_manage_desc)));
+        accountSettings.add(new SettingItem(getString(R.string.settings_account_password_title), getString(R.string.settings_account_password_desc)));
+        accountSettings.add(new SettingItem(getString(R.string.settings_account_export_title), getString(R.string.settings_account_export_desc)));
+        accountSettings.add(new SettingItem(getString(R.string.settings_account_delete_title), getString(R.string.settings_account_delete_desc)));
 
         SettingItem[] settingItemsArray = accountSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Account", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_account_category), settingItemsArray);
     }
 
     private void navigateToImpegniSettings() {
         List<SettingItem> impegniSettings = new ArrayList<>();
-        impegniSettings.add(new SettingItem("Visualizzazione impegni", "Scegli il formato di visualizzazione" ));
-        impegniSettings.add(new SettingItem("Promemoria per impegni", "Gestisci i promemoria" ));
-        impegniSettings.add(new SettingItem("Categorie impegni", "Crea e gestisci categorie personalizzate" ));
-        impegniSettings.add(new SettingItem("Condivisione", "Opzioni per condividere gli impegni" ));
-        impegniSettings.add(new SettingItem("Durata predefinita", "Imposta una durata standard" ));
+        impegniSettings.add(new SettingItem(getString(R.string.settings_impegni_view_title), getString(R.string.settings_impegni_view_desc)));
+        impegniSettings.add(new SettingItem(getString(R.string.settings_impegni_reminders_title), getString(R.string.settings_impegni_reminders_desc)));
+        impegniSettings.add(new SettingItem(getString(R.string.settings_impegni_categories_title), getString(R.string.settings_impegni_categories_desc)));
+        impegniSettings.add(new SettingItem(getString(R.string.settings_impegni_sharing_title), getString(R.string.settings_impegni_sharing_desc)));
+        impegniSettings.add(new SettingItem(getString(R.string.settings_impegni_duration_title), getString(R.string.settings_impegni_duration_desc)));
 
         SettingItem[] settingItemsArray = impegniSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Impegni", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_impegni_category), settingItemsArray);
     }
 
     private void navigateToListeSpesaSettings() {
-        // Naviga alla schermata di configurazione delle liste spesa
         List<SettingItem> listeSpesaSettings = new ArrayList<>();
-        listeSpesaSettings.add(new SettingItem("Categorie prodotti", "Gestisci categorie per i prodotti"));
-        listeSpesaSettings.add(new SettingItem("Prodotti frequenti", "Visualizza e modifica prodotti salvati"));
-        listeSpesaSettings.add(new SettingItem("Unità di misura", "Configura unità predefinite"));
+        listeSpesaSettings.add(new SettingItem(getString(R.string.settings_liste_categories_title), getString(R.string.settings_liste_categories_desc)));
+        listeSpesaSettings.add(new SettingItem(getString(R.string.settings_liste_frequent_title), getString(R.string.settings_liste_frequent_desc)));
+        listeSpesaSettings.add(new SettingItem(getString(R.string.settings_liste_units_title), getString(R.string.settings_liste_units_desc)));
 
         SettingItem[] settingItemsArray = listeSpesaSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Liste Spesa", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_liste_category), settingItemsArray);
     }
 
     private void navigateToNotificheSettings() {
         List<SettingItem> notificheSettings = new ArrayList<>();
-        notificheSettings.add(new SettingItem("Notifiche per Ricorrenze", "Imposta le notifiche per eventi ricorrenti" ));
-        notificheSettings.add(new SettingItem("Notifiche per Impegni", "Gestisci i promemoria per gli impegni" ));
-        notificheSettings.add(new SettingItem("Notifiche silenziose", "Configura la modalità non disturbare" ));
-        notificheSettings.add(new SettingItem("Snooze delle notifiche", "Opzioni per posticipare le notifiche" ));
+        notificheSettings.add(new SettingItem(getString(R.string.settings_notifications_ricorrenze_title), getString(R.string.settings_notifications_ricorrenze_desc)));
+        notificheSettings.add(new SettingItem(getString(R.string.settings_notifications_impegni_title), getString(R.string.settings_notifications_impegni_desc)));
+        notificheSettings.add(new SettingItem(getString(R.string.settings_notifications_silent_title), getString(R.string.settings_notifications_silent_desc)));
+        notificheSettings.add(new SettingItem(getString(R.string.settings_notifications_snooze_title), getString(R.string.settings_notifications_snooze_desc)));
 
         SettingItem[] settingItemsArray = notificheSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Notifiche", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_notifications_category), settingItemsArray);
     }
 
     private void navigateToIntegrazioniSettings() {
         List<SettingItem> integrazioniSettings = new ArrayList<>();
-        integrazioniSettings.add(new SettingItem("Integrazione con Calendari", "Collega calendari esterni" ));
-        integrazioniSettings.add(new SettingItem("Integrazione con Assistenti Vocali", "Collega assistenti vocali" ));
-        integrazioniSettings.add(new SettingItem("Integrazione con App di Terze Parti", "Collega app per la gestione delle attività" ));
+        integrazioniSettings.add(new SettingItem(getString(R.string.settings_integrations_calendar_title), getString(R.string.settings_integrations_calendar_desc)));
+        integrazioniSettings.add(new SettingItem(getString(R.string.settings_integrations_voice_title), getString(R.string.settings_integrations_voice_desc)));
+        integrazioniSettings.add(new SettingItem(getString(R.string.settings_integrations_third_party_title), getString(R.string.settings_integrations_third_party_desc)));
 
         SettingItem[] settingItemsArray = integrazioniSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Integrazioni", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_integrations_category), settingItemsArray);
     }
 
     private void navigateToPrivacySicurezzaSettings() {
         List<SettingItem> privacySicurezzaSettings = new ArrayList<>();
-        privacySicurezzaSettings.add(new SettingItem("Blocco dell'app", "Attiva blocco con PIN o biometrico" ));
-        privacySicurezzaSettings.add(new SettingItem("Permessi", "Gestisci i permessi dell'app" ));
-        privacySicurezzaSettings.add(new SettingItem("Cronologia dati", "Visualizza e gestisci la cronologia" ));
-        privacySicurezzaSettings.add(new SettingItem("Crittografia dati", "Abilita la crittografia per dati sensibili" ));
+        privacySicurezzaSettings.add(new SettingItem(getString(R.string.settings_privacy_lock_title), getString(R.string.settings_privacy_lock_desc)));
+        privacySicurezzaSettings.add(new SettingItem(getString(R.string.settings_privacy_permissions_title), getString(R.string.settings_privacy_permissions_desc)));
+        privacySicurezzaSettings.add(new SettingItem(getString(R.string.settings_privacy_history_title), getString(R.string.settings_privacy_history_desc)));
+        privacySicurezzaSettings.add(new SettingItem(getString(R.string.settings_privacy_encryption_title), getString(R.string.settings_privacy_encryption_desc)));
 
         SettingItem[] settingItemsArray = privacySicurezzaSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("Impostazioni Privacy & Sicurezza", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_privacy_category), settingItemsArray);
     }
 
     private void navigateToSupportoInfoSettings() {
         List<SettingItem> supportoInfoSettings = new ArrayList<>();
-        supportoInfoSettings.add(new SettingItem("Contatti e Supporto", "Accedi all'assistenza" ));
-        supportoInfoSettings.add(new SettingItem("Domande frequenti (FAQ)", "Visualizza le domande comuni" ));
-        supportoInfoSettings.add(new SettingItem("Versione dell'app", "Informazioni sulla versione" ));
-        supportoInfoSettings.add(new SettingItem("Feedback", "Invia feedback o suggerimenti" ));
+        supportoInfoSettings.add(new SettingItem(getString(R.string.settings_support_contact_title), getString(R.string.settings_support_contact_desc)));
+        supportoInfoSettings.add(new SettingItem(getString(R.string.settings_support_faq_title), getString(R.string.settings_support_faq_desc)));
+        supportoInfoSettings.add(new SettingItem(getString(R.string.settings_support_version_title), getString(R.string.settings_support_version_desc)));
+        supportoInfoSettings.add(new SettingItem(getString(R.string.settings_support_feedback_title), getString(R.string.settings_support_feedback_desc)));
 
         SettingItem[] settingItemsArray = supportoInfoSettings.toArray(new SettingItem[0]);
 
-        navigateToCategorySettings("info & SUpporto", settingItemsArray);
+        navigateToCategorySettings(getString(R.string.settings_support_category), settingItemsArray);
     }
 
     private void navigateToCategorySettings(String categoryTitle, SettingItem[] settingItems) {

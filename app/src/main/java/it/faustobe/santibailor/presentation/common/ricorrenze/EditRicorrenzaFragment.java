@@ -230,7 +230,7 @@ public class EditRicorrenzaFragment extends Fragment {
                     binding.btnElimina.setVisibility(View.GONE);
                 }
             } else {
-                Toast.makeText(getContext(), "Ricorrenza non trovata", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.ricorrenza_not_found), Toast.LENGTH_SHORT).show();
                 navigateBack();
             }
         });
@@ -261,10 +261,10 @@ public class EditRicorrenzaFragment extends Fragment {
         if (ricorrenzaToEdit == null) return;
 
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Conferma eliminazione")
-                .setMessage("Sei sicuro di voler eliminare questa ricorrenza?")
-                .setPositiveButton("Elimina", (dialog, which) -> deleteRicorrenza())
-                .setNegativeButton("Annulla", null)
+                .setTitle(R.string.confirm_delete)
+                .setMessage(R.string.confirm_delete_ricorrenza)
+                .setPositiveButton(R.string.elimina, (dialog, which) -> deleteRicorrenza())
+                .setNegativeButton(R.string.annulla, null)
                 .show();
     }
 
@@ -283,7 +283,7 @@ public class EditRicorrenzaFragment extends Fragment {
         // Naviga indietro immediatamente senza aspettare il risultato
         // Il delete è asincrono ma il fragment non deve aspettare
         if (isAdded() && getContext() != null) {
-            Toast.makeText(getContext(), "Eliminazione in corso...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.deleting_in_progress), Toast.LENGTH_SHORT).show();
             navigateBack();
         }
     }
@@ -336,7 +336,7 @@ public class EditRicorrenzaFragment extends Fragment {
                     @Override
                     public void onError(Exception e) {
                         if (isAdded() && getContext() != null) {
-                            Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.error_saving_image, e.getMessage()), Toast.LENGTH_LONG).show();
                         } else {
                             Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
                         }
@@ -362,7 +362,7 @@ public class EditRicorrenzaFragment extends Fragment {
                     @Override
                     public void onError(Exception e) {
                         if (isAdded() && getContext() != null) {
-                            Toast.makeText(getContext(), "Errore nel salvataggio dell'immagine: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), getString(R.string.error_saving_image, e.getMessage()), Toast.LENGTH_LONG).show();
                         } else {
                             Log.e("EditRicorrenzaFragment", "Error saving image, and fragment not attached", e);
                         }
@@ -441,7 +441,7 @@ public class EditRicorrenzaFragment extends Fragment {
 
     private boolean validateInputs(String nome, TipoRicorrenza tipo) {
         if (nome.isEmpty() || tipo == null) {
-            Toast.makeText(getContext(), "Compila tutti i campi obbligatori", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.fill_all_required_fields), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

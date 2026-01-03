@@ -238,15 +238,15 @@ public class SearchFragment extends Fragment {
 
     private void showDebugInfo() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Debug Info")
+        builder.setTitle(R.string.debug_info)
                 .setMessage("Parametri di ricerca:\n" +
                         "Nome: " + binding.editTextNome.getText() + "\n" +
                         "Tipo: " + binding.spinnerTipo.getText() + "\n" +
                         "Data Inizio: " + binding.editTextDataInizio.getText() + "\n" +
                         "Data Fine: " + binding.editTextDataFine.getText() + "\n\n" +
                         "Risultati: " + (searchAdapter.getItemCount() > 0 ?
-                        searchAdapter.getItemCount() : "Nessun risultato"))
-                .setPositiveButton("OK", null)
+                        searchAdapter.getItemCount() : getString(R.string.no_results_found)))
+                .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
 

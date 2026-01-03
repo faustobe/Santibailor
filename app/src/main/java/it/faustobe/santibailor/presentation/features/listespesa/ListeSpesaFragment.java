@@ -128,7 +128,7 @@ public class ListeSpesaFragment extends Fragment implements ListeSpesaAdapter.On
                 (android.view.inputmethod.InputMethodManager) requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(binding.etNuovaLista.getWindowToken(), 0);
         } else {
-            Toast.makeText(getContext(), "Inserisci il nome della lista", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.insert_list_name), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -140,19 +140,19 @@ public class ListeSpesaFragment extends Fragment implements ListeSpesaAdapter.On
         final EditText input = dialogView.findViewById(R.id.edit_nome_lista);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext(), android.R.style.Theme_Material_Light_Dialog);
-        builder.setTitle("Nuova lista");
+        builder.setTitle(R.string.new_list);
         builder.setView(dialogView);
 
-        builder.setPositiveButton("CREA", (dialog, which) -> {
+        builder.setPositiveButton(R.string.create, (dialog, which) -> {
             String nome = input.getText().toString().trim();
             if (!nome.isEmpty()) {
                 viewModel.createLista(nome, "#4CAF50");
             } else {
-                Toast.makeText(getContext(), "Inserisci un nome", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.insert_list_name), Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("ANNULLA", null);
+        builder.setNegativeButton(R.string.annulla, null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -173,12 +173,12 @@ public class ListeSpesaFragment extends Fragment implements ListeSpesaAdapter.On
 
     private void showDeleteCompletateDialog() {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Elimina liste completate")
-                .setMessage("Sei sicuro di voler eliminare tutte le liste completate?")
-                .setPositiveButton("Elimina", (d, which) -> {
+                .setTitle(R.string.delete_completed_lists)
+                .setMessage(R.string.confirm_delete_completed_lists)
+                .setPositiveButton(R.string.elimina, (d, which) -> {
                     viewModel.deleteAllListeCompletate();
                 })
-                .setNegativeButton("Annulla", null)
+                .setNegativeButton(R.string.annulla, null)
                 .create();
 
         dialog.show();
@@ -206,12 +206,12 @@ public class ListeSpesaFragment extends Fragment implements ListeSpesaAdapter.On
     @Override
     public void onDeleteClick(ListaSpesa lista) {
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setTitle("Elimina lista")
-                .setMessage("Sei sicuro di voler eliminare \"" + lista.getNome() + "\"?")
-                .setPositiveButton("Elimina", (d, which) -> {
+                .setTitle(R.string.delete_list)
+                .setMessage(getString(R.string.confirm_delete_list, lista.getNome()))
+                .setPositiveButton(R.string.elimina, (d, which) -> {
                     viewModel.deleteLista(lista);
                 })
-                .setNegativeButton("Annulla", null)
+                .setNegativeButton(R.string.annulla, null)
                 .create();
 
         dialog.show();
