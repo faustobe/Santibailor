@@ -16,6 +16,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import dagger.hilt.android.HiltAndroidApp;
 import it.faustobe.santibailor.util.FirebaseErrorHandler;
 import it.faustobe.santibailor.util.ImageHandler;
+import it.faustobe.santibailor.util.LanguageManager;
+import it.faustobe.santibailor.util.ThemeManager;
 import it.faustobe.santibailor.util.WorkManagerHelper;
 
 import javax.inject.Inject;
@@ -30,6 +32,10 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // Applica tema e lingua salvati
+        ThemeManager.applyTheme(this);
+        LanguageManager.applyLanguage(this);
 
         // Inizializza manualmente WorkManager (dato che è disabilitato in AndroidManifest)
         try {

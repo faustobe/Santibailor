@@ -17,4 +17,14 @@
     <color name="priority_high">#F44336</color>      <!-- rosso -->
     <color name="priority_medium">#FFC107</color>    <!-- giallo -->
     <color name="priority_low">#4CAF50</color>       <!-- verde -->
+
+    <!-- Colori tema applicazione -->
+    <color name="orange_primary">#FF9800</color>     <!-- arancione header -->
+    <color name="blue_primary">#2196F3</color>       <!-- blu header impostazioni -->
+    <color name="text_primary">#212121</color>       <!-- testo principale nero -->
+    <color name="text_secondary">#757575</color>     <!-- testo secondario grigio -->
+    <color name="background_primary">#FFFFFF</color> <!-- sfondo bianco -->
+    <color name="background_secondary">#F5F5F5</color> <!-- sfondo grigio chiaro -->
+    <color name="border_primary">#BDBDBD</color>     <!-- bordi grigi visibili -->
+    <color name="divider">#E0E0E0</color>            <!-- linee divisorie -->
 </resources>

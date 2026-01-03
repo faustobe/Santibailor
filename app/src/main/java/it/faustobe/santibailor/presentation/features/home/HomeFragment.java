@@ -61,6 +61,9 @@ import it.faustobe.santibailor.presentation.features.impegni.ImpegniViewModel;
 import it.faustobe.santibailor.presentation.features.listespesa.ListeSpesaViewModel;
 import it.faustobe.santibailor.presentation.features.listespesa.ListeSpesaAdapter;
 import it.faustobe.santibailor.domain.model.ListaSpesa;
+import it.faustobe.santibailor.domain.model.OverviewItem;
+import it.faustobe.santibailor.domain.model.Nota;
+import it.faustobe.santibailor.presentation.features.note.NoteViewModel;
 import it.faustobe.santibailor.util.ImageHandler;
 //import it.faustobe.santibailor.util.ImageMigrationService;
 
@@ -79,6 +82,8 @@ public class HomeFragment extends Fragment {
     private RicorrenzaAdapter eventiLaiciAdapter;
     private RicorrenzaAdapter eventiPersonaliAdapter;
     private ListeSpesaAdapter listeSpesaAdapter;
+    private OverviewAdapter overviewAdapter;
+    private NoteViewModel noteViewModel;
     private boolean isPersonalInfoExpanded = false;
     private boolean isSaintsListExpanded = false;
     private boolean isCalendarExpanded; // Inizializzato in setupCalendar() leggendo lo stato salvato
@@ -108,6 +113,7 @@ public class HomeFragment extends Fragment {
         ricorrenzaViewModel = new ViewModelProvider(requireActivity()).get(RicorrenzaViewModel.class);
         impegniViewModel = new ViewModelProvider(this).get(ImpegniViewModel.class);
         listeSpesaViewModel = new ViewModelProvider(this).get(ListeSpesaViewModel.class);
+        noteViewModel = new ViewModelProvider(this).get(NoteViewModel.class);
 
         // Inizializza ImageMigrationService solo se ricorrenzaViewModel è disponibile
         if (ricorrenzaViewModel != null && ricorrenzaViewModel.getRepository() != null) {
@@ -145,23 +151,27 @@ public class HomeFragment extends Fragment {
 
         if (ricorrenzaAdapter == null) {
             ricorrenzaAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
-            binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
-            binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
         }
+        // IMPORTANTE: Ri-assegna l'adapter ogni volta che la view viene ricreata
+        binding.recyclerViewSaints.setAdapter(ricorrenzaAdapter);
+        binding.recyclerViewSaints.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inizializza adapter per Eventi Laici Generali
         if (eventiLaiciAdapter == null) {
             eventiLaiciAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
-            binding.recyclerViewEventiLaici.setAdapter(eventiLaiciAdapter);
-            binding.recyclerViewEventiLaici.setLayoutManager(new LinearLayoutManager(getContext()));
         }
+        // IMPORTANTE: Ri-assegna l'adapter ogni volta che la view viene ricreata
+        binding.recyclerViewEventiLaici.setAdapter(eventiLaiciAdapter);
+        binding.recyclerViewEventiLaici.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        /* RIMOSSO - eventi personali ora in card_overview
         // Inizializza adapter per Eventi Personali
         if (eventiPersonaliAdapter == null) {
             eventiPersonaliAdapter = new RicorrenzaAdapter(this::navigateToRicorrenzaDetail, ricorrenzaViewModel);
             binding.recyclerViewEventiPersonali.setAdapter(eventiPersonaliAdapter);
             binding.recyclerViewEventiPersonali.setLayoutManager(new LinearLayoutManager(getContext()));
         }
+        */
 
         // Osserva le ricorrenze del giorno
         ricorrenzaViewModel.getRicorrenzeDelGiorno().observe(getViewLifecycleOwner(), this::updateRicorrenzeList);
@@ -202,10 +212,10 @@ public class HomeFragment extends Fragment {
 
         setupDateDisplay();
         loadBackgroundImage();
-        setupPersonalInfo();
+        // setupPersonalInfo(); // RIMOSSO - ora usiamo card_overview
         setupSaintsList();
         updateComponentsState();
-        setupPersonalInfoCard();
+        // setupPersonalInfoCard(); // RIMOSSO - ora usiamo card_overview
         updateInitialVisibility();
         setInitialSaintsListState();
         observeRicorrenze();
@@ -215,7 +225,8 @@ public class HomeFragment extends Fragment {
         // setupCalendarAnimation(); // RIMOSSO - causava conflitti con setupCalendarCollapse()
         // setupNavBar(); // Rimosso - nav bar verticale eliminato
         // setupTaccuino(); // Rimosso - ora usiamo i pulsanti azioni rapide
-        setupListeSpesa();
+        // setupListeSpesa(); // RIMOSSO - ora usiamo la card overview unificata
+        setupOverview();
         setupQuickActions();
     }
 
@@ -261,6 +272,7 @@ public class HomeFragment extends Fragment {
                 case "eventi":
                     targetView = binding.cardEventiLaici;
                     break;
+                /* RIMOSSO - card_personal_info eliminata
                 case "impegni":
                     targetView = binding.cardPersonalInfo;
                     // Espandi automaticamente la card
@@ -268,6 +280,7 @@ public class HomeFragment extends Fragment {
                         togglePersonalInfoExpansion();
                     }
                     break;
+                */
             }
 
             if (targetView != null) {
@@ -317,8 +330,8 @@ public class HomeFragment extends Fragment {
     private void showAllSections() {
         // Mostra tutte le card quando il calendario è espanso
         binding.saintCard.setVisibility(View.VISIBLE);
-        binding.cardEventiLaici.setVisibility(View.VISIBLE);
-        binding.cardPersonalInfo.setVisibility(View.VISIBLE);
+        // binding.cardEventiLaici.setVisibility(View.VISIBLE); // Gestita da updateEventiLaiciGenerali()
+        // binding.cardPersonalInfo.setVisibility(View.VISIBLE); // RIMOSSO - ora usiamo card_overview
         // binding.cardTaccuino.setVisibility(View.GONE); // RIMOSSO - Taccuino sostituito con pulsanti azioni rapide
     }
 
@@ -472,8 +485,8 @@ public class HomeFragment extends Fragment {
         ricorrenzaViewModel.getRicorrenzeReligiose().observe(getViewLifecycleOwner(), this::updateRicorrenzeReligiose);
         ricorrenzaViewModel.getRicorrenzeLaiche().observe(getViewLifecycleOwner(), this::updateRicorrenzeLaiche);
 
-        // Osserva gli impegni di oggi
-        impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), this::updateImpegniOggi);
+        // Osserva gli impegni di oggi - RIMOSSO, ora gestito in setupOverview()
+        // impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), this::updateImpegniOggi);
     }
 
     private void updateRicorrenze(List<Ricorrenza> ricorrenze) {
@@ -545,18 +558,17 @@ public class HomeFragment extends Fragment {
         Log.d("HomeFragment", "Ricorrenze laiche/personali: " + (ricorrenze != null ? ricorrenze.size() : 0));
         if (ricorrenze == null || ricorrenze.isEmpty()) {
             updateEventiLaiciGenerali(new java.util.ArrayList<>());
-            updateEventiPersonali(new java.util.ArrayList<>());
+            // updateEventiPersonali(new java.util.ArrayList<>()); // RIMOSSO - card eliminata
             return;
         }
 
         // Separa eventi laici generali da personali
-        // Criteri: tipo PERSONALE (3) O imageUrl locale = personale
+        // Criterio: SOLO il tipo di ricorrenza (non l'URL dell'immagine)
         List<Ricorrenza> eventiGenerali = new java.util.ArrayList<>();
         List<Ricorrenza> eventiPersonali = new java.util.ArrayList<>();
 
         for (Ricorrenza ric : ricorrenze) {
-            if (ric.getTipoRicorrenzaId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.PERSONALE ||
-                (ric.getImageUrl() != null && ric.getImageUrl().startsWith("file://"))) {
+            if (ric.getTipoRicorrenzaId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.PERSONALE) {
                 eventiPersonali.add(ric);
             } else {
                 eventiGenerali.add(ric);
@@ -565,25 +577,47 @@ public class HomeFragment extends Fragment {
 
         Log.d("HomeFragment", "Eventi laici generali: " + eventiGenerali.size() + ", personali: " + eventiPersonali.size());
         updateEventiLaiciGenerali(eventiGenerali);
-        updateEventiPersonali(eventiPersonali);
+        // updateEventiPersonali(eventiPersonali); // RIMOSSO - card eliminata
     }
 
     private void updateEventiLaiciGenerali(List<Ricorrenza> eventi) {
         if (binding == null || !isAdded()) return;
         Log.d("HomeFragment", "Eventi laici generali: " + eventi.size());
         if (eventi == null || eventi.isEmpty()) {
+            Log.d("HomeFragment", "Setting card_eventi_laici to GONE (empty list)");
             binding.cardEventiLaici.setVisibility(View.GONE);
             return;
         }
 
         Log.d("HomeFragment", "Setting card_eventi_laici to VISIBLE");
         binding.cardEventiLaici.setVisibility(View.VISIBLE);
+        binding.cardEventiLaici.setAlpha(1f); // Assicura che sia completamente visibile
         eventiLaiciAdapter.setRicorrenze(eventi);
+
+        // Forza il layout del RecyclerView
+        binding.recyclerViewEventiLaici.requestLayout();
 
         // Forza l'aggiornamento del layout del MotionLayout
         if (binding.motionLayout != null) {
             binding.motionLayout.requestLayout();
         }
+
+        // Verifica la visibilità dopo un breve delay
+        binding.cardEventiLaici.postDelayed(() -> {
+            if (binding != null && binding.cardEventiLaici != null) {
+                int visibility = binding.cardEventiLaici.getVisibility();
+                String visStr = visibility == View.VISIBLE ? "VISIBLE" : (visibility == View.GONE ? "GONE" : "INVISIBLE");
+                float alpha = binding.cardEventiLaici.getAlpha();
+                Log.d("HomeFragment", "card_eventi_laici check: visibility=" + visStr + ", alpha=" + alpha);
+
+                // Se è diventata GONE o invisibile, forza di nuovo VISIBLE
+                if (visibility != View.VISIBLE || alpha < 1f) {
+                    Log.d("HomeFragment", "FORCING card_eventi_laici to VISIBLE again!");
+                    binding.cardEventiLaici.setVisibility(View.VISIBLE);
+                    binding.cardEventiLaici.setAlpha(1f);
+                }
+            }
+        }, 100);
 
         Log.d("HomeFragment", "Displaying " + eventi.size() + " eventi laici generali");
         for (Ricorrenza e : eventi) {
@@ -591,6 +625,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    /* RIMOSSO - card_personal_info eliminata, eventi/impegni ora in card_overview
     private void updateEventiPersonali(List<Ricorrenza> eventi) {
         if (binding == null || !isAdded()) return;
         Log.d("HomeFragment", "Eventi personali: " + eventi.size());
@@ -636,18 +671,21 @@ public class HomeFragment extends Fragment {
         binding.tvImpegniOggi.setText(sb.toString());
         Log.d("HomeFragment", "Displaying " + impegni.size() + " impegni in Info Personali card");
     }
+    */
 
     private void updateInitialVisibility() {
+        /* RIMOSSO - card_personal_info eliminata
         View personalInfoContent = binding.cardPersonalInfo.findViewById(R.id.personal_info_content);
         if (personalInfoContent != null) {
             personalInfoContent.setVisibility(View.GONE);
         }
+        */
 
         if (binding.recyclerViewSaints != null) {
             binding.recyclerViewSaints.setVisibility(View.GONE);
         }
 
-        updatePersonalInfoIcon();
+        // updatePersonalInfoIcon(); // RIMOSSO - card_personal_info eliminata
         updateSaintsListIcon();
     }
 
@@ -776,6 +814,7 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    /* RIMOSSO - card_personal_info eliminata
     private void setupPersonalInfo() {
         // Osserva impegni di oggi
         impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), impegniOggi -> {
@@ -806,7 +845,9 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    */
 
+    /* RIMOSSO - card_personal_info eliminata
     private void setupPersonalInfoCard() {
         View header = binding.cardPersonalInfo.findViewById(R.id.tv_personal_info_header);
         if (header != null) {
@@ -856,6 +897,7 @@ public class HomeFragment extends Fragment {
             expandPersonalInfoIcon.setRotation(isPersonalInfoExpanded ? 180f : 0f);
         }
     }
+    */
 
     private void setupScrollListener() {
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
@@ -874,7 +916,7 @@ public class HomeFragment extends Fragment {
 
     private void updateBottomMenuVisibility() {
         if (!isAdded()) return;
-        boolean allCollapsed = !isPersonalInfoExpanded && !isSaintsListExpanded;
+        boolean allCollapsed = !isSaintsListExpanded; // MODIFICATO - rimosso isPersonalInfoExpanded
         if (allCollapsed && getActivity() instanceof MainActivity) {
             ((MainActivity) getActivity()).updateComponentsVisibility(true);
         }
@@ -882,10 +924,11 @@ public class HomeFragment extends Fragment {
 
     private void updateComponentsState() {
         if (binding == null || !isAdded()) return;
-        boolean allCollapsed = !isCalendarExpanded && !isPersonalInfoExpanded && !isSaintsListExpanded && isScrolledToTop();
+        boolean allCollapsed = !isCalendarExpanded && !isSaintsListExpanded && isScrolledToTop(); // MODIFICATO - rimosso isPersonalInfoExpanded
         homeViewModel.setAllComponentsCollapsed(allCollapsed);
     }
 
+    /* RIMOSSO - card_liste_spesa eliminata, ora usiamo card_overview
     private void setupListeSpesa() {
         // Inizializza adapter con listener per navigare al dettaglio
         listeSpesaAdapter = new ListeSpesaAdapter(new ListeSpesaAdapter.OnListaClickListener() {
@@ -921,6 +964,116 @@ public class HomeFragment extends Fragment {
                 Log.d("HomeFragment", "No active liste spesa found");
             }
         });
+    }
+    */
+
+    private void setupOverview() {
+        // Inizializza adapter per la card overview unificata
+        overviewAdapter = new OverviewAdapter(this::onOverviewItemClick);
+        binding.recyclerViewOverview.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewOverview.setAdapter(overviewAdapter);
+
+        // Cache locali per i dati
+        final List<Impegno>[] impegniCache = new List[]{new java.util.ArrayList<>()};
+        final List<ListaSpesa>[] listeCache = new List[]{new java.util.ArrayList<>()};
+        final List<Nota>[] noteCache = new List[]{new java.util.ArrayList<>()};
+
+        // Observer per impegni
+        impegniViewModel.getImpegniOggi().observe(getViewLifecycleOwner(), impegni -> {
+            impegniCache[0] = impegni != null ? impegni : new java.util.ArrayList<>();
+            updateOverviewCard(impegniCache[0], listeCache[0], noteCache[0]);
+        });
+
+        // Observer per liste spesa
+        listeSpesaViewModel.getListeAttive().observe(getViewLifecycleOwner(), liste -> {
+            listeCache[0] = liste != null ? liste : new java.util.ArrayList<>();
+            updateOverviewCard(impegniCache[0], listeCache[0], noteCache[0]);
+        });
+
+        // Observer per note
+        noteViewModel.getAllNote().observe(getViewLifecycleOwner(), note -> {
+            noteCache[0] = note != null ? note : new java.util.ArrayList<>();
+            updateOverviewCard(impegniCache[0], listeCache[0], noteCache[0]);
+        });
+    }
+
+    private void updateOverviewCard(List<Impegno> impegni, List<ListaSpesa> liste, List<Nota> note) {
+        if (binding == null || !isAdded()) return;
+
+        List<OverviewItem> items = new java.util.ArrayList<>();
+
+        // Aggiungi impegni di oggi
+        for (Impegno impegno : impegni) {
+            items.add(new OverviewItem(
+                OverviewItem.Type.IMPEGNO,
+                impegno.getTitolo(),
+                impegno.getId()
+            ));
+        }
+
+        // Aggiungi liste spesa attive
+        for (ListaSpesa lista : liste) {
+            items.add(new OverviewItem(
+                OverviewItem.Type.LISTA_SPESA,
+                lista.getNome(),
+                lista.getId()
+            ));
+        }
+
+        // Aggiungi note
+        for (Nota nota : note) {
+            String text = nota.getTitolo();
+            if (text == null || text.isEmpty()) {
+                text = nota.getContenuto() != null && nota.getContenuto().length() > 50
+                    ? nota.getContenuto().substring(0, 50) + "..."
+                    : nota.getContenuto();
+            }
+            items.add(new OverviewItem(
+                OverviewItem.Type.NOTA,
+                text,
+                nota.getId()
+            ));
+        }
+
+        // Aggiorna adapter
+        overviewAdapter.setItems(items);
+
+        // Gestisci visibilità della card
+        if (items.isEmpty()) {
+            binding.cardOverview.setVisibility(View.GONE);
+        } else {
+            binding.cardOverview.setVisibility(View.VISIBLE);
+        }
+
+        Log.d("HomeFragment", "Overview updated: " + impegni.size() + " impegni, " +
+              liste.size() + " liste, " + note.size() + " note = " + items.size() + " total");
+    }
+
+    private void onOverviewItemClick(OverviewItem item) {
+        Bundle args = new Bundle();
+
+        switch (item.getType()) {
+            case IMPEGNO:
+                // Naviga al dettaglio impegno (edit)
+                args.putInt("impegnoId", item.getId());
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_global_to_edit_impegno, args);
+                break;
+
+            case LISTA_SPESA:
+                // Naviga al dettaglio lista spesa
+                args.putInt("listaId", item.getId());
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.action_homeFragment_to_dettaglioListaSpesaFragment, args);
+                break;
+
+            case NOTA:
+                // Naviga al dettaglio nota
+                args.putInt("notaId", item.getId());
+                Navigation.findNavController(requireView())
+                    .navigate(R.id.noteDetailFragment, args);
+                break;
+        }
     }
 
     private void setupQuickActions() {

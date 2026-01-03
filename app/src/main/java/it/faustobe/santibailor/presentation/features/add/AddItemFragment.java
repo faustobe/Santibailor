@@ -49,6 +49,7 @@ import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
 import it.faustobe.santibailor.data.repository.GenericRepository;
 import it.faustobe.santibailor.databinding.FragmentAddItemBinding;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
+import it.faustobe.santibailor.util.KeyboardUtils;
 
 
 public class AddItemFragment extends Fragment {
@@ -116,6 +117,9 @@ public class AddItemFragment extends Fragment {
         setupDatePickers();
         setupToolbar();
         setupMenu();
+
+        // Nascondi tastiera quando si tocca fuori dai campi di testo
+        KeyboardUtils.setupHideKeyboardOnOutsideTouch(binding.getRoot());
     }
 
     private void setupToolbar() {

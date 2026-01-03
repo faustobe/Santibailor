@@ -45,4 +45,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style-->
+
+    <!-- Stili per componenti UI -->
+    <style name="TextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/border_primary</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextColor">@color/orange_primary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+    </style>
 </resources>

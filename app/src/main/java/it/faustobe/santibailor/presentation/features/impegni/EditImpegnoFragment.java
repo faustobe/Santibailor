@@ -26,6 +26,7 @@ import it.faustobe.santibailor.databinding.FragmentEditImpegnoBinding;
 import it.faustobe.santibailor.domain.model.Impegno;
 import it.faustobe.santibailor.domain.model.Priorita;
 import it.faustobe.santibailor.util.ImageHandler;
+import it.faustobe.santibailor.util.KeyboardUtils;
 
 @AndroidEntryPoint
 public class EditImpegnoFragment extends Fragment {
@@ -73,6 +74,9 @@ public class EditImpegnoFragment extends Fragment {
         setupImageSelection();
         setupListeners();
 
+        // Nascondi tastiera quando si tocca fuori dai campi di testo
+        KeyboardUtils.setupHideKeyboardOnOutsideTouch(binding.getRoot());
+
         if (getArguments() != null) {
             int impegnoId = getArguments().getInt("impegnoId", -1);
             if (impegnoId != -1) {
@@ -118,7 +122,18 @@ public class EditImpegnoFragment extends Fragment {
         setCurrentDateTime();
 
         // Button "Ora" per impostare data/ora corrente
-        binding.dateTimePicker.nowButton.setOnClickListener(v -> setCurrentDateTime());
+        binding.dateTimePicker.nowButton.setOnClickListener(v -> {
+            KeyboardUtils.hideKeyboard(this);
+            setCurrentDateTime();
+        });
+
+        // Nascondi tastiera quando si interagisce con i NumberPicker
+        View.OnClickListener hideKeyboardListener = v -> KeyboardUtils.hideKeyboard(this);
+        dayPicker.setOnClickListener(hideKeyboardListener);
+        monthPicker.setOnClickListener(hideKeyboardListener);
+        yearPicker.setOnClickListener(hideKeyboardListener);
+        hourPicker.setOnClickListener(hideKeyboardListener);
+        minutePicker.setOnClickListener(hideKeyboardListener);
     }
 
     private void setCurrentDateTime() {
@@ -192,8 +207,14 @@ public class EditImpegnoFragment extends Fragment {
     }
 
     private void setupImageSelection() {
-        binding.btnSelectImage.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
-        binding.ivImpegno.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+        binding.btnSelectImage.setOnClickListener(v -> {
+            KeyboardUtils.hideKeyboard(this);
+            pickImageLauncher.launch("image/*");
+        });
+        binding.ivImpegno.setOnClickListener(v -> {
+            KeyboardUtils.hideKeyboard(this);
+            pickImageLauncher.launch("image/*");
+        });
     }
 
     private void setupListeners() {

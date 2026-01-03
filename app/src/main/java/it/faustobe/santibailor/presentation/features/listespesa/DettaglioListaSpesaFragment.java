@@ -1,7 +1,6 @@
 package it.faustobe.santibailor.presentation.features.listespesa;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
@@ -26,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.faustobe.santibailor.databinding.FragmentDettaglioListaSpesaBinding;
 import it.faustobe.santibailor.domain.model.ItemSpesa;
 import it.faustobe.santibailor.domain.model.ListaSpesa;
+import it.faustobe.santibailor.util.KeyboardUtils;
 
 @AndroidEntryPoint
 public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAdapter.OnItemClickListener {
@@ -61,18 +60,15 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         setupObservers();
         setupListeners();
         setupAutocomplete();
+
+        // Nascondi tastiera quando si tocca fuori dai campi di testo
+        KeyboardUtils.setupHideKeyboardOnOutsideTouch(binding.getRoot());
     }
 
     private void setupRecyclerView() {
         adapter = new ItemSpesaAdapter(this);
         binding.recyclerViewItems.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewItems.setAdapter(adapter);
-
-        // Chiudi tastiera quando clicchi sulla lista
-        binding.recyclerViewItems.setOnTouchListener((v, event) -> {
-            hideKeyboard();
-            return false;
-        });
     }
 
     private void setupObservers() {
@@ -147,20 +143,12 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         if (!nome.isEmpty()) {
             viewModel.addItem(listaId, nome, null, null);
             binding.etNuovoItem.setText("");
-            hideKeyboard(); // Chiudi tastiera dopo aver aggiunto
+            KeyboardUtils.hideKeyboard(this); // Chiudi tastiera dopo aver aggiunto
         } else {
             Toast.makeText(getContext(), "Inserisci il nome del prodotto", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void hideKeyboard() {
-        if (getActivity() != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imm != null && getView() != null) {
-                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-            }
-        }
-    }
 
     private void showListaMenu() {
         new AlertDialog.Builder(requireContext())

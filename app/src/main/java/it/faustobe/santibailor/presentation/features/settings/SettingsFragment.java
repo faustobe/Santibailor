@@ -65,21 +65,11 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupToolbar();
-        setupFirebaseTest();
+        setupFirebaseStatusIndicator();
         setupListeners();
         setupMenu();
 
-        firebaseRemoteDataSource.getConnectionState().observe(getViewLifecycleOwner(), isConnected -> {
-            if (isConnected) {
-                // Connessione OK - procedi con le operazioni
-                Log.d(TAG, "Firebase connection established");
-            } else {
-                // Gestisci stato offline/errori
-                Log.d(TAG, "Firebase connection failed or offline");
-            }
-        });
-
-// Per forzare un test manuale
+        // Verifica connessione Firebase all'avvio
         firebaseRemoteDataSource.checkConnection();
     }
 
@@ -93,24 +83,17 @@ public class SettingsFragment extends Fragment {
         }
     }
 
-    private void setupFirebaseTest() {
-        binding.btnTestFirebase.setOnClickListener(v -> {
-            binding.tvFirebaseStatus.setText("Testing connection...");
-            binding.tvFirebaseStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_default));
-            firebaseRemoteDataSource.checkConnection();
-        });
-
+    private void setupFirebaseStatusIndicator() {
         firebaseRemoteDataSource.getConnectionState().observe(getViewLifecycleOwner(), isConnected -> {
             int color = isConnected ?
                     ContextCompat.getColor(requireContext(), R.color.success_green) :
                     ContextCompat.getColor(requireContext(), R.color.error_red);
 
-            String status = isConnected ?
-                    "Connected to Firebase" :
-                    "Connection failed - Check logs for details";
+            binding.firebaseStatusIndicator.setBackgroundTintList(
+                    android.content.res.ColorStateList.valueOf(color));
 
-            binding.tvFirebaseStatus.setText(status);
-            binding.tvFirebaseStatus.setTextColor(color);
+            String status = isConnected ? "Connesso a Firebase" : "Offline";
+            Log.d(TAG, status);
         });
     }
 
@@ -164,8 +147,10 @@ public class SettingsFragment extends Fragment {
 
     private void navigateToGeneralSettings() {
         List<SettingItem> generalSettings = new ArrayList<>();
+        // Tema e Lingua sono ACTION (usano solo costruttore title, description)
         generalSettings.add(new SettingItem("Tema", "Seleziona il tema dell'app"));
         generalSettings.add(new SettingItem("Lingua", "Scegli la lingua dell'app"));
+        // Le altre per ora sono anche ACTION
         generalSettings.add(new SettingItem("Notifiche", "Gestisci le notifiche push"));
         generalSettings.add(new SettingItem("Font e dimensione del testo", "Personalizza il carattere e la dimensione"));
         generalSettings.add(new SettingItem("Sincronizzazione", "Opzioni per sincronizzare i dati" ));

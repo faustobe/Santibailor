@@ -312,16 +312,36 @@
         android:id="@+id/action_global_to_liste_spesa"
         app:destination="@id/listeSpesaFragment"/>
 
-    <!-- Note Fragment -->
+    <!-- Note Fragments -->
     <fragment
-        android:id="@+id/noteFragment"
-        android:name="it.faustobe.santibailor.presentation.features.note.NoteFragment"
-        android:label="Note"
-        tools:layout="@layout/fragment_note"/>
+        android:id="@+id/noteListFragment"
+        android:name="it.faustobe.santibailor.presentation.features.note.NoteListFragment"
+        android:label="Le mie Note"
+        tools:layout="@layout/fragment_note_list">
+        <action
+            android:id="@+id/action_noteListFragment_to_noteDetailFragment"
+            app:destination="@id/noteDetailFragment">
+            <argument
+                android:name="notaId"
+                app:argType="integer"
+                android:defaultValue="0"/>
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteDetailFragment"
+        android:name="it.faustobe.santibailor.presentation.features.note.NoteDetailFragment"
+        android:label="Dettaglio Nota"
+        tools:layout="@layout/fragment_note_detail">
+        <argument
+            android:name="notaId"
+            app:argType="integer"
+            android:defaultValue="0"/>
+    </fragment>
 
     <action
         android:id="@+id/action_global_to_note"
-        app:destination="@id/noteFragment"/>
+        app:destination="@id/noteListFragment"/>
 
     <!-- Organizza Giornata Fragment -->
     <fragment

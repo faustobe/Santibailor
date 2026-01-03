@@ -237,7 +237,8 @@ public class ImageHandler {
             return R.drawable.default_ricorrenza_image;
         }
         if (url.startsWith("file://")) {
-            File file = new File(url.substring(7));
+            String filePath = url.substring(7);
+            File file = new File(filePath);
             if (file.exists()) {
                 return file;
             } else {

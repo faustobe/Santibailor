@@ -13,6 +13,7 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import it.faustobe.santibailor.data.AppDatabase;
+import it.faustobe.santibailor.data.local.dao.NoteDao;
 import it.faustobe.santibailor.data.remote.FirebaseRemoteDataSource;
 import it.faustobe.santibailor.data.repository.RicorrenzaRepository;
 import it.faustobe.santibailor.domain.usecase.DeleteRicorrenzaUseCase;
@@ -34,6 +35,12 @@ public class AppModule {
     @Singleton
     public AppDatabase provideAppDatabase(@ApplicationContext Context context) {
         return AppDatabase.getDatabase(context);
+    }
+
+    @Provides
+    @Singleton
+    public NoteDao provideNoteDao(AppDatabase database) {
+        return database.noteDao();
     }
 
     @Provides

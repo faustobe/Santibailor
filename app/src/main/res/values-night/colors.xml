@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Colori di base Material (restano invariati) -->
+    <color name="colorPrimary">#C0C0C0</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="purple_chip_background">#8E24AA</color>
+    <color name="success_green">#4CAF50</color>
+    <color name="error_red">#F44336</color>
+    <color name="text_default">#B0B0B0</color>         <!-- grigio chiaro per dark mode -->
+
+    <!-- Colori priorità impegni (restano invariati) -->
+    <color name="priority_high">#F44336</color>
+    <color name="priority_medium">#FFC107</color>
+    <color name="priority_low">#4CAF50</color>
+
+    <!-- Colori tema applicazione - DARK MODE -->
+    <color name="orange_primary">#FF6F00</color>        <!-- arancione più scuro -->
+    <color name="blue_primary">#1976D2</color>          <!-- blu più scuro -->
+    <color name="text_primary">#E0E0E0</color>          <!-- testo principale bianco/grigio -->
+    <color name="text_secondary">#B0B0B0</color>        <!-- testo secondario grigio chiaro -->
+    <color name="background_primary">#121212</color>    <!-- sfondo nero Material Design -->
+    <color name="background_secondary">#1E1E1E</color>  <!-- sfondo grigio scuro -->
+    <color name="border_primary">#424242</color>        <!-- bordi grigi visibili su dark -->
+    <color name="divider">#2C2C2C</color>               <!-- linee divisorie scure -->
+</resources>

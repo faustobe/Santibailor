@@ -202,9 +202,9 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Panel Info Personali (collassabile) -->
+            <!-- Card Overview Unificata (Impegni + Liste + Note) -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_personal_info"
+                android:id="@+id/card_overview"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -219,95 +219,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="12dp">
 
-                    <!-- Header della card (sempre visibile) -->
-                    <TextView
-                        android:id="@+id/tv_personal_info_header"
+                    <!-- Contenuto sempre espanso -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView_overview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="16dp"
-                        android:text="@string/personal_info"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#FF0000c0"
-                        android:background="@android:color/transparent"/>
-
-                    <!-- Contenuto espandibile -->
-                    <LinearLayout
-                        android:id="@+id/personal_info_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
-
-                        <!-- Sezione Eventi Personali -->
-                        <TextView
-                            android:id="@+id/tv_eventi_personali_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Eventi Personali"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#FF006400"
-                            android:visibility="gone"/>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerView_eventi_personali"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                            android:nestedScrollingEnabled="false"
-                            android:visibility="gone"/>
-
-                        <!-- Sezione Impegni di Oggi -->
-                        <TextView
-                            android:id="@+id/tv_impegni_oggi_label"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/impegni_di_oggi"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:textColor="#FF0000c0"
-                            android:layout_marginTop="16dp"
-                            android:visibility="gone"/>
-
-                        <TextView
-                            android:id="@+id/tv_impegni_oggi"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textColor="#000000"
-                            android:textSize="14sp"
-                            android:visibility="gone"/>
-
-                        <!-- Vecchi campi (mantenuti per compatibilità) -->
-                        <TextView
-                            android:id="@+id/tv_personal_event"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:textColor="#000000"
-                            android:textSize="16sp"
-                            android:background="@android:color/transparent"
-                            android:visibility="gone"/>
-
-                        <TextView
-                            android:id="@+id/tv_todo_list"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textColor="#000000"
-                            android:textSize="14sp"/>
-
-                        <TextView
-                            android:id="@+id/tv_today_events"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textColor="#c00000"
-                            android:textSize="14sp"/>
-                    </LinearLayout>
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -413,57 +333,6 @@
                     app:strokeWidth="1dp"
                     app:cornerRadius="8dp"/>
             </LinearLayout>
-
-            <!-- Card Liste Spesa Attive -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/card_liste_spesa"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:visibility="gone"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="#80FFFFFF"
-                app:layout_constraintTop_toBottomOf="@id/card_personal_info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Liste Spesa Attive"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="#4CAF50"
-                        android:drawableStart="@drawable/ic_add"
-                        android:drawablePadding="8dp"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerView_liste_spesa"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:nestedScrollingEnabled="false"/>
-
-                    <TextView
-                        android:id="@+id/tv_no_liste"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Nessuna lista attiva"
-                        android:textSize="14sp"
-                        android:textColor="#666666"
-                        android:gravity="center"
-                        android:padding="16dp"
-                        android:visibility="gone"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.motion.widget.MotionLayout>
     </androidx.core.widget.NestedScrollView>

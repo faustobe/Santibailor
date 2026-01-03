@@ -38,12 +38,12 @@
                 motion:percentHeight="1.1"
                 motion:curveFit="spline"/>
 
-            <!-- Animazione della card delle info personali -->
+            <!-- Animazione della card overview (impegni/liste/note) -->
             <KeyPosition
-                motion:motionTarget="@+id/card_personal_info"
+                motion:motionTarget="@+id/card_overview"
                 motion:framePosition="50"
-                motion:percentWidth="1.2"
-                motion:percentHeight="1.2"
+                motion:percentWidth="1.1"
+                motion:percentHeight="1.1"
                 motion:curveFit="spline"/>
         </KeyFrameSet>
     </Transition>
@@ -79,9 +79,9 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Constraint della card delle info personali espansa -->
+        <!-- Constraint della card overview (impegni/liste/note) espansa -->
         <Constraint
-            android:id="@+id/card_personal_info"
+            android:id="@+id/card_overview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -99,25 +99,6 @@
             motion:layout_constraintStart_toEndOf="@id/calendar_card"
             motion:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Card taccuino espansa -->
-        <Constraint
-            android:id="@+id/card_taccuino"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- Card liste spesa espansa -->
-        <Constraint
-            android:id="@+id/card_liste_spesa"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"/>
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/collapsed">
@@ -163,33 +144,13 @@
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Constraint della card delle info personali a TUTTA LARGHEZZA -->
+        <!-- Constraint della card overview (impegni/liste/note) collassata -->
         <Constraint
-            android:id="@+id/card_personal_info"
+            android:id="@+id/card_overview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             motion:layout_constraintTop_toBottomOf="@id/card_eventi_laici"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- Card taccuino collassata -->
-        <Constraint
-            android:id="@+id/card_taccuino"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
-            motion:layout_constraintStart_toStartOf="parent"
-            motion:layout_constraintEnd_toEndOf="parent"/>
-
-        <!-- Card liste spesa collassata -->
-        <Constraint
-            android:id="@+id/card_liste_spesa"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            motion:layout_constraintTop_toBottomOf="@id/card_personal_info"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"/>
     </ConstraintSet>

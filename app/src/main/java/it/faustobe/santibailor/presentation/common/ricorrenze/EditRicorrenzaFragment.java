@@ -31,6 +31,7 @@ import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 import it.faustobe.santibailor.util.DateUtils;
 import it.faustobe.santibailor.util.ImageHandler;
+import it.faustobe.santibailor.util.KeyboardUtils;
 
 public class EditRicorrenzaFragment extends Fragment {
 
@@ -75,6 +76,9 @@ public class EditRicorrenzaFragment extends Fragment {
         setupDatePickers();
         setupTipiRicorrenza();
         setupListeners();
+
+        // Nascondi tastiera quando si tocca fuori dai campi di testo
+        KeyboardUtils.setupHideKeyboardOnOutsideTouch(binding.getRoot());
 
         if (getArguments() != null) {
             int ricorrenzaId = getArguments().getInt("ricorrenzaId", -1);

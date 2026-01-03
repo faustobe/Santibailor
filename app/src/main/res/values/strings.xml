@@ -84,4 +84,95 @@
     <string name="taccuino">Taccuino</string>
     <string name="scrivi_qui_le_tue_note">Scrivi qui le tue note...</string>
     <string name="cancella">Cancella</string>
+
+    <!-- Impostazioni -->
+    <string name="settings_theme">Tema</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_language_italian">Italiano</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_system">Sistema</string>
+    <string name="select_theme">Seleziona Tema</string>
+    <string name="select_language">Seleziona Lingua</string>
+    <string name="settings_category">Impostazioni Categoria</string>
+    <string name="back_to_settings">Torna alle Impostazioni</string>
+
+    <!-- Ricerca -->
+    <string name="search">Cerca</string>
+    <string name="no_results_found">Nessun risultato trovato</string>
+    <string name="debug_info">Debug Info</string>
+    <string name="search_all_types">Tutte</string>
+    <string name="results_found">Risultati trovati: %d</string>
+    <string name="total_items_db">Totale item nel database: %d</string>
+
+    <!-- Note -->
+    <string name="edit_note">Modifica Nota</string>
+    <string name="new_note">Nuova Nota</string>
+    <string name="note_title_required">Il titolo non può essere vuoto</string>
+    <string name="note_saved">Nota salvata</string>
+    <string name="note_created">Nota creata</string>
+    <string name="note_deleted">Nota eliminata</string>
+    <string name="delete_note">Elimina nota</string>
+    <string name="delete_note_confirm">Sei sicuro di voler eliminare questa nota?</string>
+    <string name="note_modified">Modificata: %s</string>
+    <string name="my_notes">Le mie Note</string>
+    <string name="no_notes">Nessuna nota trovata</string>
+    <string name="add_first_note">Aggiungi la tua prima nota</string>
+    <string name="last_saved">Ultimo salvataggio: %s</string>
+
+    <!-- Liste Spesa -->
+    <string name="my_lists">Le mie liste</string>
+    <string name="delete_completed">Elimina completate</string>
+    <string name="no_list_created">Nessuna lista creata</string>
+    <string name="tap_to_create_list">Tocca il pulsante + per creare la tua prima lista della spesa</string>
+    <string name="empty_list">Lista vuota</string>
+    <string name="add_first_product">Aggiungi il primo prodotto alla tua lista</string>
+    <string name="add_product">Aggiungi Prodotto</string>
+    <string name="lista_spesa">Lista Spesa</string>
+
+    <!-- Ricorrenze -->
+    <string name="personal_event">Evento personale (compleanno, anniversario, ecc.)</string>
+    <string name="modifica">Modifica</string>
+    <string name="select_image">Seleziona Immagine</string>
+    <string name="edit_item">Aggiungi elemento</string>
+
+    <!-- Quick Actions -->
+    <string name="quick_action_write">Scrivi</string>
+    <string name="quick_action_organize">Organizza</string>
+    <string name="quick_action_search">Ricerca</string>
+    <string name="quick_action_summary">Riepilogo</string>
+
+    <!-- Riepilogo -->
+    <string name="summary">Riepilogo</string>
+    <string name="this_week">Questa settimana</string>
+    <string name="statistics">Statistiche</string>
+    <string name="total_commitments">Impegni totali:</string>
+    <string name="completed_label">Completati:</string>
+    <string name="recurrences_label">Ricorrenze:</string>
+    <string name="detail">Dettaglio</string>
+    <string name="week">Settimana</string>
+    <string name="month">Mese</string>
+    <string name="no_commitments_period">Nessun impegno in questo periodo</string>
+    <string name="commitments_saved">%d impegni salvati</string>
+    <string name="insert_at_least_one">Inserisci almeno un impegno</string>
+
+    <!-- Visualizzazione Ricorrenze -->
+    <string name="visualization_settings">Impostazioni di Visualizzazione</string>
+    <string name="recurrence_type_to_show">Tipo di Ricorrenze da Mostrare</string>
+    <string name="show_religious">Mostra Ricorrenze Religiose</string>
+    <string name="show_secular">Mostra Ricorrenze Laiche</string>
+    <string name="visualization_type">Tipo di Visualizzazione</string>
+    <string name="daily_view">Visualizzazione Giornaliera</string>
+    <string name="weekly_view">Visualizzazione Settimanale</string>
+    <string name="monthly_view">Visualizzazione Mensile</string>
+
+    <!-- Date Picker -->
+    <string name="today_button">Oggi</string>
+
+    <!-- Generale -->
+    <string name="add_button">+</string>
+    <string name="zero">0</string>
+    <string name="confirm">Conferma</string>
 </resources>

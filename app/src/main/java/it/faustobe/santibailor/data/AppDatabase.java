@@ -13,6 +13,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import it.faustobe.santibailor.data.local.dao.ImpegnoDao;
 import it.faustobe.santibailor.data.local.dao.ItemSpesaDao;
 import it.faustobe.santibailor.data.local.dao.ListaSpesaDao;
+import it.faustobe.santibailor.data.local.dao.NoteDao;
 import it.faustobe.santibailor.data.local.dao.ProdottoFrequenteDao;
 import it.faustobe.santibailor.data.local.dao.RicorrenzaDao;
 import it.faustobe.santibailor.data.local.dao.TipoRicorrenzaDao;
@@ -20,11 +21,12 @@ import it.faustobe.santibailor.data.local.dao.SearchDao;
 import it.faustobe.santibailor.data.local.entities.ImpegnoEntity;
 import it.faustobe.santibailor.data.local.entities.ItemSpesaEntity;
 import it.faustobe.santibailor.data.local.entities.ListaSpesaEntity;
+import it.faustobe.santibailor.data.local.entities.NoteEntity;
 import it.faustobe.santibailor.data.local.entities.ProdottoFrequenteEntity;
 import it.faustobe.santibailor.data.local.entities.RicorrenzaEntity;
 import it.faustobe.santibailor.data.local.entities.TipoRicorrenzaEntity;
 
-@Database(entities = {RicorrenzaEntity.class, TipoRicorrenzaEntity.class, ImpegnoEntity.class, ListaSpesaEntity.class, ItemSpesaEntity.class, ProdottoFrequenteEntity.class}, version = 10, exportSchema = false)
+@Database(entities = {RicorrenzaEntity.class, TipoRicorrenzaEntity.class, ImpegnoEntity.class, ListaSpesaEntity.class, ItemSpesaEntity.class, ProdottoFrequenteEntity.class, NoteEntity.class}, version = 11, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "santocal.db";
     private static volatile AppDatabase INSTANCE;
@@ -35,6 +37,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ListaSpesaDao listaSpesaDao();
     public abstract ItemSpesaDao itemSpesaDao();
     public abstract ProdottoFrequenteDao prodottoFrequenteDao();
+    public abstract NoteDao noteDao();
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
@@ -44,7 +47,8 @@ public abstract class AppDatabase extends RoomDatabase {
                         INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                         AppDatabase.class, DATABASE_NAME)
                                 .createFromAsset(DATABASE_NAME)
-                                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+                                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
+                                .fallbackToDestructiveMigration()
                                 .build();
                         Log.d("AppDatabase", "Database created successfully");
                     } catch (Exception e) {
@@ -216,6 +220,25 @@ public abstract class AppDatabase extends RoomDatabase {
                     "ultima_data_utilizzo INTEGER NOT NULL)");
 
             Log.d("AppDatabase", "Migration 9->10: Tabella prodotti_frequenti creata");
+        }
+    };
+
+    private static final Migration MIGRATION_10_11 = new Migration(10, 11) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            // Crea tabella note per gestire note multiple
+            database.execSQL("CREATE TABLE IF NOT EXISTS note (" +
+                    "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "titolo TEXT NOT NULL, " +
+                    "contenuto TEXT, " +
+                    "data_creazione INTEGER NOT NULL, " +
+                    "data_modifica INTEGER NOT NULL)");
+
+            // Crea indice su data_modifica per ordinamento veloce
+            database.execSQL("CREATE INDEX IF NOT EXISTS idx_note_data_modifica " +
+                    "ON note(data_modifica)");
+
+            Log.d("AppDatabase", "Migration 10->11: Tabella note creata con indice su data_modifica");
         }
     };
 }

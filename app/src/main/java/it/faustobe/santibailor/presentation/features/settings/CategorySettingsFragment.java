@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -19,6 +20,8 @@ import java.util.List;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentCategorySettingsBinding;
+import it.faustobe.santibailor.util.LanguageManager;
+import it.faustobe.santibailor.util.ThemeManager;
 
 public class CategorySettingsFragment extends Fragment implements CategorySettingsAdapter.OnSettingItemClickListener {
     private FragmentCategorySettingsBinding binding;
@@ -95,9 +98,79 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
     }
 
     private void performAction(SettingItem item) {
-        // Implementa azioni specifiche qui
-        Log.d("CategorySettingsFragment", "Azione eseguita per: " + item.getTitle());
-        // Esempio: Toast.makeText(requireContext(), "Azione eseguita: " + item.getTitle(), Toast.LENGTH_SHORT).show();
+        String title = item.getTitle();
+
+        if ("Tema".equals(title)) {
+            showThemeDialog();
+        } else if ("Lingua".equals(title)) {
+            showLanguageDialog();
+        } else {
+            Log.d("CategorySettingsFragment", "Azione eseguita per: " + title);
+            Toast.makeText(requireContext(), "Funzionalità in sviluppo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showThemeDialog() {
+        String currentTheme = ThemeManager.getSavedTheme(requireContext());
+
+        String[] themes = {
+                ThemeManager.THEME_LIGHT,
+                ThemeManager.THEME_DARK,
+                ThemeManager.THEME_SYSTEM
+        };
+
+        String[] themeNames = {
+                getString(R.string.settings_theme_light),
+                getString(R.string.settings_theme_dark),
+                getString(R.string.settings_theme_system)
+        };
+
+        int selectedIndex = Arrays.asList(themes).indexOf(currentTheme);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.select_theme)
+                .setSingleChoiceItems(themeNames, selectedIndex, (dialog, which) -> {
+                    String selectedTheme = themes[which];
+                    ThemeManager.saveTheme(requireContext(), selectedTheme);
+                    ThemeManager.applyTheme(selectedTheme);
+                    Toast.makeText(requireContext(), "Tema applicato", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showLanguageDialog() {
+        String currentLanguage = LanguageManager.getSavedLanguage(requireContext());
+
+        String[] languages = {
+                LanguageManager.LANGUAGE_ITALIAN,
+                LanguageManager.LANGUAGE_ENGLISH,
+                LanguageManager.LANGUAGE_SYSTEM
+        };
+
+        String[] languageNames = {
+                getString(R.string.settings_language_italian),
+                getString(R.string.settings_language_english),
+                getString(R.string.settings_language_system)
+        };
+
+        int selectedIndex = Arrays.asList(languages).indexOf(currentLanguage);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.select_language)
+                .setSingleChoiceItems(languageNames, selectedIndex, (dialog, which) -> {
+                    String selectedLanguage = languages[which];
+                    LanguageManager.saveLanguage(requireContext(), selectedLanguage);
+                    LanguageManager.applyLanguage(requireContext(), selectedLanguage);
+                    Toast.makeText(requireContext(), "Lingua applicata. Riavviare l'app", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
+
+                    // Ricrea l'activity per applicare la lingua
+                    requireActivity().recreate();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     @Override

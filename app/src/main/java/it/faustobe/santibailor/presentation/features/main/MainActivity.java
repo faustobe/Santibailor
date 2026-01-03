@@ -41,6 +41,7 @@ import com.google.android.material.navigation.NavigationView;
 import dagger.hilt.android.AndroidEntryPoint;
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.ActivityMainBinding;
+import it.faustobe.santibailor.util.LanguageManager;
 import it.faustobe.santibailor.util.SearchPreferences;
 import it.faustobe.santibailor.presentation.features.home.HomeViewModel;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
@@ -73,6 +74,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
         super.onCreate(savedInstanceState);
+
+        // Applica la lingua salvata
+        LanguageManager.applyLanguage(this);
+
         verifyStoragePermissions(this);
         Log.d("MainActivity", "onCreate called");
         //if (isDebugBuild()) {setupStrictMode();}
@@ -195,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.aggiungi_nuovo_elemento);
 
-        String[] items = {getString(R.string.ricorrenza), getString(R.string.impegno), "Lista Spesa"};
+        String[] items = {getString(R.string.ricorrenza), getString(R.string.impegno), "Lista Spesa", "Nota"};
         builder.setItems(items, (dialog, which) -> {
             if (which == 0) {
                 // Ricorrenza
@@ -203,9 +208,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (which == 1) {
                 // Impegno
                 openEditImpegnoFragment(-1);
-            } else {
+            } else if (which == 2) {
                 // Lista Spesa
                 openListeSpesaFragment();
+            } else {
+                // Nota
+                openNoteListFragment();
             }
         });
 
@@ -215,6 +223,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void openListeSpesaFragment() {
         navController.navigate(R.id.action_global_to_liste_spesa);
+    }
+
+    private void openNoteListFragment() {
+        navController.navigate(R.id.action_global_to_note);
     }
 
     private void openEditImpegnoFragment(int impegnoId) {
@@ -258,29 +270,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void showBottomNav() {
-        if (!isBottomNavVisible) {
-            bottomNav.setVisibility(View.VISIBLE);
-            bottomNav.animate()
-                    .translationY(0)
-                    .setDuration(SHOW_ANIMATION_DURATION)
-                    .setInterpolator(new DecelerateInterpolator())
-                    .withEndAction(() -> isBottomNavVisible = true)
-                    .start();
-        }
+        if (bottomNav == null) return;
+
+        // Cancella qualsiasi animazione in corso
+        bottomNav.animate().cancel();
+
+        // Imposta visibilità e posizione immediatamente
+        bottomNav.setVisibility(View.VISIBLE);
+        bottomNav.setTranslationY(0);
+        isBottomNavVisible = true;
+
+        Log.d("MainActivity", "Bottom nav shown - visibility: " + bottomNav.getVisibility() + ", translationY: " + bottomNav.getTranslationY());
     }
 
     public void hideBottomNav() {
-        if (isBottomNavVisible) {
-            bottomNav.animate()
-                    .translationY(bottomNav.getHeight())
-                    .setDuration(HIDE_ANIMATION_DURATION)
-                    .setInterpolator(new AccelerateInterpolator())
-                    .withEndAction(() -> {
-                        bottomNav.setVisibility(View.GONE);
-                        isBottomNavVisible = false;
-                    })
-                    .start();
-        }
+        if (bottomNav == null) return;
+
+        // Cancella qualsiasi animazione in corso
+        bottomNav.animate().cancel();
+
+        // Nascondi con animazione
+        bottomNav.animate()
+                .translationY(bottomNav.getHeight())
+                .setDuration(HIDE_ANIMATION_DURATION)
+                .setInterpolator(new AccelerateInterpolator())
+                .withEndAction(() -> {
+                    bottomNav.setVisibility(View.GONE);
+                    isBottomNavVisible = false;
+                    Log.d("MainActivity", "Bottom nav hidden");
+                })
+                .start();
     }
 
     private void setupBottomNavigation() {

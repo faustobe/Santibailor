@@ -99,10 +99,10 @@ public class SettingsViewModel extends AndroidViewModel {
         saveSettings("theme", newTheme);
     }
 
-    public LiveData<String> getLanguage() { return theme; }
-    public void setLanguage(String newTheme) {
-        theme.setValue(newTheme);
-        saveSettings("theme", newTheme);
+    public LiveData<String> getLanguage() { return language; }
+    public void setLanguage(String newLanguage) {
+        language.setValue(newLanguage);
+        saveSettings("language", newLanguage);
     }
 
     public LiveData<Boolean> getNotificationsEnabled() { return notificationsEnabled; }
