@@ -103,6 +103,19 @@
     <string name="navigation_error">Navigation error</string>
     <string name="feature_in_development">Feature in development</string>
 
+    <!-- Background -->
+    <string name="settings_general_background_title">Background</string>
+    <string name="settings_general_background_desc">Customize home background</string>
+    <string name="select_background">Select Background</string>
+    <string name="background_santo">Saint</string>
+    <string name="background_none">None</string>
+    <string name="background_gradient_warm">Warm Gradient</string>
+    <string name="background_gradient_cool">Cool Gradient</string>
+    <string name="background_gradient_sunset">Sunset Gradient</string>
+    <string name="background_custom">Custom</string>
+    <string name="background_applied">Background applied</string>
+    <string name="background_custom_error">Error loading custom image</string>
+
     <!-- Settings - Main Categories -->
     <string name="settings_general">General</string>
     <string name="settings_account">Account</string>
@@ -395,4 +408,69 @@
     <string name="add_button">+</string>
     <string name="zero">0</string>
     <string name="confirm">Confirm</string>
+
+    <!-- Notifications Dialog -->
+    <string name="notifications_enabled_label">Enabled</string>
+    <string name="notifications_disabled_label">Disabled</string>
+    <string name="notifications_updated">Notification setting updated</string>
+    <string name="select_notification_time">Select notification time</string>
+    <string name="notification_time_set">Notification scheduled at %1$02d:%2$02d</string>
+    <string name="impegni_notifications_updated">Commitment notifications updated</string>
+
+    <!-- Settings - Simplified sections -->
+    <string name="settings_aspetto">Appearance</string>
+    <string name="settings_aspetto_desc">Theme, language and background</string>
+    <string name="settings_notifiche_desc">Recurrences and commitments</string>
+    <string name="settings_cerca_gestisci">Search &amp; Manage</string>
+    <string name="settings_cerca_gestisci_desc">Search, edit and share</string>
+    <string name="settings_privacy_new">Privacy</string>
+    <string name="settings_privacy_new_desc">Permissions, data and policy</string>
+    <string name="settings_info">Info</string>
+    <string name="settings_info_desc">Version and credits</string>
+
+    <!-- Appearance section -->
+    <string name="settings_aspetto_category">Appearance</string>
+
+    <!-- Notifications section (simplified) -->
+    <string name="settings_notifiche_category">Notifications</string>
+
+    <!-- Search &amp; Manage section -->
+    <string name="settings_cerca_gestisci_category">Search &amp; Manage</string>
+    <string name="settings_search_ricorrenze_title">Search recurrences</string>
+    <string name="settings_search_ricorrenze_desc">Search existing recurrences</string>
+    <string name="settings_manage_ricorrenze_title">Manage recurrences</string>
+    <string name="settings_manage_ricorrenze_desc">Add, edit or delete recurrences</string>
+    <string name="settings_share_export_title">Share / Export</string>
+    <string name="settings_share_export_desc">Share or export your recurrences</string>
+    <string name="share_export_no_data">No data to share</string>
+
+    <!-- Privacy section -->
+    <string name="settings_privacy_new_category">Privacy</string>
+    <string name="settings_privacy_app_permissions_title">App permissions</string>
+    <string name="settings_privacy_app_permissions_desc">Manage permissions in system settings</string>
+    <string name="settings_privacy_export_data_title">Export your data</string>
+    <string name="settings_privacy_export_data_desc">Export all local data to a file</string>
+    <string name="settings_privacy_delete_data_title">Delete local data</string>
+    <string name="settings_privacy_delete_data_desc">Delete all data saved in the app</string>
+    <string name="settings_privacy_policy_title">Privacy policy</string>
+    <string name="settings_privacy_policy_desc">How your data is handled</string>
+    <string name="privacy_delete_confirm_title">Delete all data</string>
+    <string name="privacy_delete_confirm_message">Are you sure you want to delete all local data? This operation cannot be undone.</string>
+    <string name="privacy_data_deleted">All local data has been deleted</string>
+    <string name="privacy_export_success">Data exported successfully</string>
+    <string name="privacy_export_error">Error exporting data</string>
+    <string name="privacy_policy_text">Santibailor respects your privacy.\n\nAll data is saved locally on your device. No personal data is sent to external servers.\n\nPermissions requested by the app are used exclusively for app functionality (notifications, image access).\n\nYou can export or delete your data at any time from the Privacy section of settings.</string>
+
+    <!-- Recurrence Detail -->
+    <string name="detail_date_label">Date</string>
+    <string name="detail_type_label">Type</string>
+    <string name="date_format_day_month">%2$s %1$d</string>
+
+    <!-- Info section -->
+    <string name="settings_info_category">Info</string>
+    <string name="info_app_version">Version</string>
+    <string name="info_app_description_title">Description</string>
+    <string name="info_app_description">Santibailor helps you keep track of saints of the day, personal recurrences, commitments and notes. A daily assistant to organize your day.</string>
+    <string name="info_credits_title">Credits</string>
+    <string name="info_credits">Developed with passion by Fausto</string>
 </resources>

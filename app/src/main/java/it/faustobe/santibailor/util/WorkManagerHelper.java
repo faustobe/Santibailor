@@ -23,62 +23,76 @@ public class WorkManagerHelper {
     private static final int NOTIFICATION_MINUTE = 0;
 
     /**
-     * Programma la notifica giornaliera del santo del giorno
+     * Programma la notifica giornaliera del santo del giorno (default 7:00)
      *
      * @param context Context dell'applicazione
      */
     public static void scheduleDailySaintNotification(Context context) {
-        // Constraints: esegui solo se il dispositivo è carico o in carica (opzionale)
+        scheduleDailySaintNotification(context, NOTIFICATION_HOUR, NOTIFICATION_MINUTE);
+    }
+
+    /**
+     * Programma la notifica giornaliera del santo del giorno con orario personalizzato
+     *
+     * @param context Context dell'applicazione
+     * @param hour Ora della notifica (0-23)
+     * @param minute Minuto della notifica (0-59)
+     */
+    public static void scheduleDailySaintNotification(Context context, int hour, int minute) {
         Constraints constraints = new Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.NOT_REQUIRED) // Non serve connessione
-                .setRequiresBatteryNotLow(false) // Non aspettare batteria alta
+                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                .setRequiresBatteryNotLow(false)
                 .build();
 
-        // Calcola il delay iniziale per eseguire il worker alle 7:00 AM
-        long initialDelay = calculateInitialDelay();
+        long initialDelay = calculateInitialDelay(hour, minute);
 
-        // Crea un PeriodicWorkRequest che si ripete ogni 24 ore
         PeriodicWorkRequest dailyWorkRequest = new PeriodicWorkRequest.Builder(
                 DailySaintNotificationWorker.class,
-                1, // Intervallo di ripetizione
-                TimeUnit.DAYS // Unità di tempo
+                1,
+                TimeUnit.DAYS
         )
                 .setConstraints(constraints)
                 .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
                 .addTag(DAILY_SAINT_WORK_NAME)
                 .build();
 
-        // Schedula il work con policy KEEP (mantieni l'esistente se già schedulato)
+        // Usa REPLACE per aggiornare l'orario quando l'utente lo cambia
         WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 DAILY_SAINT_WORK_NAME,
-                ExistingPeriodicWorkPolicy.KEEP, // Non sovrascrivere se esiste già
+                ExistingPeriodicWorkPolicy.REPLACE,
                 dailyWorkRequest
         );
 
-        android.util.Log.d("WorkManagerHelper", "Daily saint notification scheduled with initial delay: " + initialDelay + "ms");
+        android.util.Log.d("WorkManagerHelper", "Daily saint notification scheduled at " + hour + ":" + minute + " with initial delay: " + initialDelay + "ms");
+    }
+
+    /**
+     * Calcola il delay iniziale per l'orario di default
+     */
+    private static long calculateInitialDelay() {
+        return calculateInitialDelay(NOTIFICATION_HOUR, NOTIFICATION_MINUTE);
     }
 
     /**
      * Calcola il delay iniziale per eseguire il worker all'ora specificata
      *
+     * @param hour Ora della notifica (0-23)
+     * @param minute Minuto della notifica (0-59)
      * @return delay in millisecondi
      */
-    private static long calculateInitialDelay() {
+    private static long calculateInitialDelay(int hour, int minute) {
         Calendar currentTime = Calendar.getInstance();
         Calendar scheduledTime = Calendar.getInstance();
 
-        // Imposta l'ora programmata (es. 7:00 AM)
-        scheduledTime.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR);
-        scheduledTime.set(Calendar.MINUTE, NOTIFICATION_MINUTE);
+        scheduledTime.set(Calendar.HOUR_OF_DAY, hour);
+        scheduledTime.set(Calendar.MINUTE, minute);
         scheduledTime.set(Calendar.SECOND, 0);
         scheduledTime.set(Calendar.MILLISECOND, 0);
 
-        // Se l'ora programmata è già passata oggi, schedula per domani
         if (scheduledTime.before(currentTime)) {
             scheduledTime.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        // Calcola la differenza in millisecondi
         return scheduledTime.getTimeInMillis() - currentTime.getTimeInMillis();
     }
 

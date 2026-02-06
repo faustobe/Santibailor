@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             tools:text="Latte"/>
 
         <LinearLayout
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@color/text_secondary"
                 tools:text="2 litri"
                 android:visibility="gone"/>
 
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:textSize="12sp"
-                android:textColor="@android:color/holo_blue_dark"
+                android:textColor="@color/blue_primary"
                 tools:text="Latticini"
                 android:visibility="gone"/>
         </LinearLayout>
@@ -62,7 +62,7 @@
             android:layout_marginTop="4dp"
             android:textSize="12sp"
             android:textStyle="italic"
-            android:textColor="@android:color/darker_gray"
+            android:textColor="@color/text_secondary"
             tools:text="Preferibilmente biologico"
             android:visibility="gone"/>
     </LinearLayout>
@@ -72,6 +72,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:src="@drawable/ic_delete"
+        android:tint="?attr/colorOnSurface"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Elimina"/>
 </LinearLayout>

@@ -4,11 +4,11 @@ import java.util.Calendar;
 
 public class DateUtils {
 
-    private static final String[] MONTH_NAMES_SHORT = {"Gen", "Feb", "Mar", "Apr", "Mag", "Giu",
-            "Lug", "Ago", "Set", "Ott", "Nov", "Dic"};
+    private static final String[] MONTH_NAMES_SHORT = {"gen", "feb", "mar", "apr", "mag", "Giu",
+            "lug", "ago", "set", "ott", "nov", "dic"};
 
-    private static final String[] MONTH_NAMES_FULL = {"Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno",
-            "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"};
+    private static final String[] MONTH_NAMES_FULL = {"gennaio", "febbraio", "marzo", "aprile", "Maggio", "Giugno",
+            "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"};
 
     public static String[] getMonthNamesShort() {
         return MONTH_NAMES_SHORT;

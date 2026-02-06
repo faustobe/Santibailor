@@ -122,9 +122,19 @@ public class ListaSpesaRepository {
         return Transformations.map(itemSpesaDao.getItemCompletati(idLista), ItemSpesaMapper::toDomainList);
     }
 
+    public boolean isItemInLista(int idLista, String nome) {
+        return itemSpesaDao.countByNomeInLista(idLista, nome) > 0;
+    }
+
     public void insertItem(ItemSpesa item, OnInsertListener listener) {
         executorService.execute(() -> {
             try {
+                if (isItemInLista(item.getIdLista(), item.getNome())) {
+                    if (listener != null) {
+                        listener.onError(new ItemAlreadyExistsException());
+                    }
+                    return;
+                }
                 long id = itemSpesaDao.insert(ItemSpesaMapper.toEntity(item));
                 if (listener != null) {
                     listener.onSuccess((int) id);
@@ -135,6 +145,9 @@ public class ListaSpesaRepository {
                 }
             }
         });
+    }
+
+    public static class ItemAlreadyExistsException extends Exception {
     }
 
     public void updateItem(ItemSpesa item, OnUpdateListener listener) {

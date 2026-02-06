@@ -27,4 +27,21 @@
     <color name="background_secondary">#F5F5F5</color> <!-- sfondo grigio chiaro -->
     <color name="border_primary">#BDBDBD</color>     <!-- bordi grigi visibili -->
     <color name="divider">#E0E0E0</color>            <!-- linee divisorie -->
+
+    <!-- Colori card semi-trasparenti per light mode -->
+    <color name="card_background_light">#80FFFFFF</color>      <!-- bianco semi-trasparente (50%) -->
+    <color name="card_background_medium">#AAFFFFFF</color>     <!-- bianco semi-trasparente (66%) -->
+    <color name="card_text_primary">#212121</color>            <!-- testo scuro su card chiare -->
+    <color name="quick_action_background">#CCFFFFFF</color>    <!-- sfondo bottoni azioni rapide -->
+    <color name="quick_action_text">#000000</color>            <!-- testo bottoni -->
+
+    <!-- Colori calendario -->
+    <color name="calendar_background">#AAFFFFFF</color>        <!-- sfondo calendario -->
+    <color name="calendar_text">#000000</color>                <!-- testo giorno/mese -->
+    <color name="calendar_day_highlight">#FF0000</color>       <!-- numero giorno in rosso -->
+    <color name="button_stroke">#666666</color>                <!-- bordo bottoni -->
+
+    <!-- Altri colori UI -->
+    <color name="eventi_laici_header">#006400</color>          <!-- header eventi laici verde scuro -->
+    <color name="dashboard_impegni_background">#FFF3E0</color> <!-- background card impegni arancione chiaro -->
 </resources>

@@ -1,6 +1,7 @@
 package it.faustobe.santibailor;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,7 +18,6 @@ import dagger.hilt.android.HiltAndroidApp;
 import it.faustobe.santibailor.util.FirebaseErrorHandler;
 import it.faustobe.santibailor.util.ImageHandler;
 import it.faustobe.santibailor.util.LanguageManager;
-import it.faustobe.santibailor.util.ThemeManager;
 import it.faustobe.santibailor.util.WorkManagerHelper;
 
 import javax.inject.Inject;
@@ -33,8 +33,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // Applica tema e lingua salvati
-        ThemeManager.applyTheme(this);
+        // Applica lingua salvata
         LanguageManager.applyLanguage(this);
 
         // Inizializza manualmente WorkManager (dato che è disabilitato in AndroidManifest)
@@ -66,9 +65,18 @@ public class MyApplication extends Application {
                     }
                 });
 
-        // Schedula la notifica giornaliera del santo del giorno
-        WorkManagerHelper.scheduleDailySaintNotification(this);
-        Log.d(TAG, "WorkManager: Daily saint notification scheduled");
+        // Schedula la notifica giornaliera solo se abilitata nelle preferenze
+        SharedPreferences prefs = getSharedPreferences("settings", MODE_PRIVATE);
+        boolean notificationsEnabled = prefs.getBoolean("notifications_enabled", true);
+        boolean saintNotificationsEnabled = prefs.getBoolean("saint_notifications_enabled", true);
+        if (notificationsEnabled && saintNotificationsEnabled) {
+            int hour = prefs.getInt("saint_notification_hour", 7);
+            int minute = prefs.getInt("saint_notification_minute", 0);
+            WorkManagerHelper.scheduleDailySaintNotification(this, hour, minute);
+            Log.d(TAG, "WorkManager: Daily saint notification scheduled at " + hour + ":" + minute);
+        } else {
+            Log.d(TAG, "WorkManager: Daily saint notification disabled by user preference");
+        }
     }
 
     private void handleAuthenticationError(Exception exception) {

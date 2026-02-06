@@ -76,7 +76,7 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         // Osserva la lista
         viewModel.getListaById(listaId).observe(getViewLifecycleOwner(), this::updateListaInfo);
 
-        // Osserva gli item
+        // Osserva gli item (ordinati: non completati piu recenti in cima, completati in fondo)
         viewModel.getItemsByListaId(listaId).observe(getViewLifecycleOwner(), items -> {
             if (items != null && !items.isEmpty()) {
                 binding.recyclerViewItems.setVisibility(View.VISIBLE);
@@ -118,7 +118,6 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
                 NavController navController = Navigation.findNavController(v);
                 navController.navigateUp();
             } catch (Exception e) {
-                // Fallback: usa requireActivity
                 requireActivity().onBackPressed();
             }
         });
@@ -127,7 +126,7 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         binding.btnAddItem.setOnClickListener(v -> addNewItem());
 
         binding.etNuovoItem.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_DONE ||
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
                     (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
                 addNewItem();
                 return true;
@@ -144,12 +143,11 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         if (!nome.isEmpty()) {
             viewModel.addItem(listaId, nome, null, null);
             binding.etNuovoItem.setText("");
-            KeyboardUtils.hideKeyboard(this); // Chiudi tastiera dopo aver aggiunto
+            binding.etNuovoItem.requestFocus();
         } else {
             Toast.makeText(getContext(), getString(R.string.insert_product_name), Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void showListaMenu() {
         new AlertDialog.Builder(requireContext())
@@ -190,7 +188,6 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
     }
 
     private void setupAutocomplete() {
-        // Adapter per le suggestionsi
         ArrayAdapter<String> adapter = new ArrayAdapter<>(
                 requireContext(),
                 android.R.layout.simple_dropdown_item_1line,
@@ -198,7 +195,6 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
         );
         binding.etNuovoItem.setAdapter(adapter);
 
-        // Listener per il cambio di testo
         binding.etNuovoItem.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -216,7 +212,6 @@ public class DettaglioListaSpesaFragment extends Fragment implements ItemSpesaAd
             }
         });
 
-        // Osserva i suggerimenti dal ViewModel
         viewModel.getSuggestionsList().observe(getViewLifecycleOwner(), suggestions -> {
             if (suggestions != null) {
                 adapter.clear();

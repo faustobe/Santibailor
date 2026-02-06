@@ -48,9 +48,9 @@ public abstract class AppDatabase extends RoomDatabase {
                                         AppDatabase.class, DATABASE_NAME)
                                 .createFromAsset(DATABASE_NAME)
                                 .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
-                                .fallbackToDestructiveMigration()
+                                // RIMOSSO .fallbackToDestructiveMigration() che causava la perdita dei dati!
                                 .build();
-                        Log.d("AppDatabase", "Database created successfully");
+                        Log.d("AppDatabase", "Database created successfully - data will persist between app restarts");
                     } catch (Exception e) {
                         Log.e("AppDatabase", "Error creating database", e);
                     }

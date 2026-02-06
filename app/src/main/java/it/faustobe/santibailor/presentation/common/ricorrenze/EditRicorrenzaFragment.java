@@ -229,6 +229,15 @@ public class EditRicorrenzaFragment extends Fragment {
                 } else {
                     binding.btnElimina.setVisibility(View.GONE);
                 }
+
+                // Per le ricorrenze religiose, nascondi il date picker e mostra la data come label
+                if (ricorrenza.getTipoRicorrenzaId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.RELIGIOSA) {
+                    binding.datePicker.getRoot().setVisibility(View.GONE);
+                    String monthName = DateUtils.getMonthNameFull(ricorrenza.getIdMese());
+                    String dateText = getString(R.string.date_format_day_month, ricorrenza.getGiorno(), monthName);
+                    binding.tvDateLabel.setText(getString(R.string.detail_date_label) + ": " + dateText);
+                    binding.tvDateLabel.setVisibility(View.VISIBLE);
+                }
             } else {
                 Toast.makeText(getContext(), getString(R.string.ricorrenza_not_found), Toast.LENGTH_SHORT).show();
                 navigateBack();
@@ -301,8 +310,16 @@ public class EditRicorrenzaFragment extends Fragment {
         }
 
         int id = (ricorrenzaToEdit != null) ? ricorrenzaToEdit.getId() : 0;
-        int giorno = binding.datePicker.dayPicker.getValue();
-        int idMese = binding.datePicker.monthPicker.getValue() - 1;
+        int giorno;
+        int idMese;
+        // Per le ricorrenze religiose, usa i valori originali (il date picker è nascosto)
+        if (ricorrenzaToEdit != null && ricorrenzaToEdit.getTipoRicorrenzaId() == it.faustobe.santibailor.domain.model.TipoRicorrenza.RELIGIOSA) {
+            giorno = ricorrenzaToEdit.getGiorno();
+            idMese = ricorrenzaToEdit.getIdMese();
+        } else {
+            giorno = binding.datePicker.dayPicker.getValue();
+            idMese = binding.datePicker.monthPicker.getValue() - 1;
+        }
 
         // Determina il tipo finale: se è LAICA e checkbox Personale è selezionato, usa PERSONALE (3)
         int baseTipoId = selectedTipo.getId();

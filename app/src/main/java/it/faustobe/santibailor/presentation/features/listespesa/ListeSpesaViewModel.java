@@ -200,14 +200,18 @@ public class ListeSpesaViewModel extends ViewModel {
         repository.insertItem(item, new ListaSpesaRepository.OnInsertListener() {
             @Override
             public void onSuccess(int id) {
-                successMessage.postValue("Item aggiunto");
+                successMessage.postValue(null);
                 // Salva o aggiorna la frequenza del prodotto
                 prodottoFrequenteRepository.salvaOAggiornaFrequenza(nome, categoria);
             }
 
             @Override
             public void onError(Exception e) {
-                errorMessage.postValue("Errore: " + e.getMessage());
+                if (e instanceof ListaSpesaRepository.ItemAlreadyExistsException) {
+                    errorMessage.postValue("\"" + nome + "\" è già nella lista");
+                } else {
+                    errorMessage.postValue("Errore: " + e.getMessage());
+                }
             }
         });
     }

@@ -22,7 +22,7 @@ public interface ItemSpesaDao {
     @Delete
     void delete(ItemSpesaEntity item);
 
-    @Query("SELECT * FROM item_spesa WHERE id_lista = :idLista ORDER BY ordine ASC, id ASC")
+    @Query("SELECT * FROM item_spesa WHERE id_lista = :idLista ORDER BY completato ASC, id DESC")
     LiveData<List<ItemSpesaEntity>> getItemsByListaId(int idLista);
 
     @Query("SELECT * FROM item_spesa WHERE id_lista = :idLista ORDER BY ordine ASC, id ASC")
@@ -54,4 +54,7 @@ public interface ItemSpesaDao {
 
     @Query("SELECT COUNT(*) FROM item_spesa WHERE id_lista = :idLista AND completato = 1")
     int getCountCompletatiByListaId(int idLista);
+
+    @Query("SELECT COUNT(*) FROM item_spesa WHERE id_lista = :idLista AND LOWER(nome) = LOWER(:nome)")
+    int countByNomeInLista(int idLista, String nome);
 }

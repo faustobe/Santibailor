@@ -103,6 +103,19 @@
     <string name="navigation_error">Errore nella navigazione</string>
     <string name="feature_in_development">Funzionalità in sviluppo</string>
 
+    <!-- Sfondo -->
+    <string name="settings_general_background_title">Sfondo</string>
+    <string name="settings_general_background_desc">Personalizza lo sfondo della home</string>
+    <string name="select_background">Seleziona Sfondo</string>
+    <string name="background_santo">Santo</string>
+    <string name="background_none">Nessuno</string>
+    <string name="background_gradient_warm">Gradiente Caldo</string>
+    <string name="background_gradient_cool">Gradiente Freddo</string>
+    <string name="background_gradient_sunset">Gradiente Tramonto</string>
+    <string name="background_custom">Personalizzato</string>
+    <string name="background_applied">Sfondo applicato</string>
+    <string name="background_custom_error">Errore nel caricamento dell\'immagine personalizzata</string>
+
     <!-- Impostazioni - Categorie Principali -->
     <string name="settings_general">Generali</string>
     <string name="settings_account">Account</string>
@@ -395,4 +408,69 @@
     <string name="add_button">+</string>
     <string name="zero">0</string>
     <string name="confirm">Conferma</string>
+
+    <!-- Notifiche Dialog -->
+    <string name="notifications_enabled_label">Abilitate</string>
+    <string name="notifications_disabled_label">Disabilitate</string>
+    <string name="notifications_updated">Impostazione notifiche aggiornata</string>
+    <string name="select_notification_time">Seleziona orario notifica</string>
+    <string name="notification_time_set">Notifica programmata alle %1$02d:%2$02d</string>
+    <string name="impegni_notifications_updated">Notifiche impegni aggiornate</string>
+
+    <!-- Impostazioni - Nuove sezioni semplificate -->
+    <string name="settings_aspetto">Aspetto</string>
+    <string name="settings_aspetto_desc">Tema, lingua e sfondo</string>
+    <string name="settings_notifiche_desc">Ricorrenze e impegni</string>
+    <string name="settings_cerca_gestisci">Cerca e Gestisci</string>
+    <string name="settings_cerca_gestisci_desc">Cerca, modifica e condividi</string>
+    <string name="settings_privacy_new">Privacy</string>
+    <string name="settings_privacy_new_desc">Permessi, dati e informativa</string>
+    <string name="settings_info">Info</string>
+    <string name="settings_info_desc">Versione e crediti</string>
+
+    <!-- Sezione Aspetto -->
+    <string name="settings_aspetto_category">Aspetto</string>
+
+    <!-- Sezione Notifiche (semplificata) -->
+    <string name="settings_notifiche_category">Notifiche</string>
+
+    <!-- Sezione Cerca e Gestisci -->
+    <string name="settings_cerca_gestisci_category">Cerca e Gestisci</string>
+    <string name="settings_search_ricorrenze_title">Cerca ricorrenze</string>
+    <string name="settings_search_ricorrenze_desc">Cerca tra le ricorrenze esistenti</string>
+    <string name="settings_manage_ricorrenze_title">Gestione ricorrenze</string>
+    <string name="settings_manage_ricorrenze_desc">Aggiungi, modifica o elimina ricorrenze</string>
+    <string name="settings_share_export_title">Condividi / Esporta</string>
+    <string name="settings_share_export_desc">Condividi o esporta le tue ricorrenze</string>
+    <string name="share_export_no_data">Nessun dato da condividere</string>
+
+    <!-- Sezione Privacy -->
+    <string name="settings_privacy_new_category">Privacy</string>
+    <string name="settings_privacy_app_permissions_title">Permessi dell\'app</string>
+    <string name="settings_privacy_app_permissions_desc">Gestisci i permessi nelle impostazioni di sistema</string>
+    <string name="settings_privacy_export_data_title">Esporta i tuoi dati</string>
+    <string name="settings_privacy_export_data_desc">Esporta tutti i dati locali in un file</string>
+    <string name="settings_privacy_delete_data_title">Cancella dati locali</string>
+    <string name="settings_privacy_delete_data_desc">Elimina tutti i dati salvati nell\'app</string>
+    <string name="settings_privacy_policy_title">Informativa privacy</string>
+    <string name="settings_privacy_policy_desc">Come vengono trattati i tuoi dati</string>
+    <string name="privacy_delete_confirm_title">Cancella tutti i dati</string>
+    <string name="privacy_delete_confirm_message">Sei sicuro di voler eliminare tutti i dati locali? Questa operazione non è reversibile.</string>
+    <string name="privacy_data_deleted">Tutti i dati locali sono stati eliminati</string>
+    <string name="privacy_export_success">Dati esportati con successo</string>
+    <string name="privacy_export_error">Errore nell\'esportazione dei dati</string>
+    <string name="privacy_policy_text">Santibailor rispetta la tua privacy.\n\nTutti i dati vengono salvati localmente sul tuo dispositivo. Nessun dato personale viene inviato a server esterni.\n\nI permessi richiesti dall\'app sono utilizzati esclusivamente per le funzionalità dell\'app (notifiche, accesso alle immagini).\n\nPuoi esportare o cancellare i tuoi dati in qualsiasi momento dalla sezione Privacy delle impostazioni.</string>
+
+    <!-- Dettaglio Ricorrenza -->
+    <string name="detail_date_label">Data</string>
+    <string name="detail_type_label">Tipo</string>
+    <string name="date_format_day_month">%1$d %2$s</string>
+
+    <!-- Sezione Info -->
+    <string name="settings_info_category">Info</string>
+    <string name="info_app_version">Versione</string>
+    <string name="info_app_description_title">Descrizione</string>
+    <string name="info_app_description">Santibailor ti aiuta a tenere traccia dei santi del giorno, delle ricorrenze personali, degli impegni e delle note. Un assistente quotidiano per organizzare la tua giornata.</string>
+    <string name="info_credits_title">Crediti</string>
+    <string name="info_credits">Sviluppato con passione da Fausto</string>
 </resources>

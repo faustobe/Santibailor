@@ -73,7 +73,7 @@
                 android:background="#FFFFFF"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:imeOptions="actionDone"
+                android:imeOptions="actionSend"
                 android:inputType="text"
                 android:singleLine="true"
                 android:completionThreshold="1"

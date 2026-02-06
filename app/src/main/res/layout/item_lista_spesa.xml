@@ -8,8 +8,8 @@
     android:layout_margin="4dp"
     app:cardCornerRadius="8dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="#FFFFFF"
-    app:strokeColor="#E0E0E0"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:strokeColor="@color/border_primary"
     app:strokeWidth="1dp"
     android:clickable="true"
     android:focusable="true">
@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="18sp"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             tools:text="Spesa settimanale"/>
 
         <ImageButton

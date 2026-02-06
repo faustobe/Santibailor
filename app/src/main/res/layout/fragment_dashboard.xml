@@ -20,7 +20,7 @@
             android:text="Panoramica"
             android:textSize="24sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
+            android:textColor="?attr/colorOnSurface"
             android:layout_marginBottom="16dp" />
 
         <!-- Card: Statistiche Ricorrenze -->
@@ -43,7 +43,7 @@
                     android:text="📊 Statistiche Ricorrenze"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="12dp" />
 
                 <LinearLayout
@@ -73,7 +73,7 @@
                             android:layout_height="wrap_content"
                             android:text="Totali"
                             android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -97,7 +97,7 @@
                             android:layout_height="wrap_content"
                             android:text="Oggi"
                             android:textSize="14sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -123,7 +123,7 @@
                     android:text="🏷️ Ricorrenze per Tipo"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="12dp" />
 
                 <LinearLayout
@@ -180,7 +180,7 @@
             android:layout_marginBottom="16dp"
             app:cardElevation="4dp"
             app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="#FFF3E0">
+            app:cardBackgroundColor="@color/dashboard_impegni_background">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -194,7 +194,7 @@
                     android:text="📅 Statistiche Impegni"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="12dp" />
 
                 <LinearLayout
@@ -225,7 +225,7 @@
                             android:layout_height="wrap_content"
                             android:text="Totali"
                             android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -249,7 +249,7 @@
                             android:layout_height="wrap_content"
                             android:text="Oggi"
                             android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -273,7 +273,7 @@
                             android:layout_height="wrap_content"
                             android:text="Futuri"
                             android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -297,7 +297,7 @@
                             android:layout_height="wrap_content"
                             android:text="Fatti"
                             android:textSize="12sp"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/text_secondary" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -329,7 +329,7 @@
                     android:text="ℹ️ Informazioni"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/black"
+                    android:textColor="?attr/colorOnSurface"
                     android:layout_marginBottom="12dp" />
 
                 <TextView

@@ -55,6 +55,7 @@ import it.faustobe.santibailor.presentation.common.ricorrenze.RicorrenzaAdapter;
 import it.faustobe.santibailor.presentation.features.main.MainActivity;
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentHomeBinding;
+import it.faustobe.santibailor.util.BackgroundManager;
 import it.faustobe.santibailor.util.DateUtils;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 import it.faustobe.santibailor.presentation.features.impegni.ImpegniViewModel;
@@ -690,11 +691,61 @@ public class HomeFragment extends Fragment {
     }
 
     private void loadBackgroundImage() {
-        Glide.with(this)
-                .load(R.drawable.background_saint)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .centerCrop()
-                .into(binding.backgroundImage);
+        String bg = BackgroundManager.getSavedBackground(requireContext());
+
+        switch (bg) {
+            case BackgroundManager.BG_SANTO:
+                binding.backgroundImage.setVisibility(View.VISIBLE);
+                binding.backgroundImage.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+                Glide.with(this)
+                        .load(R.drawable.background_saint)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .centerCrop()
+                        .into(binding.backgroundImage);
+                break;
+
+            case BackgroundManager.BG_NONE:
+                binding.backgroundImage.setVisibility(View.GONE);
+                break;
+
+            case BackgroundManager.BG_GRADIENT_WARM:
+            case BackgroundManager.BG_GRADIENT_COOL:
+            case BackgroundManager.BG_GRADIENT_SUNSET:
+                binding.backgroundImage.setVisibility(View.VISIBLE);
+                binding.backgroundImage.setScaleType(android.widget.ImageView.ScaleType.FIT_XY);
+                binding.backgroundImage.setImageResource(BackgroundManager.getBackgroundDrawableResId(bg));
+                break;
+
+            case BackgroundManager.BG_CUSTOM:
+                String customPath = BackgroundManager.getCustomBackgroundPath(requireContext());
+                binding.backgroundImage.setVisibility(View.VISIBLE);
+                binding.backgroundImage.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+                if (customPath != null) {
+                    Glide.with(this)
+                            .load(customPath)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .error(R.drawable.background_saint)
+                            .into(binding.backgroundImage);
+                } else {
+                    Glide.with(this)
+                            .load(R.drawable.background_saint)
+                            .transition(DrawableTransitionOptions.withCrossFade())
+                            .centerCrop()
+                            .into(binding.backgroundImage);
+                }
+                break;
+
+            default:
+                binding.backgroundImage.setVisibility(View.VISIBLE);
+                binding.backgroundImage.setScaleType(android.widget.ImageView.ScaleType.CENTER_CROP);
+                Glide.with(this)
+                        .load(R.drawable.background_saint)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .centerCrop()
+                        .into(binding.backgroundImage);
+                break;
+        }
     }
 
     private void navigateToRicorrenzaDetail(int ricorrenzaId) {
@@ -1134,6 +1185,11 @@ public class HomeFragment extends Fragment {
         super.onResume();
 
         Log.d(TAG, "onResume() chiamato");
+
+        // Ricarica lo sfondo quando l'utente torna dalla schermata impostazioni
+        if (binding != null) {
+            loadBackgroundImage();
+        }
 
         // Ricarica i dati SOLO se non è il primo caricamento
         if (isInitialized) {

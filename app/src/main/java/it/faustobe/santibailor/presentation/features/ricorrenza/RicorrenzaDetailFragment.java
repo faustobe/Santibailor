@@ -16,6 +16,8 @@ import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentRicorrenzaDetailBinding;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 import it.faustobe.santibailor.domain.model.Ricorrenza;
+import it.faustobe.santibailor.domain.model.TipoRicorrenza;
+import it.faustobe.santibailor.util.DateUtils;
 
 public class RicorrenzaDetailFragment extends Fragment {
 
@@ -40,6 +42,23 @@ public class RicorrenzaDetailFragment extends Fragment {
             if (ricorrenza != null) {
                 binding.tvNome.setText(ricorrenza.getNome());
 
+                // Data: giorno + nome mese (idMese è 0-based)
+                String monthName = DateUtils.getMonthNameFull(ricorrenza.getIdMese());
+                String dateText = getString(R.string.date_format_day_month, ricorrenza.getGiorno(), monthName);
+                binding.tvData.setText(dateText);
+
+                // Tipo ricorrenza
+                viewModel.getAllTipiRicorrenza().observe(getViewLifecycleOwner(), tipi -> {
+                    if (tipi != null) {
+                        for (TipoRicorrenza tipo : tipi) {
+                            if (tipo.getId() == ricorrenza.getTipoRicorrenzaId()) {
+                                binding.tvTipo.setText(tipo.getTipo());
+                                break;
+                            }
+                        }
+                    }
+                });
+
                 // Carica la biografia da Firebase
                 viewModel.getBio(ricorrenzaIdString).observe(getViewLifecycleOwner(), bio -> {
                     if (bio != null && !bio.isEmpty()) {
@@ -49,16 +68,14 @@ public class RicorrenzaDetailFragment extends Fragment {
                     }
                 });
 
-                // Carica l'immagine da Firebase
+                // Carica l'immagine: prima da URL locale, poi sovrascrive con Firebase se disponibile
+                viewModel.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
                 viewModel.downloadImage(ricorrenzaIdString).observe(getViewLifecycleOwner(), imageData -> {
-                    if (imageData != null) {
+                    if (imageData != null && isAdded()) {
                         Glide.with(this)
                                 .load(imageData)
                                 .placeholder(R.drawable.placeholder_image)
                                 .into(binding.ivRicorrenza);
-                    } else {
-                        // Fallback all'URL dell'immagine locale se l'immagine Firebase non è disponibile
-                        viewModel.loadImage(ricorrenza.getImageUrl(), binding.ivRicorrenza, R.drawable.placeholder_image);
                     }
                 });
             }

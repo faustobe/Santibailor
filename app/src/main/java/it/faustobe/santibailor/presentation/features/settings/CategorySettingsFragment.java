@@ -1,15 +1,26 @@
 package it.faustobe.santibailor.presentation.features.settings;
 
+import android.Manifest;
+import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -20,13 +31,43 @@ import java.util.List;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentCategorySettingsBinding;
+import it.faustobe.santibailor.util.BackgroundManager;
+import it.faustobe.santibailor.util.ImageHandler;
 import it.faustobe.santibailor.util.LanguageManager;
 import it.faustobe.santibailor.util.ThemeManager;
+import it.faustobe.santibailor.util.WorkManagerHelper;
 
 public class CategorySettingsFragment extends Fragment implements CategorySettingsAdapter.OnSettingItemClickListener {
     private FragmentCategorySettingsBinding binding;
     private CategorySettingsAdapter adapter;
     private List<SettingItem> settingItems;
+    private ActivityResultLauncher<String> imagePickerLauncher;
+    private ActivityResultLauncher<String> notificationPermissionLauncher;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null) {
+                        handleCustomBackgroundSelected(uri);
+                    }
+                }
+        );
+        notificationPermissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        enableNotifications();
+                    } else {
+                        Toast.makeText(requireContext(),
+                                getString(R.string.notifications_disabled_label),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -104,6 +145,24 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
             showThemeDialog();
         } else if (getString(R.string.settings_general_language_title).equals(title)) {
             showLanguageDialog();
+        } else if (getString(R.string.settings_general_background_title).equals(title)) {
+            showBackgroundDialog();
+        } else if (getString(R.string.settings_general_notifications_title).equals(title)) {
+            showNotificationDialog();
+        } else if (getString(R.string.settings_notifications_ricorrenze_title).equals(title)) {
+            showRicorrenzeNotificationDialog();
+        } else if (getString(R.string.settings_notifications_impegni_title).equals(title)) {
+            showImpegniNotificationDialog();
+        } else if (getString(R.string.settings_privacy_app_permissions_title).equals(title)) {
+            openAppPermissions();
+        } else if (getString(R.string.settings_privacy_export_data_title).equals(title)) {
+            exportData();
+        } else if (getString(R.string.settings_privacy_delete_data_title).equals(title)) {
+            confirmDeleteData();
+        } else if (getString(R.string.settings_privacy_policy_title).equals(title)) {
+            showPrivacyPolicy();
+        } else if (getString(R.string.settings_share_export_title).equals(title)) {
+            shareExport();
         } else {
             Log.d("CategorySettingsFragment", "Action executed for: " + title);
             Toast.makeText(requireContext(), getString(R.string.feature_in_development), Toast.LENGTH_SHORT).show();
@@ -171,6 +230,245 @@ public class CategorySettingsFragment extends Fragment implements CategorySettin
                 })
                 .setNegativeButton(android.R.string.cancel, null)
                 .show();
+    }
+
+    private void showBackgroundDialog() {
+        String currentBackground = BackgroundManager.getSavedBackground(requireContext());
+
+        String[] backgrounds = {
+                BackgroundManager.BG_SANTO,
+                BackgroundManager.BG_NONE,
+                BackgroundManager.BG_GRADIENT_WARM,
+                BackgroundManager.BG_GRADIENT_COOL,
+                BackgroundManager.BG_GRADIENT_SUNSET,
+                BackgroundManager.BG_CUSTOM
+        };
+
+        String[] backgroundNames = {
+                getString(R.string.background_santo),
+                getString(R.string.background_none),
+                getString(R.string.background_gradient_warm),
+                getString(R.string.background_gradient_cool),
+                getString(R.string.background_gradient_sunset),
+                getString(R.string.background_custom)
+        };
+
+        int selectedIndex = Arrays.asList(backgrounds).indexOf(currentBackground);
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.select_background)
+                .setSingleChoiceItems(backgroundNames, selectedIndex, (dialog, which) -> {
+                    String selectedBackground = backgrounds[which];
+                    if (BackgroundManager.BG_CUSTOM.equals(selectedBackground)) {
+                        imagePickerLauncher.launch("image/*");
+                    } else {
+                        BackgroundManager.saveBackground(requireContext(), selectedBackground);
+                        Toast.makeText(requireContext(), getString(R.string.background_applied), Toast.LENGTH_SHORT).show();
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showNotificationDialog() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+        boolean currentEnabled = prefs.getBoolean("notifications_enabled", true);
+
+        String[] options = {
+                getString(R.string.notifications_enabled_label),
+                getString(R.string.notifications_disabled_label)
+        };
+
+        int selectedIndex = currentEnabled ? 0 : 1;
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_general_notifications_title)
+                .setSingleChoiceItems(options, selectedIndex, (dialog, which) -> {
+                    if (which == 0) {
+                        // Abilitate
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            if (ContextCompat.checkSelfPermission(requireContext(),
+                                    Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                                enableNotifications();
+                            } else {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+                            }
+                        } else {
+                            enableNotifications();
+                        }
+                    } else {
+                        // Disabilitate
+                        disableNotifications();
+                    }
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void enableNotifications() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+        prefs.edit().putBoolean("notifications_enabled", true).apply();
+        WorkManagerHelper.scheduleDailySaintNotification(requireContext());
+        Toast.makeText(requireContext(), getString(R.string.notifications_updated), Toast.LENGTH_SHORT).show();
+    }
+
+    private void disableNotifications() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+        prefs.edit().putBoolean("notifications_enabled", false).apply();
+        WorkManagerHelper.cancelDailySaintNotification(requireContext());
+        Toast.makeText(requireContext(), getString(R.string.notifications_updated), Toast.LENGTH_SHORT).show();
+    }
+
+    private void showRicorrenzeNotificationDialog() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+        boolean currentEnabled = prefs.getBoolean("saint_notifications_enabled", true);
+
+        String[] options = {
+                getString(R.string.notifications_enabled_label),
+                getString(R.string.notifications_disabled_label)
+        };
+
+        int selectedIndex = currentEnabled ? 0 : 1;
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_notifications_ricorrenze_title)
+                .setSingleChoiceItems(options, selectedIndex, (dialog, which) -> {
+                    if (which == 0) {
+                        // Abilitate → mostra TimePicker
+                        dialog.dismiss();
+                        int savedHour = prefs.getInt("saint_notification_hour", 7);
+                        int savedMinute = prefs.getInt("saint_notification_minute", 0);
+                        new TimePickerDialog(requireContext(), (view, hourOfDay, minuteOfHour) -> {
+                            prefs.edit()
+                                    .putBoolean("saint_notifications_enabled", true)
+                                    .putInt("saint_notification_hour", hourOfDay)
+                                    .putInt("saint_notification_minute", minuteOfHour)
+                                    .apply();
+                            WorkManagerHelper.scheduleDailySaintNotification(requireContext(), hourOfDay, minuteOfHour);
+                            Toast.makeText(requireContext(),
+                                    String.format(getString(R.string.notification_time_set), hourOfDay, minuteOfHour),
+                                    Toast.LENGTH_SHORT).show();
+                        }, savedHour, savedMinute, true).show();
+                    } else {
+                        // Disabilitate
+                        prefs.edit().putBoolean("saint_notifications_enabled", false).apply();
+                        WorkManagerHelper.cancelDailySaintNotification(requireContext());
+                        Toast.makeText(requireContext(), getString(R.string.notifications_updated), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void showImpegniNotificationDialog() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+        boolean currentEnabled = prefs.getBoolean("impegni_notifications_enabled", true);
+
+        String[] options = {
+                getString(R.string.notifications_enabled_label),
+                getString(R.string.notifications_disabled_label)
+        };
+
+        int selectedIndex = currentEnabled ? 0 : 1;
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_notifications_impegni_title)
+                .setSingleChoiceItems(options, selectedIndex, (dialog, which) -> {
+                    boolean enabled = (which == 0);
+                    prefs.edit().putBoolean("impegni_notifications_enabled", enabled).apply();
+                    Toast.makeText(requireContext(), getString(R.string.impegni_notifications_updated), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
+    }
+
+    private void openAppPermissions() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", requireContext().getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    private void exportData() {
+        try {
+            SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+            StringBuilder sb = new StringBuilder();
+            sb.append("=== Santibailor Data Export ===\n\n");
+            sb.append("Settings:\n");
+            for (String key : prefs.getAll().keySet()) {
+                sb.append("  ").append(key).append(" = ").append(prefs.getAll().get(key)).append("\n");
+            }
+
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Santibailor - Data Export");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, sb.toString());
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.settings_privacy_export_data_title)));
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), getString(R.string.privacy_export_error), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void confirmDeleteData() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.privacy_delete_confirm_title)
+                .setMessage(R.string.privacy_delete_confirm_message)
+                .setPositiveButton(R.string.elimina, (dialog, which) -> {
+                    SharedPreferences prefs = requireContext().getSharedPreferences("settings", android.content.Context.MODE_PRIVATE);
+                    prefs.edit().clear().apply();
+                    Toast.makeText(requireContext(), getString(R.string.privacy_data_deleted), Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(R.string.annulla, null)
+                .show();
+    }
+
+    private void showPrivacyPolicy() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.settings_privacy_policy_title)
+                .setMessage(R.string.privacy_policy_text)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    private void shareExport() {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Santibailor");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.info_app_description));
+            startActivity(Intent.createChooser(shareIntent, getString(R.string.settings_share_export_title)));
+        } catch (Exception e) {
+            Toast.makeText(requireContext(), getString(R.string.share_export_no_data), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleCustomBackgroundSelected(Uri uri) {
+        ImageHandler imageHandler = ImageHandler.getInstance(requireContext());
+        imageHandler.saveLocalImageOnly(uri, new ImageHandler.OnImageSavedListener() {
+            @Override
+            public void onImageSaved(String imageUrl) {
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() -> {
+                        BackgroundManager.saveCustomBackgroundPath(requireContext(), imageUrl);
+                        BackgroundManager.saveBackground(requireContext(), BackgroundManager.BG_CUSTOM);
+                        Toast.makeText(requireContext(), getString(R.string.background_applied), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+
+            @Override
+            public void onError(Exception e) {
+                if (isAdded()) {
+                    requireActivity().runOnUiThread(() ->
+                            Toast.makeText(requireContext(), getString(R.string.background_custom_error), Toast.LENGTH_SHORT).show()
+                    );
+                }
+            }
+        });
     }
 
     @Override

@@ -38,6 +38,7 @@
             android:name=".presentation.features.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Santibailor.Splash"
+            android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
