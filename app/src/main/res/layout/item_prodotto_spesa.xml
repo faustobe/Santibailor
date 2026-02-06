@@ -9,11 +9,16 @@
     android:gravity="center_vertical"
     android:background="?attr/selectableItemBackground">
 
-    <CheckBox
-        android:id="@+id/checkbox_completato"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"/>
+    <ImageView
+        android:id="@+id/icon_completato"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_task_unchecked"
+        android:contentDescription="Stato completamento"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackgroundBorderless" />
 
     <LinearLayout
         android:layout_width="0dp"

@@ -7,22 +7,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +25,6 @@ import java.util.Locale;
 
 import it.faustobe.santibailor.R;
 import it.faustobe.santibailor.databinding.FragmentSearchBinding;
-import it.faustobe.santibailor.domain.model.Ricorrenza;
-import it.faustobe.santibailor.domain.model.SearchResult;
 import it.faustobe.santibailor.domain.model.TipoRicorrenza;
 import it.faustobe.santibailor.presentation.common.viewmodels.RicorrenzaViewModel;
 import it.faustobe.santibailor.util.DateUtils;
@@ -42,7 +35,6 @@ public class SearchFragment extends Fragment {
     private static final String TAG = "SearchFragment";
     private FragmentSearchBinding binding;
     private RicorrenzaViewModel viewModel;
-    private SearchAdapter searchAdapter;
     private boolean shouldClearSearch = false;
 
     private static final long SEARCH_DELAY_MS = 300;
@@ -82,7 +74,6 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         setupViews();
-        setupRecyclerView();
         setupSearchView();
         setupListeners();
         setupTipoSpinner();
@@ -102,12 +93,6 @@ public class SearchFragment extends Fragment {
         binding.buttonDebug.setOnClickListener(v -> showDebugInfo());
     }
 
-    private void setupRecyclerView() {
-        searchAdapter = new SearchAdapter();
-        binding.recyclerViewRisultati.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewRisultati.setAdapter(searchAdapter);
-    }
-
     private void setupSearchView() {
         binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {
             @Override
@@ -122,8 +107,6 @@ public class SearchFragment extends Fragment {
                 searchRunnable = () -> {
                     if (newText.length() >= 3) {
                         performSearch(newText);
-                    } else if (newText.isEmpty()) {
-                        clearResults();
                     }
                 };
                 searchHandler.postDelayed(searchRunnable, SEARCH_DELAY_MS);
@@ -187,14 +170,13 @@ public class SearchFragment extends Fragment {
     }
 
     private void observeViewModel() {
-        viewModel.getSearchResults().observe(getViewLifecycleOwner(), this::updateUIWithResults);
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), this::updateLoadingState);
-        viewModel.getTotalSearchResults().observe(getViewLifecycleOwner(), this::updateTotalResultsCount);
         viewModel.getTotalItemCount().observe(getViewLifecycleOwner(), this::updateTotalCount);
     }
 
     private void performSearch(String query) {
-        viewModel.performSearch(query, 20, 0);
+        // SearchView quick search: set as nome and navigate to results
+        viewModel.setSearchParams(query, null, null, null);
+        navigateToResults(query, "", "");
     }
 
     private void performSearch() {
@@ -206,46 +188,36 @@ public class SearchFragment extends Fragment {
         Integer tipo = (selectedTipo != null && selectedTipo.getId() != 0) ? selectedTipo.getId() : null;
 
         viewModel.setSearchParams(nome, tipo, dataInizio, dataFine);
-        updateSearchParamsSummary();
+
+        String displayDateStart = binding.editTextDataInizio.getText().toString();
+        String displayDateEnd = binding.editTextDataFine.getText().toString();
+        navigateToResults(nome, displayDateStart, displayDateEnd);
     }
 
-    private void updateUIWithResults(List<SearchResult> results) {
-        if (results == null) {
-            results = new ArrayList<>();
-        }
-        searchAdapter.submitList(results);
-        binding.recyclerViewRisultati.setVisibility(results.isEmpty() ? View.GONE : View.VISIBLE);
-        binding.textViewNoResults.setVisibility(results.isEmpty() ? View.VISIBLE : View.GONE);
-    }
-
-    private void updateLoadingState(boolean isLoading) {
-        binding.loadingMoreProgress.setVisibility(isLoading ? View.VISIBLE : View.GONE);
-    }
-
-    private void updateTotalResultsCount(int count) {
-        binding.textViewRisultati.setText("Risultati trovati: " + count);
+    private void navigateToResults(String searchName, String dateStart, String dateEnd) {
+        SearchFragmentDirections.ActionSearchFragmentToSearchResultsFragment action =
+                SearchFragmentDirections.actionSearchFragmentToSearchResultsFragment();
+        action.setSearchName(searchName != null ? searchName : "");
+        action.setSearchDateStart(dateStart != null ? dateStart : "");
+        action.setSearchDateEnd(dateEnd != null ? dateEnd : "");
+        Navigation.findNavController(requireView()).navigate(action);
     }
 
     private void updateTotalCount(Integer count) {
         binding.textViewTotalItems.setText("Totale item nel database: " + count);
     }
 
-    private void clearResults() {
-        searchAdapter.submitList(new ArrayList<>());
-        binding.recyclerViewRisultati.setVisibility(View.GONE);
-        binding.textViewNoResults.setVisibility(View.VISIBLE);
-    }
-
     private void showDebugInfo() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.debug_info)
                 .setMessage("Parametri di ricerca:\n" +
-                        "Nome: " + binding.editTextNome.getText() + "\n" +
+                        "Nome (campo): " + binding.editTextNome.getText() + "\n" +
+                        "SearchView: " + binding.searchView.getQuery() + "\n" +
                         "Tipo: " + binding.spinnerTipo.getText() + "\n" +
-                        "Data Inizio: " + binding.editTextDataInizio.getText() + "\n" +
-                        "Data Fine: " + binding.editTextDataFine.getText() + "\n\n" +
-                        "Risultati: " + (searchAdapter.getItemCount() > 0 ?
-                        searchAdapter.getItemCount() : getString(R.string.no_results_found)))
+                        "Data Inizio: " + binding.editTextDataInizio.getText() +
+                        " (tag: " + binding.editTextDataInizio.getTag() + ")\n" +
+                        "Data Fine: " + binding.editTextDataFine.getText() +
+                        " (tag: " + binding.editTextDataFine.getTag() + ")")
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }
@@ -326,7 +298,6 @@ public class SearchFragment extends Fragment {
         SearchPreferences.clearSearchParams(requireContext());
         viewModel.clearSearchState();
         ripristinaDatiRicerca();
-        clearResults();
     }
 
     @Override

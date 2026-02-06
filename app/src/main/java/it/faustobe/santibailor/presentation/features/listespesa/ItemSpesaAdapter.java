@@ -4,8 +4,8 @@ import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,7 +55,7 @@ public class ItemSpesaAdapter extends RecyclerView.Adapter<ItemSpesaAdapter.View
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private final CheckBox checkboxCompletato;
+        private final ImageView iconCompletato;
         private final TextView tvNomeItem;
         private final TextView tvQuantita;
         private final TextView tvCategoria;
@@ -64,7 +64,7 @@ public class ItemSpesaAdapter extends RecyclerView.Adapter<ItemSpesaAdapter.View
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            checkboxCompletato = itemView.findViewById(R.id.checkbox_completato);
+            iconCompletato = itemView.findViewById(R.id.icon_completato);
             tvNomeItem = itemView.findViewById(R.id.tv_nome_item);
             tvQuantita = itemView.findViewById(R.id.tv_quantita);
             tvCategoria = itemView.findViewById(R.id.tv_categoria);
@@ -76,14 +76,13 @@ public class ItemSpesaAdapter extends RecyclerView.Adapter<ItemSpesaAdapter.View
             // Nome
             tvNomeItem.setText(item.getNome());
 
-            // Checkbox
-            checkboxCompletato.setChecked(item.isCompletato());
-
-            // Stile barrato se completato
+            // Icona stato: quadratino rosso o spunta verde
             if (item.isCompletato()) {
+                iconCompletato.setImageResource(R.drawable.ic_task_checked);
                 tvNomeItem.setPaintFlags(tvNomeItem.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 tvNomeItem.setAlpha(0.6f);
             } else {
+                iconCompletato.setImageResource(R.drawable.ic_task_unchecked);
                 tvNomeItem.setPaintFlags(tvNomeItem.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
                 tvNomeItem.setAlpha(1.0f);
             }
@@ -112,9 +111,9 @@ public class ItemSpesaAdapter extends RecyclerView.Adapter<ItemSpesaAdapter.View
                 tvNote.setVisibility(View.GONE);
             }
 
-            // Checkbox listener
-            checkboxCompletato.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (listener != null && buttonView.isPressed()) {
+            // Toggle listener
+            iconCompletato.setOnClickListener(v -> {
+                if (listener != null) {
                     listener.onItemToggle(item);
                 }
             });

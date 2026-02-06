@@ -169,6 +169,31 @@
         <action
             android:id="@+id/action_searchFragment_to_editRicorrenzaFragment"
             app:destination="@id/editRicorrenzaFragment" />
+        <action
+            android:id="@+id/action_searchFragment_to_searchResultsFragment"
+            app:destination="@id/searchResultsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchResultsFragment"
+        android:name="it.faustobe.santibailor.presentation.features.search.SearchResultsFragment"
+        android:label="Risultati Ricerca"
+        tools:layout="@layout/fragment_search_results">
+        <argument
+            android:name="searchName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="searchDateStart"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="searchDateEnd"
+            app:argType="string"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_searchResultsFragment_to_ricorrenzaDetailFragment"
+            app:destination="@id/ricorrenzaDetailFragment" />
     </fragment>
 
     <fragment

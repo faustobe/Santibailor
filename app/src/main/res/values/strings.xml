@@ -239,6 +239,9 @@
     <string name="search_all_types">Tutte</string>
     <string name="results_found">Risultati trovati: %d</string>
     <string name="total_items_db">Totale item nel database: %d</string>
+    <string name="search_results_for">Risultati per: %s</string>
+    <string name="search_period">Periodo: %s - %s</string>
+    <string name="search_results_count">%d risultati trovati</string>
 
     <!-- Note -->
     <string name="edit_note">Modifica Nota</string>
